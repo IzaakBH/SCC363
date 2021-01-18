@@ -1,5 +1,7 @@
 package com.scc363.hospitalproject.datamodels;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -12,11 +14,30 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    private String username;
-    //TODO: This HAS to be changed to a secure format. A package will exist for this.
+    @NotNull
+    @Column(unique = true)
+    private String username;//TODO: This HAS to be changed to a secure format. A package will exist for this.
+
+    @NotNull
     private String password;
 
-    private UserTypes userType;
+    @NotNull
+    @Column(unique = true)
+    private String email;
+
+    @NotNull
+    private String userType;
+
+    // Getters and setters
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 
     public String getUsername() {
         return username;
@@ -26,20 +47,24 @@ public class User {
         this.username = username;
     }
 
-    public UserTypes getUserType() {
+    public String getUserType() {
         return userType;
     }
 
-    public void setUserType(UserTypes type) {
+    public void setUserType(String type) {
         userType = type;
     }
 
-    public String setPassword(String password) {
+    public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
     public String toString() {
-        return String.format("Username: %s is a %s]", username, userType.toString());
+        return String.format("Username: %s is a %s. Password: %s, EmailL %s]", username, userType, password, email);
     }
 }

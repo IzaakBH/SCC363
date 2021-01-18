@@ -21,12 +21,13 @@ public class HospitalControler {
     private LoginAuthService loginAuthService;
 
     @PostMapping("/add")
-    public String addUser(@RequestParam String userName, @RequestParam String password, @RequestParam String userType){
+    public String addUser(@RequestParam String userName, @RequestParam String email, @RequestParam String password, @RequestParam String userType){
         User u = new User();
         u.setUsername(userName);
+        u.setEmail(email);
         u.setPassword(password);
         //TODO: Validation for non proper type here if a manual request is made.
-        u.setUserType(UserTypes.valueOf(userType));
+        u.setUserType(userType);
         userRepository.save(u);
         return String.format("Added %s to the database!", userName);
     }
