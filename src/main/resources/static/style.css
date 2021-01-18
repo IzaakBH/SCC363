@@ -1,9 +1,7 @@
 body{
     font-family:Arial, Helvetica, sans-serif;
     background-image : url("b.jpg");
-    background-repeat: no-repeat;
-    opacity: 80%;
-    
+    background-repeat: no-repeat; 
 }
 
 button {   
@@ -24,7 +22,7 @@ form {
     border: 3px solid #f1f1f1;  
     width: 30%;
     margin-top: 100px; 
-    
+    opacity: 90%;
     text-align: center;
     margin-left: 50px;
 }   
@@ -36,6 +34,16 @@ input[type=text], input[type=password] {
     padding: 12px 20px;   
     display: inline-block;   
     border: 2px solid rgb(255, 255, 255);   
+    box-sizing: border-box; 
+}  
+
+input[type=code]{   
+    width: 35%;  
+    text-align: center; 
+    margin: 8px 0;  
+    padding: 12px 20px;   
+    display: inline-block;   
+    border: 2px solid rgb(0, 0, 0);   
     box-sizing: border-box; 
 }  
 
@@ -59,4 +67,54 @@ button:hover {
     font-weight: bold;
     margin-bottom: 100px;
     bottom: 20px;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+  }
+  
+  /* The Close Button */
+  
+  .close {
+    color: #aaaaaa;
+    text-align: center;
+    font-weight: bold;
+    width: 20%;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .label{
+      margin-top: 100px;
+      margin-bottom: 200px;
+  }
+  
+  .a{
+    margin-top: 200px;
+    margin-bottom: 200px;
 }
