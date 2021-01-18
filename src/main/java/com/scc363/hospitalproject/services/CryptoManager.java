@@ -32,40 +32,44 @@ public class CryptoManager
         return null;
     }
 
-    /**
-     * Salts a string by inserting a character at static positions in the string. This technique can make hashing
-     * a more secure way to store data.
-     * @param data String to salt
-     * @return salted string
-     */
-    public String saltString(String data)
-    {
-        int dataSize = data.length();
-        ArrayList<Integer> saltPositions = new ArrayList<>();
-        saltPositions.add((int) Math.floor(0.24*dataSize));
-        saltPositions.add((int) Math.floor(0.32*dataSize));
-        saltPositions.add((int) Math.floor(0.52*dataSize));
-        saltPositions.add((int) Math.floor(0.67*dataSize));
-        saltPositions.add((int) Math.floor(0.72*dataSize));
-        saltPositions.add((int) Math.floor(0.9*dataSize));
 
-        StringBuilder saltedString = new StringBuilder();
-        int j = 0;
-        for (int i = 0; i < (dataSize+saltPositions.size()); i++)
+    /**
+     * this method takes in an integer between 0 and 127 and converts it to its ASCII char.
+     * @param intVal integer value of the char
+     * @return String value of the ASCII char
+     */
+    private String getChar(int intVal)
+    {
+        StringBuilder ascii = new StringBuilder();
+        if (intVal >= 0 && intVal <= 127) //asserts integer is within the ASCII bounds
         {
-            if (saltPositions.contains(i))
+            int charLen = 4; //size of an integer
+            for (int i = charLen - 1; i >= 0; i--)
             {
-                saltedString.append("m");
-            }
-            else if (j < dataSize)
-            {
-                saltedString.append(data.charAt(j));
-                j++;
+                ascii.append((char) ((intVal >> (8 * i) & 0xFF))); //bit shift right and bitwise and with 0xFF hex
             }
         }
-
-        return saltedString.toString();
+        return ascii.toString();
     }
+
+
+    /**
+     * This method generates a 128 bit salt value for
+     * @return salt string
+     */
+    public String generateSalt()
+    {
+        StringBuilder salt = new StringBuilder();
+        //loop generates 128 randomly generated characters from ASCII
+        for(int i = 0; i < 128; i++)
+        {
+            //Secure random is considered to be 'Crypto graphically secure'.
+            SecureRandom secureRandom = new SecureRandom();
+            salt.append(getChar(secureRandom.nextInt(126-33+1)+33));
+        }
+        return salt.toString();
+    }
+
     /**
      * generates an RSA key pair with a size of 2048
      * @return KeyPair object with private and public keys
