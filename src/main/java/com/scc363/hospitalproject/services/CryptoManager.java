@@ -1,6 +1,8 @@
 package com.scc363.hospitalproject.services;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -61,7 +63,7 @@ public class CryptoManager
     {
         StringBuilder salt = new StringBuilder();
         //loop generates 128 randomly generated characters from ASCII
-        for(int i = 0; i < 128; i++)
+        for(int i = 0; i < 16; i++)
         {
             //Secure random is considered to be 'Crypto graphically secure'.
             SecureRandom secureRandom = new SecureRandom();
@@ -136,6 +138,41 @@ public class CryptoManager
         return null;
     }
 
+    public byte[] encryptAES(String data, SecretKey key)
+    {
+        try
+        {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return cipher.doFinal(data.getBytes());
+        }
+        catch (Exception e)
+        {
+            System.out.println("Unable to encrypt data");
+        }
+
+        return null;
+    }
+
+    public String decryptAES(byte[] cipherText, SecretKey key)
+    {
+        try
+        {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            byte[] plainTextArr = cipher.doFinal(cipherText);
+            return new String(plainTextArr);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Unable to decrypt data");
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 
     /**
      * converts a key to a string key can be either public or private type
@@ -202,6 +239,30 @@ public class CryptoManager
         }
         return null;
 
+    }
+
+
+    public String generateSessionCode(String IP)
+    {
+        return hashString(IP + generateSalt());
+    }
+
+    public SecretKey generateAESKey()
+    {
+        try
+        {
+            SecureRandom secureRandom = new SecureRandom();
+            KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+            keyGenerator.init(256, secureRandom);
+            return keyGenerator.generateKey();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Unable to generate AES Key");
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }
