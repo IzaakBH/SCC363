@@ -6,3 +6,5 @@ the issue is completed (issues should take no longer than a day to complete), me
 
 If an issue is too complex to complete in a short time frame, create new issues on the board and assign them to the current
 sprint. These can then be implemented on their own branches.
+
+To start the spring localhost on your machine, run (Linux/OSX) -> './mvnw spring-boot:run' (Windows) -> 'mvnw spring-boot:run'
