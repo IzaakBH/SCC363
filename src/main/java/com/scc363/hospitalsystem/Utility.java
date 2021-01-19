@@ -74,7 +74,7 @@ public class Utility {
             score += (double)numOfSym/4 * symbolWeight;
         }
 
-        return score;
+        return score/100;
     }
 
 }
