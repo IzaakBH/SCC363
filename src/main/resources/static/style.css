@@ -96,6 +96,7 @@ button:hover {
   /* The Close Button */
   
   .close {
+    float: right;
     color: #aaaaaa;
     text-align: center;
     font-weight: bold;
