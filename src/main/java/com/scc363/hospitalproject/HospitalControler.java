@@ -11,15 +11,18 @@ public class HospitalControler {
     private CustomerRepository customerRepository;
 
     @PostMapping("/add")
-    public String addCustomer(@RequestParam String first, @RequestParam String last){
+    public String addCustomer(@RequestParam String first, @RequestParam String last, @RequestParam String email, @RequestParam String username, @RequestParam String password){
         Customer customer = new Customer();
         customer.setFirstName(first);
         customer.setLastName(last);
+        customer.setUsername(username);
+        customer.setEmail(email);
+        customer.setPassword(password);
         customerRepository.save(customer);
         return "Add new customer to repo!";
     }
 
-    @GetMapping("/list")
+    @GetMapping("/listusers")
     public Iterable<Customer> getCustomer() {
         return customerRepository.findAll();
     }
