@@ -1,5 +1,6 @@
-package com.scc363.hospitalproject.Constraints;
+package com.scc363.hospitalproject.validators;
 
+import com.scc363.hospitalproject.Constraints.UniqueEmail;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -8,14 +9,13 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 @Component
-public class UniqueUsernameValidator implements ConstraintValidator<UniqueUsername, String> {
+public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, String> {
 
     @Autowired
     UserRepository userRepo;
 
-
     @Override
-    public boolean isValid(String username, ConstraintValidatorContext context) {
-        return !userRepo.existsByUsername(username);
+    public boolean isValid(String email, ConstraintValidatorContext context) {
+        return !userRepo.existsByEmail(email);
     }
 }

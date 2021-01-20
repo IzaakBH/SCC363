@@ -1,5 +1,7 @@
 package com.scc363.hospitalproject.Constraints;
 
+import com.scc363.hospitalproject.validators.PasswordConstraintValidator;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;

@@ -1,5 +1,6 @@
-package com.scc363.hospitalproject.Constraints;
+package com.scc363.hospitalproject.validators;
 
+import com.scc363.hospitalproject.Constraints.ValidPassword;
 import com.scc363.hospitalproject.utils.PasswordStrengthEvaluator;
 
 import javax.validation.ConstraintValidator;
@@ -14,7 +15,7 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
         double score = PasswordStrengthEvaluator.evaluatePassword(password);
-        return score < 0.7;
+        return score > 0.5;
 
     }
 }
