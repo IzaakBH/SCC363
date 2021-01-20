@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class HospitalControler {
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private PatientDetailsRepository patientDetailsRepository;
 
@@ -35,5 +36,8 @@ public class HospitalControler {
     @GetMapping("/listusers")
     public Iterable<User> getUsers() { return userRepository.findAll(); }
 
-
+    @GetMapping("/getuser{id}")
+    public String getUserById(@RequestParam int id) {
+        return userRepository.findUserById(id).toString();
+    }
 }
