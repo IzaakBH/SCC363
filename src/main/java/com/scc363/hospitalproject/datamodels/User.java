@@ -3,6 +3,9 @@ package com.scc363.hospitalproject.datamodels;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -14,18 +17,18 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotNull
+    @Size(min=3, max=20)
     @Column(unique = true)
     private String username;//TODO: This HAS to be changed to a secure format. A package will exist for this.
 
-    @NotNull
+    @NotBlank(message = "Password must not be blank")
     private String password;
 
-    @NotNull
     @Column(unique = true)
+    @Email( message = "Email address should be valid")
     private String email;
 
-    @NotNull
+    @NotBlank(message = "Choose a user type")
     private String userType;
 
     // Getters and setters

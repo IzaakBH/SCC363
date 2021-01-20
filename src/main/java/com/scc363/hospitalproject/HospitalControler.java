@@ -8,10 +8,21 @@ import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import com.scc363.hospitalproject.services.LoginAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller
 public class HospitalControler {
     @Autowired
     private UserRepository userRepository;
@@ -21,20 +32,40 @@ public class HospitalControler {
 
     private LoginAuthService loginAuthService;
 
+
+    @GetMapping("/add")
+    public String addUserForm(User user) {
+        return "add";
+    }
+
     @PostMapping("/add")
-    public String addUser(@RequestParam String userName, @RequestParam String email, @RequestParam String password, @RequestParam String userType){
-        User u = new User();
-        u.setUsername(userName);
-        u.setEmail(email);
-        u.setPassword(password);
-        //TODO: Validation for non proper type here if a manual request is made.
-        u.setUserType(userType);
-        userRepository.save(u);
-        return String.format("Added %s to the database!", userName);
+    public String addUser(@ModelAttribute @Valid User u, Errors errors, Model model) {
+
+        if (errors.hasErrors()) {
+            return "add";
+        } else {
+            userRepository.save(u);
+            return "redirect:";
+        }
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 
     @GetMapping("/listusers")
-    public Iterable<User> getUsers() { return userRepository.findAll(); }
+    public String getUsers(Model model) {
+        model.addAttribute("users", userRepository.findAll());
+        return "listusers";
+    }
 
     @GetMapping("/getuser{id}")
     public String getUserById(@RequestParam int id) {

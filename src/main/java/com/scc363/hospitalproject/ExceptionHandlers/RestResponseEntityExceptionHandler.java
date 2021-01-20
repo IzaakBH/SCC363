@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 // When invalid user details are validated, a RepositoryConstraintViolationException is thrown. This class handles that.
 // See section 3, https://www.baeldung.com/spring-data-rest-validators
 public class RestResponseEntityExceptionHandler  extends ResponseEntityExceptionHandler {
+
     @ExceptionHandler({ RepositoryConstraintViolationException.class })
     public ResponseEntity<Object> handleAccessDeniedException (Exception e, WebRequest req){
         RepositoryConstraintViolationException nevEx = (RepositoryConstraintViolationException) e;
@@ -21,4 +22,6 @@ public class RestResponseEntityExceptionHandler  extends ResponseEntityException
 
         return new ResponseEntity<>(errors, new HttpHeaders(), HttpStatus.PARTIAL_CONTENT);
     }
+
+
 }
