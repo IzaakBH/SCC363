@@ -42,7 +42,7 @@ public class PasswordStrengthEvaluator {
             } 
         }
 
-        if (numOfNum == 0 || numOfUpp == 0 || numOfLow == 0 || numOfSym < 2){
+        if (numOfNum == 0 || numOfUpp == 0 || numOfLow == 0 || numOfSym < 1){
             return 0;
         }
 
