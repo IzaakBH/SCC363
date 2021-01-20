@@ -1,0 +1,226 @@
+Index: src/main/resources/static/index.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE HTML>\r\n<html>\r\n<head>\r\n    <title>SCC363</title>\r\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\r\n</head>\r\n<body>\r\n<form action=\"/add\" method=\"POST\">\r\n    <p>Add customer</p>\r\n\r\n    <div>\r\n        <label for=\"userName\">Username</label>\r\n        <input name=\"userName\" id=\"userName\" value=\"Homersimpo66\">\r\n    </div>\r\n    <div>\r\n        <label for=\"password\">Password</label>\r\n        <input name=\"password\" id=\"password\" value=\"bart123\">\r\n    </div>\r\n    <div>\r\n        <select id=\"userType\" name=\"userType\">\r\n            <option value=\"SYSADMIN\">Sysadmin</option>\r\n            <option value=\"DOCTOR\">Doctor</option>\r\n            <option value=\"NURSE\">Nurse</option>\r\n            <option value=\"PATIENT\">Patient</option>\r\n            <option value=\"REGULATOR\">Regulator</option>\r\n            <option value=\"MEDADMIN\">Medical Admin</option>\r\n        </select>\r\n    </div>\r\n    <div>\r\n        <button>Add user</button>\r\n    </div>\r\n</form>\r\n\r\n\r\n\r\n<form action=\"/list\" method=\"GET\">\r\n    <button>List customers</button>\r\n</form>\r\n</body>\r\n</html>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/static/index.html b/src/main/resources/static/index.html
+--- a/src/main/resources/static/index.html	(revision 87532bdb9dbe9f5e62c13b0919499abe76f80d7f)
++++ b/src/main/resources/static/index.html	(date 1611164316244)
+@@ -1,40 +1,105 @@
+-<!DOCTYPE HTML>
++<!-- <!DOCTYPE HTML>
+ <html>
+ <head>
+-    <title>SCC363</title>
+-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
++   <title>SCC363</title>
++   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ </head>
+ <body>
+ <form action="/add" method="POST">
+-    <p>Add customer</p>
++   <p>Add customer</p>
+ 
+-    <div>
+-        <label for="userName">Username</label>
+-        <input name="userName" id="userName" value="Homersimpo66">
+-    </div>
+-    <div>
+-        <label for="password">Password</label>
+-        <input name="password" id="password" value="bart123">
+-    </div>
+-    <div>
+-        <select id="userType" name="userType">
+-            <option value="SYSADMIN">Sysadmin</option>
+-            <option value="DOCTOR">Doctor</option>
+-            <option value="NURSE">Nurse</option>
+-            <option value="PATIENT">Patient</option>
+-            <option value="REGULATOR">Regulator</option>
+-            <option value="MEDADMIN">Medical Admin</option>
+-        </select>
+-    </div>
+-    <div>
+-        <button>Add user</button>
++   <div>
++       <label for="userName">Username</label>
++       <input name="userName" id="userName" value="Homersimpo66">
++   </div>
++   <div>
++       <label for="password">Password</label>
++       <input name="password" id="password" value="bart123">
++   </div>
++   <div>
++       <select id="userType" name="userType">
++           <option value="SYSADMIN">Sysadmin</option>
++           <option value="DOCTOR">Doctor</option>
++           <option value="NURSE">Nurse</option>
++           <option value="PATIENT">Patient</option>
++           <option value="REGULATOR">Regulator</option>
++           <option value="MEDADMIN">Medical Admin</option>
++       </select>
++   </div>
++ <div> 
++       <button>Add user</button>
++   </div>
++</form>
++
++
++
++<form action="/list" method="GET">
++   <button>List customers</button>
++</form>
++</body>
++</html> -->
++
++<!DOCTYPE HTML>
++<html>
++<head>
++    <title>Register_Login</title>
++    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
++    <link rel="stylesheet" href="style.css">
++</head>
++<body>
++
++<form action="/add" method="POST">
++
++    <div class="container">
++        <br>
++        <br>
++        <br>
++        <label class = "name" >Hygeia Hospital</label>
++        <br>
++        <br>
++        <br>
++        <label for="first" >Name : </label>
++        <input type="text" placeholder="Enter name"  name="first" id="userName" required>
++        <br>
++        <br>
++        <label for="last" >Surname : </label>
++        <input type="text" placeholder="Enter Surname" name="last" required>
++        <br>
++        <br>
++        <label for="email" >Email : </label>
++        <input type="text" placeholder="Enter email" name="email" required>
++        <br>
++        <br>
++        <label for="userName" >Username : </label>
++        <input type="text" placeholder="Enter UserName" name="userName" required>
++        <br>
++        <br>
++        <label for="password">Password : </label>
++        <input type="password" placeholder="Enter Password" name="password" required>
++        <br>
++        <br>
++        <div>
++            <select id="userType" name="userType">
++                <option value="SYSADMIN">Sysadmin</option>
++                <option value="DOCTOR">Doctor</option>
++                <option value="NURSE">Nurse</option>
++                <option value="PATIENT">Patient</option>
++                <option value="REGULATOR">Regulator</option>
++                <option value="MEDADMIN">Medical Admin</option>
++            </select>
++        </div>
++        <br>
++        <br>
++        <button type="submit">Sign up</button>
++        <br>
++        <br>
++        Already a member?<a href="login.html">Log in </a>
++        <br>
++        <br>
+     </div>
+ </form>
+-
+-
+-
+-<form action="/list" method="GET">
+-    <button>List customers</button>
+-</form>
++    <form action="/list" method="GET">
++        <button>List customers</button>
++    </form>
+ </body>
+ </html>
+Index: src/main/java/com/scc363/hospitalproject/datamodels/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.scc363.hospitalproject.datamodels;\r\n\r\nimport javax.persistence.*;\r\nimport java.text.SimpleDateFormat;\r\nimport java.time.LocalDate;\r\nimport java.time.Period;\r\nimport java.util.Date;\r\n\r\n@Entity\r\npublic class User {\r\n    @Id\r\n    @GeneratedValue(strategy = GenerationType.AUTO)\r\n    private Integer id;\r\n\r\n    private String username;\r\n    //TODO: This HAS to be changed to a secure format. A package will exist for this.\r\n    private String password;\r\n\r\n    private UserTypes userType;\r\n\r\n    public String getUsername() {\r\n        return username;\r\n    }\r\n\r\n    public void setUsername(String username) {\r\n        this.username = username;\r\n    }\r\n\r\n    public UserTypes getUserType() {\r\n        return userType;\r\n    }\r\n\r\n    public void setUserType(UserTypes type) {\r\n        userType = type;\r\n    }\r\n\r\n    public String setPassword(String password) {\r\n        return password;\r\n    }\r\n\r\n    @Override\r\n    public String toString() {\r\n        return String.format(\"Username: %s is a %s]\", username, userType.toString());\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/scc363/hospitalproject/datamodels/User.java b/src/main/java/com/scc363/hospitalproject/datamodels/User.java
+--- a/src/main/java/com/scc363/hospitalproject/datamodels/User.java	(revision 87532bdb9dbe9f5e62c13b0919499abe76f80d7f)
++++ b/src/main/java/com/scc363/hospitalproject/datamodels/User.java	(date 1611161103332)
+@@ -18,14 +18,44 @@
+ 
+     private UserTypes userType;
+ 
++    private String email;
++
++    private String first;
++
++    private String last;
++
++    public String getFirstName() {
++        return first;
++    }
++
++    public void setFirstName(String first) {
++        this.first = first;
++    }
++
++    public String getLastName() {
++        return last;
++    }
++
++    public void setLastName(String last) {
++        this.last = last;
++    }
++
+     public String getUsername() {
+         return username;
+     }
+ 
++    public String getUserEmail() {
++        return email;
++    }
++
+     public void setUsername(String username) {
+         this.username = username;
+     }
+ 
++    public void setUserEmail(String email) {
++        this.email = email;
++    }
++
+     public UserTypes getUserType() {
+         return userType;
+     }
+Index: src/main/java/com/scc363/hospitalproject/HospitalControler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.scc363.hospitalproject;\r\n\r\n\r\nimport com.scc363.hospitalproject.datamodels.PatientDetails;\r\nimport com.scc363.hospitalproject.datamodels.User;\r\nimport com.scc363.hospitalproject.datamodels.UserTypes;\r\nimport com.scc363.hospitalproject.repositories.PatientDetailsRepository;\r\nimport com.scc363.hospitalproject.repositories.UserRepository;\r\nimport com.scc363.hospitalproject.services.LoginAuthService;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.ui.ModelMap;\r\nimport org.springframework.web.bind.annotation.*;\r\n\r\n@RestController\r\npublic class HospitalControler {\r\n    @Autowired\r\n    private UserRepository userRepository;\r\n    @Autowired\r\n    private PatientDetailsRepository patientDetailsRepository;\r\n\r\n    private LoginAuthService loginAuthService;\r\n\r\n    @PostMapping(\"/add\")\r\n    public String addUser(@RequestParam String userName, @RequestParam String password, @RequestParam String userType){\r\n        User u = new User();\r\n        u.setUsername(userName);\r\n        u.setPassword(password);\r\n        //TODO: Validation for non proper type here if a manual request is made.\r\n        u.setUserType(UserTypes.valueOf(userType));\r\n        userRepository.save(u);\r\n        return String.format(\"Added %s to the database!\", userName);\r\n    }\r\n\r\n    @GetMapping(\"/listusers\")\r\n    public Iterable<User> getUsers() { return userRepository.findAll(); }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/scc363/hospitalproject/HospitalControler.java b/src/main/java/com/scc363/hospitalproject/HospitalControler.java
+--- a/src/main/java/com/scc363/hospitalproject/HospitalControler.java	(revision 87532bdb9dbe9f5e62c13b0919499abe76f80d7f)
++++ b/src/main/java/com/scc363/hospitalproject/HospitalControler.java	(date 1611161240483)
+@@ -21,10 +21,13 @@
+     private LoginAuthService loginAuthService;
+ 
+     @PostMapping("/add")
+-    public String addUser(@RequestParam String userName, @RequestParam String password, @RequestParam String userType){
++    public String addUser(@RequestParam String first, @RequestParam String last, @RequestParam String email, @RequestParam String userName, @RequestParam String password, @RequestParam String userType){
+         User u = new User();
+         u.setUsername(userName);
+         u.setPassword(password);
++        u.setUserEmail(email);
++        u.setFirstName(first);
++        u.setLastName(last);
+         //TODO: Validation for non proper type here if a manual request is made.
+         u.setUserType(UserTypes.valueOf(userType));
+         userRepository.save(u);
