@@ -1,5 +1,6 @@
 package com.scc363.hospitalproject.datamodels;
 
+import com.scc363.hospitalproject.Constraints.ValidPassword;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
@@ -21,7 +22,7 @@ public class User {
     @Column(unique = true)
     private String username;//TODO: This HAS to be changed to a secure format. A package will exist for this.
 
-    @NotBlank(message = "Password must not be blank")
+    @ValidPassword
     private String password;
 
     @Column(unique = true)
