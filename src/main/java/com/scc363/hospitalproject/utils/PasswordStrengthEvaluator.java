@@ -1,9 +1,9 @@
-package com.scc363.hospitalsystem;
+package com.scc363.hospitalproject.utils;
 
 
-public class Utility {
+public class PasswordStrengthEvaluator {
 
-    public double evaluatePassword(String pass){
+    public static double evaluatePassword(String pass){
         double score = 0;
         char temp;
         int numOfSym = 0;
