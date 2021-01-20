@@ -6,41 +6,45 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  
+
 <form action="/add" method="POST">
 
-    <div class="container">  
-        <br>
-        <br>
-        <br> 
-        <label class = "name" >Hygeia Hospital</label>  
+    <div class="container">
         <br>
         <br>
         <br>
-        <label>Name : </label>   
-        <input type="text" placeholder="Enter name" name="username" required>  
+        <label class = "name" >Hygeia Hospital</label>
         <br>
         <br>
-        <label>Surname : </label>   
-        <input type="text" placeholder="Enter Surname" name="username" required>  
+        <br>
+        <label for="first" >Name : </label>
+        <input type="text" placeholder="Enter name"  name="first" id="userName" required>
         <br>
         <br>
-        <label>Username : </label>   
-        <input type="text" placeholder="Enter Username" name="username" required>  
+        <label for="last" >Surname : </label>
+        <input type="text" placeholder="Enter Surname" name="last" required>
         <br>
         <br>
-        <label>Password : </label>   
-        <input type="password" placeholder="Enter Password" name="password" required>  
+        <label for="email" >Email : </label>
+        <input type="text" placeholder="Enter email" name="email" required>
         <br>
         <br>
-        <button type="submit">Sign up</button>   
+        <label for="username" >Username : </label>
+        <input type="text" placeholder="Enter Username" name="username" required>
+        <br>
+        <br>
+        <label for="password">Password : </label>
+        <input type="password" placeholder="Enter Password" name="password" required>
+        <br>
+        <br>
+        <button type="submit">Sign up</button>
         <!-- <input type="checkbox" checked="checked"> Remember me    -->
-        <br> 
         <br>
-        Already a member?<a href="index.html">Log in </a>   
-        <br>  
         <br>
-    </div>   
+        Already a member?<a href="index.html">Log in </a>
+        <br>
+        <br>
+    </div>
 <!-- </form>
 
 
@@ -50,3 +54,49 @@
 </form> -->
 </body>
 </html>
+
+
+<!--<!DOCTYPE HTML>-->
+<!--<html>-->
+<!--<head>-->
+<!--    <title>SCC363</title>-->
+<!--    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />-->
+<!--</head>-->
+<!--<body>-->
+<!--<form action="/add" method="POST">-->
+<!--    <p>Add customer</p>-->
+
+<!--    <div>-->
+<!--        <label for="userName">Username</label>-->
+<!--        <input name="userName" id="userName" value="Homersimpo66">-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <label for="email">Email address</label>-->
+<!--        <input name="email" id="email" value="example@example.com">-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <label for="password">Password</label>-->
+<!--        <input name="password" id="password" value="bart123">-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <select id="userType" name="userType">-->
+<!--            <option value="SYSADMIN">Sysadmin</option>-->
+<!--            <option value="DOCTOR">Doctor</option>-->
+<!--            <option value="NURSE">Nurse</option>-->
+<!--            <option value="PATIENT">Patient</option>-->
+<!--            <option value="REGULATOR">Regulator</option>-->
+<!--            <option value="MEDADMIN">Medical Admin</option>-->
+<!--        </select>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <button>Add user</button>-->
+<!--    </div>-->
+<!--</form>-->
+
+
+
+<!--<form action="/listusers" method="GET">-->
+<!--    <button>List users</button>-->
+<!--</form>-->
+<!--</body>-->
+<!--</html>-->
