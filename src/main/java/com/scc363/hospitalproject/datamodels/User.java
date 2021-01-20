@@ -1,5 +1,7 @@
 package com.scc363.hospitalproject.datamodels;
 
+import com.scc363.hospitalproject.Constraints.UniqueEmail;
+import com.scc363.hospitalproject.Constraints.UniqueUsername;
 import com.scc363.hospitalproject.Constraints.ValidPassword;
 import com.sun.istack.NotNull;
 
@@ -18,6 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @UniqueUsername
     @Size(min=3, max=20)
     @Column(unique = true)
     private String username;//TODO: This HAS to be changed to a secure format. A package will exist for this.
@@ -25,8 +28,9 @@ public class User {
     @ValidPassword
     private String password;
 
-    @Column(unique = true)
+    @UniqueEmail
     @Email( message = "Email address should be valid")
+    @Column(unique=true)
     private String email;
 
     @NotBlank(message = "Choose a user type")
