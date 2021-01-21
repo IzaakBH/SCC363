@@ -42,7 +42,7 @@ public class HospitalControler {
 
     @GetMapping("/code")
     public boolean checkCode(@RequestParam float code){
-        if(code == u.getCode()){
+        if(code == u.sendEmail()){
             return true;
         }
         else{

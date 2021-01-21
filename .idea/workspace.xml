@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6fcfe697-13ce-4882-b005-c380d7db9e6c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/userdata.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/userdata.mv.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/HospitalControler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/HospitalControler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/datamodels/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/datamodels/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/login.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

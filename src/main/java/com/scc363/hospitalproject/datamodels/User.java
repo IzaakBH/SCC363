@@ -31,7 +31,7 @@ public class User {
 
     //private MultiFactorAuthCodeGen code;
 
-    private float sentCode;
+    //private float sentCode;
 
     public String getFirstName() {
         return first;
@@ -77,10 +77,10 @@ public class User {
         return password;
     }
 
-    public void sendEmail(){
+    public float sendEmail(){
 
         MultiFactorAuthCodeGen code = new MultiFactorAuthCodeGen();
-        sentCode = code.getCode();
+        float sentCode = code.getCode();
 
         String to = email;//change accordingly
         String from = "maria.ntemiri.mn@gmail.com";//change accordingly
@@ -104,20 +104,14 @@ public class User {
             System.out.println("message sent successfully....");
 
         }catch (MessagingException mex) {mex.printStackTrace();}
-    }
-
-
-    public float getCode(){
         return sentCode;
     }
+
 
     @Override
     public String toString() {
         return String.format("Username: %s is a %s]", username, userType.toString());
     }
 
-//    public User(){
-//        code = new MultiFactorAuthCodeGen();
-//        sentCode = code.getCode();
-//    }
+
 }
