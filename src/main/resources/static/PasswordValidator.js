@@ -12,7 +12,7 @@ function evaluatePassword(pass){
     var letterWeight = 20;
     var length = pass.value.length;
     if (length < 11) {
-        document.getElementById("dynamic_name").innerHTML = 0;
+        document.getElementById("score").innerHTML = "Fail, password must be at least 11 in length";
         return;
     }
     else if (length > 20){
@@ -28,7 +28,7 @@ function evaluatePassword(pass){
     numOfSym = pass.value.length -numOfUpp - numOfLow - numOfNum;
     
     if (numOfNum == 0 || numOfUpp == 0 || numOfLow == 0 || numOfSym < 2){
-        document.getElementById("dynamic_name").innerHTML = 0;
+        document.getElementById("dynamic_name").innerHTML = "Fail, password must contain number, 2 symbol, uppercase and lowercase character";
         return;
     }
 
@@ -60,6 +60,16 @@ function evaluatePassword(pass){
         score += numOfSym/4 * symbolWeight;
     }
 
-    document.getElementById("dynamic_name").innerHTML = score/100;
+    var rating = "Fail";
+    if (score < 50 && score != 0){
+        rating = "Weak Password";
+    }
+    else if(score <70){
+        rating = "Good Password";
+    }
+    else{
+        rating = "Strong Password"
+    }
+    document.getElementById("score").innerHTML = rating;
 }
 

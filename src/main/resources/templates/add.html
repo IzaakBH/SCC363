@@ -5,7 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     </head>
     <body>
-
+        <script src="../static/PasswordValidator.js"></script>
         <form action="#" th:action="@{/add}" th:object="${user}" method="POST">
             <p>Add customer</p>
 
@@ -21,7 +21,8 @@
             </div>
             <div>
                 <label for="password">Password</label>
-                <input name="password" th:field="*{password}" id="password">
+                <input name="password" th:field="*{password}" id="password" onkeyup="evaluatePassword(this)">
+                <div id="score"></div>
                 <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
             </div>
             <div>
@@ -35,7 +36,7 @@
                 </select>
             </div>
             <div>
-                <button>Add user</button>
+                <button id="submit">Add user</button>
             </div>
         </form>
 
