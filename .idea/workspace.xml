@@ -9,10 +9,7 @@
       <change beforePath="$PROJECT_DIR$/data/userdata.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/userdata.mv.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/HospitalControler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/HospitalControler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/datamodels/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/datamodels/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/repositories/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/repositories/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/static/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/static/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/static/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/static/login.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -115,6 +112,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Login" />
     <MESSAGE value="sentEmail is done" />
-    <option name="LAST_COMMIT_MESSAGE" value="sentEmail is done" />
+    <MESSAGE value="still needs work on the login and getting pasword cause i dont seem to get it" />
+    <option name="LAST_COMMIT_MESSAGE" value="still needs work on the login and getting pasword cause i dont seem to get it" />
   </component>
 </project>

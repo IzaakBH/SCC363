@@ -44,20 +44,20 @@ public class HospitalControler {
 
 
         @GetMapping("/login")
-    public boolean login(@RequestParam String userName, @RequestParam String password) {
+    public String login(@RequestParam String userName, @RequestParam String password) {
         try {
             User u1 = userRepository.findUserByUsername(userName);
             if(u1.getPassword() == null) {
-                u1.sendEmail(u1.getUserEmail());
-                return true;
+
+                return String.format("Sent email!" +  u1.sendEmail(u1.getUserEmail()));
             }
             else{
                 System.out.println(u1.getPassword());
-                return false;
+                return null;
             }
         }catch(Exception e){
             System.out.println("Not found");
-            return true;
+            return null;
             }
     }
 

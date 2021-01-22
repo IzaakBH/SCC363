@@ -1,5 +1,7 @@
 package com.scc363.hospitalproject.datamodels;
 
+import com.sun.mail.smtp.SMTPTransport;
+
 import javax.mail.*;
 import javax.mail.Message;
 import javax.mail.Session;
@@ -74,39 +76,74 @@ public class User {
     }
 
     public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getPassword() {return password;}
 
    //public float getCode(){ return Integer.valueOf(code);}
 
-    public void sendEmail(String email){
+    public Object sendEmail(String email) {
         MultiFactorAuthCodeGen codeGen = new MultiFactorAuthCodeGen();
         code = String.valueOf(codeGen.getCode());
 
-        String to = email;//change accordingly
-        String from = "maria.ntemiri.mn@gmail.com";//change accordingly
-        String host = "localhost";//or IP address
+        // Recipient's email ID needs to be mentioned.
+        String to = "maria.ntemiri.mn@gmail.com";
 
-        //Get the session object
+        // Sender's email ID needs to be mentioned
+        String from = "maria.ntemiri.mn@gmail.com";
+
+        // Assuming you are sending email from through gmails smtp
+        String host = "smtp.gmail.com";
+
+        // Get system properties
         Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", host);
-        Session session = Session.getDefaultInstance(properties);
 
-        //compose the message
-        try{
+        // Setup mail server
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.ssl.enable", "true");
+        properties.put("mail.smtp.auth", "true");
+
+        // Get the Session object.// and pass username and password
+        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+
+            protected PasswordAuthentication getPasswordAuthentication() {
+
+                return new PasswordAuthentication(from, "*******");
+
+            }
+
+        });
+
+        // Used to debug SMTP issues
+        session.setDebug(true);
+
+        try {
+            // Create a default MimeMessage object.
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(from));
-            message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
-            message.setSubject("Ping");
-            message.setText("Hello, the code is:  " + code);
 
+            // Set From: header field of the header.
+            message.setFrom(new InternetAddress(from));
+
+            // Set To: header field of the header.
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+            // Set Subject: header field
+            message.setSubject("This is the Subject Line!");
+
+            // Now set the actual message
+            message.setText("This is actual message");
+
+            System.out.println("sending...");
             // Send message
             Transport.send(message);
-            System.out.println("message sent successfully....");
-
-        }catch (MessagingException mex) {mex.printStackTrace();}
-
+            System.out.println("Sent message successfully....");
+        } catch (MessagingException mex) {
+            mex.printStackTrace();
+            return mex.toString();
+        }
+        return "success";
     }
 
 
