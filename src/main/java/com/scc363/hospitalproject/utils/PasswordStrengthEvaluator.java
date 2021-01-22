@@ -2,10 +2,16 @@ package com.scc363.hospitalproject.utils;
 
 
 public class PasswordStrengthEvaluator {
-
+    /*
+     Return password strength score between 0 and 1
+     return -1 if sequence/repeat is detected
+     */
     public static double evaluatePassword(String pass){
         double score = 0;
         char temp;
+        int comp1;
+        int comp2;
+        int comp3;
         int numOfSym = 0;
         int numOfNum = 0;
         int numOfUpp = 0;
@@ -27,6 +33,17 @@ public class PasswordStrengthEvaluator {
 
         for (int i = 0; i < pass.length(); i++) {
             temp = pass.charAt(i);
+            if (i > 2){
+                comp1 = Character.compare(pass.charAt(i-3), pass.charAt(i-2));
+                comp2 = Character.compare(pass.charAt(i-2), pass.charAt(i-1));
+                comp3 = Character.compare(pass.charAt(i-1), pass.charAt(i));
+                if (comp1 == -1 && comp2 == -1 && comp3 == -1 ||
+                        comp1 == 1 && comp2 == 1 && comp3 == 1 ||
+                        comp1 == 0 && comp2 == 0 && comp3 == 0){
+                    return -1;
+                }
+
+            }
 
             if (Character.isDigit(temp)){
                 numOfNum++;
