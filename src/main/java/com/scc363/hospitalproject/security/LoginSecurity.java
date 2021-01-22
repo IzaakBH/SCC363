@@ -10,7 +10,23 @@ public class LoginSecurity extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         // Tells spring to authorise all requests with basic authentication
-        http.authorizeRequests().anyRequest().authenticated().and().httpBasic();
+//        http.authorizeRequests()
+//                .anyRequest()
+//                .authenticated()
+//                .and()
+//                .formLogin()
+//                .and()
+//                .httpBasic();
+        http.authorizeRequests()
+                    .antMatchers("/", "/home", "/signup").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                .formLogin()
+                    .loginPage("/login")
+                    .permitAll()
+                    .and()
+                .logout()
+                    .permitAll();
     }
 
     // Temp method to create a user with username user password pass and role USER
