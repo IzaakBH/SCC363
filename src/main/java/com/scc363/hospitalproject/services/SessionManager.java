@@ -1,8 +1,7 @@
 package com.scc363.hospitalproject.services;
 
-import com.scc363.hospitalproject.datamodels.KeyValue;
+import com.scc363.hospitalproject.utils.Pair;
 import com.scc363.hospitalproject.datamodels.Session;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.crypto.SecretKey;
@@ -43,10 +42,10 @@ public class SessionManager
         {
             String privKCipher = cryptoManager.encryptAES(cryptoManager.keyToString(keyPair.getPrivate()), aesKey);
             return new JSONManager(
-                    new KeyValue[]{
-                            new KeyValue("sessionID", sessionID),
-                            new KeyValue("privateKey", privKCipher),
-                            new KeyValue("username", username)
+                    new Pair[]{
+                            new Pair("sessionID", sessionID),
+                            new Pair("privateKey", privKCipher),
+                            new Pair("username", username)
                     }).generateJSONObject();
         }
         else

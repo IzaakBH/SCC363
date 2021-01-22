@@ -5,6 +5,7 @@ import com.scc363.hospitalproject.datamodels.*;
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import com.scc363.hospitalproject.services.*;
+import com.scc363.hospitalproject.utils.Pair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +80,8 @@ public class HospitalController {
             }
             else
             {
-                return new JSONManager(new KeyValue[]{
-                        new KeyValue("result", "incorrect login details")
+                return new JSONManager(new Pair[]{
+                        new Pair("result", "incorrect login details")
                 }).generateJSONObject().toString();
             }
         }

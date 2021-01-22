@@ -1,17 +1,16 @@
 package com.scc363.hospitalproject.services;
 
-import com.scc363.hospitalproject.datamodels.KeyValue;
+import com.scc363.hospitalproject.utils.Pair;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 
 public class JSONManager
 {
-    private KeyValue[] keyValues;
+    private Pair[] keyValues;
 
-    public JSONManager(KeyValue[] keyValues)
+    public JSONManager(Pair[] keyValues)
     {
         this.keyValues = keyValues;
     }
@@ -21,7 +20,7 @@ public class JSONManager
     public JSONObject generateJSONObject()
     {
         JSONObject object = new JSONObject();
-        for (KeyValue keyValue : keyValues)
+        for (Pair keyValue : keyValues)
         {
             object.put(keyValue.getKey(), keyValue.getValue());
         }
@@ -37,7 +36,7 @@ public class JSONManager
 
     public String getResponseObject(boolean value)
     {
-        this.keyValues = new KeyValue[]{new KeyValue("result", String.valueOf(value))};
+        this.keyValues = new Pair[]{new Pair("result", String.valueOf(value))};
         return generateJSONObject().toString();
     }
 }
