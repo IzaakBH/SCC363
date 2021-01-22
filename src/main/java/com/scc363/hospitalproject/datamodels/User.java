@@ -67,4 +67,6 @@ public class User {
     public String toString() {
         return String.format("Username: %s is a %s. Password: %s, EmailL %s]", username, userType, password, email);
     }
+
+
 }
