@@ -13,6 +13,8 @@ import java.util.Properties;
 
 @Entity
 public class User {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -29,9 +31,7 @@ public class User {
 
     private String last;
 
-    //private MultiFactorAuthCodeGen code;
-
-    //private float sentCode;
+    private String code;
 
     public String getFirstName() {
         return first;
@@ -73,14 +73,16 @@ public class User {
         userType = type;
     }
 
-    public String setPassword(String password) {
-        return password;
+    public void setPassword(String password) {
     }
 
-    public float sendEmail(){
+    public String getPassword() {return password;}
 
-        MultiFactorAuthCodeGen code = new MultiFactorAuthCodeGen();
-        float sentCode = code.getCode();
+   //public float getCode(){ return Integer.valueOf(code);}
+
+    public void sendEmail(String email){
+        MultiFactorAuthCodeGen codeGen = new MultiFactorAuthCodeGen();
+        code = String.valueOf(codeGen.getCode());
 
         String to = email;//change accordingly
         String from = "maria.ntemiri.mn@gmail.com";//change accordingly
@@ -97,14 +99,14 @@ public class User {
             message.setFrom(new InternetAddress(from));
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
             message.setSubject("Ping");
-            message.setText("Hello, the code is:  " + sentCode);
+            message.setText("Hello, the code is:  " + code);
 
             // Send message
             Transport.send(message);
             System.out.println("message sent successfully....");
 
         }catch (MessagingException mex) {mex.printStackTrace();}
-        return sentCode;
+
     }
 
 

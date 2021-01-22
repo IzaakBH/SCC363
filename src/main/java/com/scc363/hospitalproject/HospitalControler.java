@@ -1,6 +1,7 @@
 package com.scc363.hospitalproject;
 
 
+import com.scc363.hospitalproject.datamodels.MultiFactorAuthCodeGen;
 import com.scc363.hospitalproject.datamodels.PatientDetails;
 import com.scc363.hospitalproject.datamodels.User;
 import com.scc363.hospitalproject.datamodels.UserTypes;
@@ -22,6 +23,8 @@ public class HospitalControler {
 
     private User u;
 
+
+
     @PostMapping("/add")
     public String addUser(@RequestParam String first, @RequestParam String last, @RequestParam String email, @RequestParam String userName, @RequestParam String password, @RequestParam String userType){
         u = new User();
@@ -40,13 +43,40 @@ public class HospitalControler {
     public Iterable<User> getUsers() { return userRepository.findAll(); }
 
 
-    @GetMapping("/code")
-    public boolean checkCode(@RequestParam float code){
-        if(code == u.sendEmail()){
+        @GetMapping("/login")
+    public boolean login(@RequestParam String userName, @RequestParam String password) {
+        try {
+            User u1 = userRepository.findUserByUsername(userName);
+            if(u1.getPassword() == null) {
+                u1.sendEmail(u1.getUserEmail());
+                return true;
+            }
+            else{
+                System.out.println(u1.getPassword());
+                return false;
+            }
+        }catch(Exception e){
+            System.out.println("Not found");
             return true;
-        }
-        else{
+            }
+    }
+
+
+    @GetMapping("/code")
+    public boolean checkCode(@RequestParam int code,  @RequestParam String userName) {
+        try {
+            u = userRepository.findUserByUsername(userName);
+            if(code==1){
+                return true;
+            }
+            else{
+                System.out.println("wrong code");
+                return false;
+            }
+        }catch(Exception e){
+            System.out.println("Not found");
             return false;
         }
     }
+
 }

@@ -9,8 +9,11 @@
       <change beforePath="$PROJECT_DIR$/data/userdata.mv.db" beforeDir="false" afterPath="$PROJECT_DIR$/data/userdata.mv.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/HospitalControler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/HospitalControler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/datamodels/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/datamodels/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/repositories/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/scc363/hospitalproject/repositories/UserRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/static/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/static/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/static/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/static/login.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,6 +76,14 @@
       <option name="presentableId" value="Default" />
       <updated>1610707590073</updated>
     </task>
+    <task id="LOCAL-00001" summary="sentEmail is done">
+      <created>1611225888561</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1611225888561</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -103,6 +114,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Login" />
-    <option name="LAST_COMMIT_MESSAGE" value="Login" />
+    <MESSAGE value="sentEmail is done" />
+    <option name="LAST_COMMIT_MESSAGE" value="sentEmail is done" />
   </component>
 </project>
