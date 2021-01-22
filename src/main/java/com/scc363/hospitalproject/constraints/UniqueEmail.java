@@ -1,4 +1,4 @@
-package com.scc363.hospitalproject.Constraints;
+package com.scc363.hospitalproject.constraints;
 
 import com.scc363.hospitalproject.validators.UniqueEmailValidator;
 

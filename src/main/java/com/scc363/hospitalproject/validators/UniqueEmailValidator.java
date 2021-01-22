@@ -1,6 +1,6 @@
 package com.scc363.hospitalproject.validators;
 
-import com.scc363.hospitalproject.Constraints.UniqueEmail;
+import com.scc363.hospitalproject.constraints.UniqueEmail;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

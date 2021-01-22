@@ -1,6 +1,6 @@
 package com.scc363.hospitalproject.validators;
 
-import com.scc363.hospitalproject.Constraints.ValidPassword;
+import com.scc363.hospitalproject.constraints.ValidPassword;
 import com.scc363.hospitalproject.utils.PasswordStrengthEvaluator;
 
 import javax.validation.ConstraintValidator;

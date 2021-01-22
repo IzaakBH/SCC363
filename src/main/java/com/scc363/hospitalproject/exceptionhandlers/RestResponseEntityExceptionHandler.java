@@ -1,4 +1,4 @@
-package com.scc363.hospitalproject.ExceptionHandlers;
+package com.scc363.hospitalproject.exceptionhandlers;
 
 import org.springframework.data.rest.core.RepositoryConstraintViolationException;
 import org.springframework.http.HttpHeaders;

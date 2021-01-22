@@ -1,18 +1,13 @@
 package com.scc363.hospitalproject.datamodels;
 
-import com.scc363.hospitalproject.Constraints.UniqueEmail;
-import com.scc363.hospitalproject.Constraints.UniqueUsername;
-import com.scc363.hospitalproject.Constraints.ValidPassword;
-import com.sun.istack.NotNull;
+import com.scc363.hospitalproject.constraints.UniqueEmail;
+import com.scc363.hospitalproject.constraints.UniqueUsername;
+import com.scc363.hospitalproject.constraints.ValidPassword;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.Date;
 
 @Entity
 public class User {
