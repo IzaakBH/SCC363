@@ -5,40 +5,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<form action="/add" method="POST">
-    <p>Add customer</p>
 
-    <div>
-        <label for="userName">Username</label>
-        <input name="userName" id="userName" value="Homersimpo66">
-    </div>
-    <div>
-        <label for="email">Email address</label>
-        <input name="email" id="email" value="example@example.com">
-    </div>
-    <div>
-        <label for="password">Password</label>
-        <input name="password" id="password" value="bart123">
-    </div>
-    <div>
-        <select id="userType" name="userType">
-            <option value="SYSADMIN">Sysadmin</option>
-            <option value="DOCTOR">Doctor</option>
-            <option value="NURSE">Nurse</option>
-            <option value="PATIENT">Patient</option>
-            <option value="REGULATOR">Regulator</option>
-            <option value="MEDADMIN">Medical Admin</option>
-        </select>
-    </div>
-    <div>
-        <button>Add user</button>
-    </div>
-</form>
+    <h1>Hospital Application</h1>
 
-
-
-<form action="/listusers" method="GET">
-    <button>List users</button>
-</form>
+    <a href="\add">Add users</a>
+    <a href="\listusers">List Users</a>
 </body>
 </html>
