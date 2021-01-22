@@ -9,11 +9,20 @@ import com.scc363.hospitalproject.utils.Pair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
-@RestController
+@Controller
 public class HospitalController {
     @Autowired
     private UserRepository userRepository;
@@ -25,20 +34,32 @@ public class HospitalController {
     private final SessionManager sessionManager = new SessionManager();
 
 
+    @GetMapping("/add")
+    public String addUserForm(User user) {
+        return "add";
+    }
+
     @PostMapping("/add")
-    public String addUser(@RequestParam String userName, @RequestParam String password, @RequestParam String userType){
-        User u = new User();
-        u.setUsername(userName);
-        u.setPassword(password);
-        //TODO: Validation for non proper type here if a manual request is made.
-        u.setUserType(UserTypes.valueOf(userType));
-        userRepository.save(u);
-        return String.format("Added %s to the database!", userName);
+    public String addUser(@ModelAttribute @Valid User u, Errors errors, Model model) {
+
+        if (errors.hasErrors()) {
+            return "add";
+        } else {
+            userRepository.save(u);
+            return "redirect:";
+        }
     }
 
     @GetMapping("/listusers")
-    public Iterable<User> getUsers() { return userRepository.findAll(); }
+    public String getUsers(Model model) {
+        model.addAttribute("users", userRepository.findAll());
+        return "listusers";
+    }
 
+    @GetMapping("/getuser{id}")
+    public String getUserById(@RequestParam int id) {
+        return userRepository.findUserById(id).toString();
+    }
 
     /**
      * Example login method to check, first of all if a user exists and if they have provided the correct password, secondly to
@@ -107,6 +128,18 @@ public class HospitalController {
         JSONObject sessionObject = (JSONObject) dataArr.get(0); //This is the position in the JSON array that the session credentials have been stored.
         return new JSONManager().getResponseObject(sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()));
 
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 
 }
