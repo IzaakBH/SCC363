@@ -34,31 +34,9 @@ public class HospitalController {
     private final SessionManager sessionManager = new SessionManager();
 
 
-    @GetMapping("/add")
-    public String addUserForm(User user) {
-        return "add";
-    }
-
-    @PostMapping("/add")
-    public String addUser(@ModelAttribute @Valid User u, Errors errors, Model model) {
-
-        if (errors.hasErrors()) {
-            return "add";
-        } else {
-            userRepository.save(u);
-            return "redirect:";
-        }
-    }
-
-    @GetMapping("/listusers")
-    public String getUsers(Model model) {
-        model.addAttribute("users", userRepository.findAll());
-        return "listusers";
-    }
-
-    @GetMapping("/getuser{id}")
-    public String getUserById(@RequestParam int id) {
-        return userRepository.findUserById(id).toString();
+    @GetMapping("/login")
+    public String login() {
+        return "login";
     }
 
     /**
@@ -111,6 +89,40 @@ public class HospitalController {
             return "error[no data provided]";
         }
     }
+
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
+    }
+
+    @GetMapping("/add")
+    public String addUserForm(User user) {
+        return "add";
+    }
+
+    @PostMapping("/add")
+    public String addUser(@ModelAttribute @Valid User u, Errors errors, Model model) {
+
+        if (errors.hasErrors()) {
+            return "add";
+        } else {
+            userRepository.save(u);
+            return "redirect:";
+        }
+    }
+
+    @GetMapping("/listusers")
+    public String getUsers(Model model) {
+        model.addAttribute("users", userRepository.findAll());
+        return "listusers";
+    }
+
+    @GetMapping("/getuser{id}")
+    public String getUserById(@RequestParam int id) {
+        return userRepository.findUserById(id).toString();
+    }
+
 
 
     /**
