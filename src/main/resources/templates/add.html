@@ -5,7 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     </head>
     <body>
-        <script src="../static/PasswordValidator.js"></script>
+        <script type="text/javascript" th:src="@{/PasswordValidator.js}"></script>
         <form action="#" th:action="@{/add}" th:object="${user}" method="POST">
             <p>Add customer</p>
 

@@ -13,6 +13,7 @@ function evaluatePassword(pass){
     var length = pass.value.length;
     if (length < 11) {
         document.getElementById("score").innerHTML = "Fail, password must be at least 11 in length";
+        document.getElementById("submit").disabled = true;
         return;
     }
     else if (length > 20){
@@ -29,6 +30,7 @@ function evaluatePassword(pass){
     
     if (numOfNum == 0 || numOfUpp == 0 || numOfLow == 0 || numOfSym < 2){
         document.getElementById("score").innerHTML = "Fail, password must contain number, 2 symbol, uppercase and lowercase character";
+        document.getElementById("submit").disabled = true;
         return;
     }
 
