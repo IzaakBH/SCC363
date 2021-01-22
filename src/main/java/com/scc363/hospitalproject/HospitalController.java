@@ -4,25 +4,13 @@ package com.scc363.hospitalproject;
 import com.scc363.hospitalproject.datamodels.*;
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
-import com.scc363.hospitalproject.services.CryptoManager;
-import com.scc363.hospitalproject.services.JSONManager;
-import com.scc363.hospitalproject.services.LoginAuthService;
-import com.scc363.hospitalproject.services.SessionCache;
+import com.scc363.hospitalproject.services.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Base64;
 
 @RestController
 public class HospitalController {
@@ -33,7 +21,7 @@ public class HospitalController {
 
     private LoginAuthService loginAuthService;
 
-    private SessionCache sessionCache = new SessionCache();
+    private final SessionManager sessionManager = new SessionManager();
 
 
     @PostMapping("/add")
@@ -51,28 +39,49 @@ public class HospitalController {
     public Iterable<User> getUsers() { return userRepository.findAll(); }
 
 
-
-    @GetMapping("/auth")
-    public String authenticate(@RequestParam String userName, @RequestParam String password, HttpServletRequest request)
+    /**
+     * Example login method to check, first of all if a user exists and if they have provided the correct password, secondly to
+     * create a new session having destroy any existing ones using the ifUserHasSessionDestroy() method, then returning the
+     * session data to be stored client side.
+     * @param data post data in JSON format
+     * @param request automatically provided request header to extract client IP from
+     * @return returns a result based on decisions made inside the class either login failed or session data in JSON format for the client to store.
+     *
+     * example of returned JSON object -
+     * {
+     *     "sessionID"  : "h434gh34bjg4yrf78dee78",
+     *     "privateKey" : "h434gh34bjg4yrf78dee78h434gh34bjg4+rf78dee78h434gh34bjg4yrf78dee78h434gh34bjg4yrf78de/\+78h434gh34bjg4yrf78dee78h434gh34bjg4yrf78dee78h434gh34bjg4yrf78dee78h434gh34bjg4yrf78dee78",
+     *     "username"   : "john123"
+     * }
+     */
+    @PostMapping("/login")
+    public String login(@RequestParam String data, HttpServletRequest request)
     {
-        if (userName.length() > 0 && password.length() > 0)
+        JSONArray dataArr = new JSONManager().convertToJSONObject(data);
+        JSONObject dataObj = (JSONObject) dataArr.get(0);
+        String userName = (String) dataObj.get("userName");
+        String password = (String) dataObj.get("password");
+        /*
+         Example conditional. Should be replaced to login method to check user exists and has provided correct password.
+         1. Extract salt from DB.
+         2. Append it to provided password plaintext.
+         3. Hash new plaintext.
+         4. Compare digest with DB stored version
+         5. If equal, success, if not failure.
+         */
+        if (userName.length() > 0 && password.length() > 0 /* loginMethod(username, password) */)
         {
-            CryptoManager cryptoManager = new CryptoManager();
-            String clientIP = request.getRemoteAddr();
-            String salt = cryptoManager.generateSalt();
-            SecretKey key = cryptoManager.generateAESKey();
-            String sessionKeyPT = clientIP;
-            byte[] sessionKeyCipher = cryptoManager.encryptAES(sessionKeyPT, key);
-            String sessionKeyCT = Base64.getEncoder().encodeToString(sessionKeyCipher);
-            Session session = new Session(key, sessionKeyCT, salt);
-
-            if (sessionCache.createSession(session))
+            sessionManager.ifUserHasSessionDestroy(userName);
+            JSONObject sessionData = sessionManager.createSession(userName, request.getRemoteAddr());
+            if (sessionData != null)
             {
-                return new JSONManager(new KeyValue[]{new KeyValue("sessionKey", sessionKeyCT)}).generateJSONObject().toString();
+                return sessionData.toString();
             }
             else
             {
-                return "error[unale to create session]";
+                return new JSONManager(new KeyValue[]{
+                        new KeyValue("result", "incorrect login details")
+                }).generateJSONObject().toString();
             }
         }
         else
@@ -82,51 +91,21 @@ public class HospitalController {
     }
 
 
-
-    @GetMapping("/isauth")
-    public String isAuthenticated(@RequestParam  String sessionKey, HttpServletRequest request)
+    /**
+     * Example method to test if a given user and computer have an active and valid session. Takes in a JSON request object, obtains the client stored username, sessionID
+     * and encrypted private key, passes this data to the SessionManager class for validation and then provides a result in JSON format using the JSONManager class.
+     * @param data post data in JSON format
+     * @param request automatically provided request header to extract client IP from
+     * @return JSON string result of authenticatio.
+     */
+    @PostMapping("/isAuth")
+    public String isAuthenticated(@RequestParam String data, HttpServletRequest request)
     {
-        sessionKey = sessionKey.replaceAll(" ", "+");
-        if (sessionCache.hasSession(sessionKey))
-        {
-            Session session = sessionCache.getSession(sessionKey);
-            if (!session.hasExpired())
-            {
-                CryptoManager cryptoManager = new CryptoManager();
-                String remoteAddr = request.getRemoteAddr();
-                String rebuiltSessionKey = session.getSessionKey();
 
-                if (cryptoManager.decryptAES(sessionKey.getBytes(), session.getKey()).equals(rebuiltSessionKey))
-                {
-                    return "session authorised";
-                }
-                else
-                {
-                    return "session not authorised";
-                }
-            }
-            else
-            {
-                sessionCache.destroySession(sessionKey);
-                return "error[session has expired]";
-            }
-        }
-        else
-        {
-            System.out.println(sessionKey + " does not exist inncahce");
-            return "error[invalid session code]";
-        }
+        JSONArray dataArr = new JSONManager().convertToJSONObject(data); //converts JSON string into JSON object
+        JSONObject sessionObject = (JSONObject) dataArr.get(0); //This is the position in the JSON array that the session credentials have been stored.
+        return new JSONManager().getResponseObject(sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()));
+
     }
 
-    @GetMapping("/listsessions")
-    public String listSessions()
-    {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Session session : sessionCache.sessions)
-        {
-            stringBuilder.append(session.getSessionKey() + "<br>");
-        }
-
-        return stringBuilder.toString();
-    }
 }

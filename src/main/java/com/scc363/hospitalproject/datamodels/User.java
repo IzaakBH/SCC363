@@ -42,4 +42,6 @@ public class User {
     public String toString() {
         return String.format("Username: %s is a %s]", username, userType.toString());
     }
+
+
 }

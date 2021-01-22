@@ -1,29 +1,40 @@
 package com.scc363.hospitalproject.datamodels;
 
+import com.scc363.hospitalproject.services.CryptoManager;
+
 import javax.crypto.SecretKey;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 
 public class Session
 {
-    /*
-
-    login -> check user details -> generate RSA key pair -> encrypt IP with public key -> return crypto IP and public key -> browser stores key
-    request -> sends public key and session key with request data -> checks session key exists -> if so encrypts remote IP with passed public key, compares to stored session key, decrypts encrypted session key with private key, compares with remote IP -> session authorised
-
-     */
 
 
-    private SecretKey key;
-    private String sessionKey;
-    private String salt;
+    private PublicKey publicKey;
+    private SecretKey aesKey;
+    private String sessionID;
     private long expiry;
+    private String user;
+    private byte[] challenge;
 
-    public Session(SecretKey key, String sessionKey, String salt)
+    public Session(PublicKey key, String sessionID, SecretKey aesKey, String user, byte[] challenge)
     {
-        this.key = key;
-        this.sessionKey = sessionKey;
+        this.publicKey = key;
+        this.sessionID = sessionID;
         this.expiry = System.currentTimeMillis() + 300000;
-        this.salt = salt;
+        this.aesKey = aesKey;
+        this.user = user;
+        this.challenge = challenge;
+    }
+
+    public SecretKey getAesKey()
+    {
+        return this.aesKey;
+    }
+
+    public String getUser()
+    {
+        return this.user;
     }
 
     public boolean hasExpired()
@@ -31,18 +42,30 @@ public class Session
         return System.currentTimeMillis() > expiry;
     }
 
-    public String getSessionKey()
+    public String getSessionID()
     {
-        return this.sessionKey;
+        return this.sessionID;
     }
 
-    public SecretKey getKey()
+    /*
+    public PublicKey getKey()
     {
-        return this.key;
+        return this.publicKey;
     }
 
-    public String getSalt()
+     */
+
+
+    public boolean isAuthenticated(PrivateKey privateKey, String data)
     {
-        return this.salt;
+        CryptoManager cryptoManager = new CryptoManager();
+        if (cryptoManager.decrypt(challenge, privateKey).equals(data))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

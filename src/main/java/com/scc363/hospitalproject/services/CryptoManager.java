@@ -138,13 +138,13 @@ public class CryptoManager
         return null;
     }
 
-    public byte[] encryptAES(String data, SecretKey key)
+    public String encryptAES(String data, SecretKey key)
     {
         try
         {
-            Cipher cipher = Cipher.getInstance("AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, key);
-            return cipher.doFinal(data.getBytes());
+            return Base64.getEncoder().encodeToString(cipher.doFinal(data.getBytes(StandardCharsets.UTF_8)));
         }
         catch (Exception e)
         {
@@ -154,14 +154,13 @@ public class CryptoManager
         return null;
     }
 
-    public String decryptAES(byte[] cipherText, SecretKey key)
+    public String decryptAES(String cipherText, SecretKey key)
     {
         try
         {
-            Cipher cipher = Cipher.getInstance("AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, key);
-            byte[] plainTextArr = cipher.doFinal(cipherText);
-            return new String(plainTextArr);
+            return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));
         }
         catch (Exception e)
         {
@@ -253,7 +252,7 @@ public class CryptoManager
         {
             SecureRandom secureRandom = new SecureRandom();
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-            keyGenerator.init(256, secureRandom);
+            keyGenerator.init(128, secureRandom);
             return keyGenerator.generateKey();
         }
         catch (Exception e)

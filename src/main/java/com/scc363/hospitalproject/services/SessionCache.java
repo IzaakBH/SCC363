@@ -14,16 +14,29 @@ public class SessionCache
     }
 
 
-    public boolean hasSession(String sessionKey)
+    public boolean hasSession(String sessionKey, String username)
     {
-        return getSession(sessionKey) != null;
+        return getSession(sessionKey, username) != null;
     }
 
-    public Session getSession(String sessionKey)
+
+    public Session getSession(String sessionKey, String username)
     {
         for (Session session : this.sessions)
         {
-            if (session.getSessionKey().equals(sessionKey))
+            if (session.getSessionID().equals(sessionKey) && session.getUser().equals(username))
+            {
+                return session;
+            }
+        }
+        return null;
+    }
+
+    public Session getSessionByUser(String username)
+    {
+        for (Session session : sessions)
+        {
+            if (session.getUser().equals(username))
             {
                 return session;
             }
@@ -33,7 +46,7 @@ public class SessionCache
 
     public boolean createSession(Session session)
     {
-        if (!hasSession(session.getSessionKey()))
+        if (!hasSession(session.getSessionID(), session.getUser()))
         {
             this.sessions.add(session);
             return true;
@@ -41,11 +54,11 @@ public class SessionCache
         return false;
     }
 
-    public void destroySession(String sessionKey)
+    public void destroySession(String sessionID, String username)
     {
-        if (getSession(sessionKey) != null)
+        if (getSession(sessionID, username) != null)
         {
-            int positionInBuffer = findSessionPosition(sessionKey);
+            int positionInBuffer = findSessionPosition(sessionID);
             if (positionInBuffer >= 0)
             {
                 this.sessions.remove(positionInBuffer);
@@ -58,11 +71,13 @@ public class SessionCache
     {
         for (int i = 0; i < this.sessions.size(); i++)
         {
-            if (this.sessions.get(i).getSessionKey().equals(sessionKey))
+            if (this.sessions.get(i).getSessionID().equals(sessionKey))
             {
                 return i;
             }
         }
         return -1;
     }
+
+
 }
