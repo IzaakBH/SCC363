@@ -28,7 +28,7 @@ function evaluatePassword(pass){
     numOfSym = pass.value.length -numOfUpp - numOfLow - numOfNum;
     
     if (numOfNum == 0 || numOfUpp == 0 || numOfLow == 0 || numOfSym < 2){
-        document.getElementById("dynamic_name").innerHTML = "Fail, password must contain number, 2 symbol, uppercase and lowercase character";
+        document.getElementById("score").innerHTML = "Fail, password must contain number, 2 symbol, uppercase and lowercase character";
         return;
     }
 
@@ -71,5 +71,11 @@ function evaluatePassword(pass){
         rating = "Strong Password"
     }
     document.getElementById("score").innerHTML = rating;
+    if (score > 50){
+        document.getElementById("submit").disabled = false;
+    }
+    else{
+        document.getElementById("submit").disabled = true;
+    }
 }
 
