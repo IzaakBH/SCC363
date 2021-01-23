@@ -21,8 +21,8 @@
             </div>
             <div>
                 <label for="password">Password</label>
-                <input name="password" th:field="*{password}" id="password" onkeyup="evaluatePassword(this)">
-                <div id="score"></div>
+                <input name="password" th:field="*{password}" id="password" onkeyup="evaluatePassword(this)" onpaste="evaluatePassword(this)">
+                <div id="rating"></div>
                 <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
             </div>
             <div>
