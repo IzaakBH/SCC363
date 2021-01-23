@@ -18,4 +18,8 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
         return score > 0.5;
 
     }
+
+    public double getScore(String password, ConstraintValidatorContext context){
+        return PasswordStrengthEvaluator.evaluatePassword(password);
+    }
 }
