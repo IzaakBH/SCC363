@@ -10,9 +10,12 @@ function evaluatePassword(pass){
     var symbolWeight = 25;
     var numberWeight = 25;
     var letterWeight = 20;
+    var spCharCheckFail = 0;
+    var rating = "";
     var length = pass.value.length;
     if (length < 11) {
-        document.getElementById("dynamic_name").innerHTML = 0;
+        document.getElementById("rating").innerHTML = "Password must be at least 11 in length";
+        document.getElementById("submit").disabled = true;
         return;
     }
     else if (length > 20){
@@ -26,11 +29,45 @@ function evaluatePassword(pass){
     numOfLow = (pass.value.match(/[a-z]/g) || []).length;
     numOfNum = (pass.value.match(/[0-9]/g) || []).length;
     numOfSym = pass.value.length -numOfUpp - numOfLow - numOfNum;
-    
-    if (numOfNum == 0 || numOfUpp == 0 || numOfLow == 0 || numOfSym < 2){
-        document.getElementById("dynamic_name").innerHTML = 0;
+
+    if(numOfNum == 0){
+        rating = rating.concat("Number");
+        spCharCheckFail++;
+    }
+    if(numOfUpp == 0){
+        if(spCharCheckFail != 0){
+            rating = rating.concat(", Uppercase ");
+        }
+        else{
+            rating = rating.concat("Uppercase");
+        }
+        spCharCheckFail++;
+    }
+    if(numOfLow == 0){
+        if(spCharCheckFail != 0){
+            rating = rating.concat(", Lowercase");
+        }
+        else{
+            rating = rating.concat("Lowercase");
+        }
+        spCharCheckFail++;
+    }
+    if(numOfSym < 2){
+        if(spCharCheckFail != 0){
+            rating = rating.concat(", 2 Symbols");
+        }
+        else{
+            rating = rating.concat("2 Symbols");
+        }
+        spCharCheckFail++;
+    }
+    if(spCharCheckFail !=0){
+        rating = "Password must contain ".concat(rating);
+        document.getElementById("rating").innerHTML = rating;
+        document.getElementById("submit").disabled = true;
         return;
     }
+
 
     if (numOfUpp > 5){
         score += letterWeight/2;
@@ -60,6 +97,22 @@ function evaluatePassword(pass){
         score += numOfSym/4 * symbolWeight;
     }
 
-    document.getElementById("dynamic_name").innerHTML = score/100;
+
+    if (score < 50 && score != 0){
+        rating = "Weak Password";
+    }
+    else if(score <70){
+        rating = "Good Password";
+    }
+    else{
+        rating = "Strong Password"
+    }
+    document.getElementById("rating").innerHTML = rating;
+    if (score > 50){
+        document.getElementById("submit").disabled = false;
+    }
+    else{
+        document.getElementById("submit").disabled = true;
+    }
 }
 
