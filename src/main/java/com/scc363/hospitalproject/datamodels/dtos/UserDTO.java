@@ -1,6 +1,5 @@
 package com.scc363.hospitalproject.datamodels.dtos;
 
-import com.scc363.hospitalproject.constraints.UniqueEmail;
 import com.scc363.hospitalproject.constraints.UniqueUsername;
 import com.scc363.hospitalproject.constraints.ValidPassword;
 
@@ -8,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 

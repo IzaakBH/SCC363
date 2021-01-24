@@ -6,9 +6,7 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import javax.mail.Session;
 
-import com.scc363.hospitalproject.constraints.UniqueEmail;
 import com.scc363.hospitalproject.constraints.UniqueUsername;
-import com.scc363.hospitalproject.constraints.ValidPassword;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
