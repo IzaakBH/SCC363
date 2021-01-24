@@ -5,9 +5,7 @@ import com.scc363.hospitalproject.constraints.UniqueUsername;
 import com.scc363.hospitalproject.constraints.ValidPassword;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Entity
 public class User {
@@ -18,14 +16,20 @@ public class User {
     @UniqueUsername
     @Size(min=3, max=20)
     @Column(unique = true)
+    @NotNull
+    @NotEmpty
     private String username;//TODO: This HAS to be changed to a secure format. A package will exist for this.
 
     @ValidPassword
+    @NotNull
+    @NotEmpty
     private String password;
 
     @UniqueEmail
-    @Email( message = "Email address should be valid")
+    @Email( message = "Email address should follow the form email@email.com")
     @Column(unique=true)
+    @NotNull
+    @NotEmpty
     private String email;
 
     @NotBlank(message = "Choose a user type")

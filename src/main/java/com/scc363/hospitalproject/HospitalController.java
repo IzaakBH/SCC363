@@ -16,6 +16,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -90,7 +91,20 @@ public class HospitalController {
         }
     }
 
+    @GetMapping("/registration")
+    public String registration(Model model) {
+        User u = new User();
+        model.addAttribute("user", u);
+        return "registration";
+    }
 
+    @PostMapping("/registration")
+    public ModelAndView registration(@ModelAttribute("user") @Valid User u, HttpServletRequest request, Errors errors) {
+
+    }
+
+
+    // Test mapping
     @GetMapping("/hello")
     public String hello() {
         return "hello";
