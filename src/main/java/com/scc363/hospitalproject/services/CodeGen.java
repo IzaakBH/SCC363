@@ -1,8 +1,11 @@
 package com.scc363.hospitalproject.services;
 
-public class CodeGen {
+import java.util.Random;
 
-    public String generateCode() {
-        return "TEMP CODE THIS CLASS NEEDS IMPLEMENTING";
+public class CodeGen {
+    Random rand = new Random();
+
+    public int generateCode(){
+        return rand.nextInt((9999 - 100) + 1) + 10;
     }
 }

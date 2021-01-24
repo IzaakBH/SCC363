@@ -6,39 +6,33 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import javax.mail.Session;
 
+//import com.scc363.hospitalproject.constraints.UniqueEmail;
 import com.scc363.hospitalproject.constraints.UniqueUsername;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.scc363.hospitalproject.constraints.ValidPassword;
 import com.scc363.hospitalproject.services.CodeGen;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
-import java.util.Collection;
-import java.util.Collections;
-
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
-public class User implements UserDetails {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @UniqueUsername
+    @Size(min=3, max=20)
     @Column(unique = true)
-    @NotNull
-    @NotEmpty
-    private String username;
+    private String username;//TODO: This HAS to be changed to a secure format. A package will exist for this.
 
-    //@ValidPassword
-    @NotNull
-    @NotEmpty
+    @ValidPassword
     private String password;
 
-    @Email( message = "Email address should follow the form email@email.com")
+    //@UniqueEmail
+    @Email( message = "Email address should be valid")
     @Column(unique=true)
-    @NotNull
-    @NotEmpty
     private String email;
 
     @NotBlank(message = "Choose a user type")
@@ -51,20 +45,6 @@ public class User implements UserDetails {
     private String last;
 
     String code;
-    private boolean locked;
-
-
-    public User() {
-
-    }
-
-    public User(String username, String password, String email, String userType) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.userType = userType;
-    }
-
     // Getters and setters
 
     public String getEmail() {
@@ -80,26 +60,6 @@ public class User implements UserDetails {
         return username;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return !locked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
     public void setUsername(String username) {
         this.username = username;
     }
@@ -110,12 +70,6 @@ public class User implements UserDetails {
 
     public void setUserType(String type) {
         userType = type;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority sga = new SimpleGrantedAuthority(userType);
-        return Collections.singletonList(sga);
     }
 
     public String getPassword() {
@@ -141,6 +95,13 @@ public class User implements UserDetails {
     public void setLast(String last) {
         this.last = last;
     }
+
+    public String getCode() {
+        return code;
+    }
+
+
+
     @Override
     public String toString() {
         return String.format("Username: %s is a %s. Password: %s, EmailL %s]", username, userType, password, email);
@@ -183,13 +144,4 @@ public class User implements UserDetails {
     }
 
 
-}
-
-enum UserTypes {
-    REGULATOR,
-    SYSADMIN,
-    DOCTOR,
-    NURSE,
-    MEDADMIN,
-    PATIENT
 }
