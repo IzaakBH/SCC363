@@ -31,6 +31,12 @@ public class User {
     @NotBlank(message = "Choose a user type")
     private String userType;
 
+    @NotBlank(message = "Choose a user first name")
+    private String first;
+
+    @NotBlank(message = "Choose a user last name")
+    private String last;
+
     // Getters and setters
 
     public String getEmail() {
@@ -66,6 +72,21 @@ public class User {
         this.password = password;
     }
 
+    public String getFirst() {
+        return first;
+    }
+
+    public void setFirst(String first) {
+        this.first = first;
+    }
+
+    public String getLast() {
+        return last;
+    }
+
+    public void setLast(String last) {
+        this.last = last;
+    }
     @Override
     public String toString() {
         return String.format("Username: %s is a %s. Password: %s, EmailL %s]", username, userType, password, email);
