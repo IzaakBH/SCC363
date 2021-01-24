@@ -9,30 +9,38 @@ import javax.mail.Session;
 import com.scc363.hospitalproject.constraints.UniqueEmail;
 import com.scc363.hospitalproject.constraints.UniqueUsername;
 import com.scc363.hospitalproject.constraints.ValidPassword;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import com.scc363.hospitalproject.services.CodeGen;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
+import java.util.Collection;
+import java.util.Collections;
+
 
 @Entity
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @UniqueUsername
-    @Size(min=3, max=20)
     @Column(unique = true)
-    private String username;//TODO: This HAS to be changed to a secure format. A package will exist for this.
+    @NotNull
+    @NotEmpty
+    private String username;
 
-    @ValidPassword
+    //@ValidPassword
+    @NotNull
+    @NotEmpty
     private String password;
 
-    @UniqueEmail
-    @Email( message = "Email address should be valid")
+    @Email( message = "Email address should follow the form email@email.com")
     @Column(unique=true)
+    @NotNull
+    @NotEmpty
     private String email;
 
     @NotBlank(message = "Choose a user type")
@@ -45,6 +53,20 @@ public class User {
     private String last;
 
     String code;
+    private boolean locked;
+
+
+    public User() {
+
+    }
+
+    public User(String username, String password, String email, String userType) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.userType = userType;
+    }
+
     // Getters and setters
 
     public String getEmail() {
@@ -60,6 +82,26 @@ public class User {
         return username;
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !locked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -70,6 +112,12 @@ public class User {
 
     public void setUserType(String type) {
         userType = type;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        SimpleGrantedAuthority sga = new SimpleGrantedAuthority(userType);
+        return Collections.singletonList(sga);
     }
 
     public String getPassword() {
@@ -137,4 +185,13 @@ public class User {
     }
 
 
+}
+
+enum UserTypes {
+    REGULATOR,
+    SYSADMIN,
+    DOCTOR,
+    NURSE,
+    MEDADMIN,
+    PATIENT
 }

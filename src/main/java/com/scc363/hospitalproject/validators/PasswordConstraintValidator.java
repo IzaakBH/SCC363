@@ -14,9 +14,7 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
-        double score = PasswordStrengthEvaluator.evaluatePassword(password);
-        return score > 0.5;
-
+        return PasswordStrengthEvaluator.evaluatePassword(password) >= 0.5;
     }
 
     public double getScore(String password, ConstraintValidatorContext context){

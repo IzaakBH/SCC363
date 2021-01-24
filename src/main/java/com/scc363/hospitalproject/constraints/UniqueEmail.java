@@ -15,6 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = UniqueEmailValidator.class)
 @Target({ FIELD })
 @Retention(RUNTIME)
+@Deprecated
 public @interface UniqueEmail {
 
     public String message() default "Email already registered";

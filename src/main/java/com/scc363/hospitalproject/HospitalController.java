@@ -2,6 +2,8 @@ package com.scc363.hospitalproject;
 
 
 import com.scc363.hospitalproject.datamodels.*;
+import com.scc363.hospitalproject.datamodels.dtos.UserDTO;
+import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import com.scc363.hospitalproject.services.*;
@@ -9,18 +11,15 @@ import com.scc363.hospitalproject.utils.Pair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class HospitalController {
@@ -28,8 +27,8 @@ public class HospitalController {
     private UserRepository userRepository;
     @Autowired
     private PatientDetailsRepository patientDetailsRepository;
-
-    private LoginAuthService loginAuthService;
+    @Autowired
+    private RegistrationService regService;
 
     private final SessionManager sessionManager = new SessionManager();
 
@@ -90,28 +89,71 @@ public class HospitalController {
         }
     }
 
+    @GetMapping("/register")
+    public String showRegistration(WebRequest request, Model model) {
+        UserDTO u = new UserDTO();
+        model.addAttribute("user", u);
+        return "register";
+    }
 
+    @PostMapping("/register")
+    public ModelAndView processRegistration(@ModelAttribute @Valid User u, HttpServletRequest request, Errors errors) {
+        if (errors.hasErrors()) {
+            System.out.print("Errors: " + errors.toString());
+        }
+
+        try {
+            User registered = regService.registerNewUser(u);
+            System.out.println("===========\n User added");
+        } catch (UserAlreadyExistsException e) {
+            ModelAndView model = new ModelAndView();
+            System.out.println("===========\n Adding User failed");
+            model.addObject("message", "An account for that username/email already exists.");
+            model.addObject("user", u);
+            model.setViewName("register");
+            return model;
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            ModelAndView model = new ModelAndView();
+            model.addObject("message", "An account for that username/email already exists.");
+            model.addObject("user", u);
+            model.setViewName("register");
+            return model;
+        }
+
+        u.sendEmail(u.getEmail());
+        return new ModelAndView("hello", "user", u);
+    }
+
+
+    // Test mapping
     @GetMapping("/hello")
     public String hello() {
         return "hello";
     }
-
-    @GetMapping("/add")
-    public String addUserForm(User user) {
-        return "add";
-    }
-
-    @PostMapping("/add")
-    public String addUser(@ModelAttribute @Valid User u, Errors errors, Model model) {
-        u.sendEmail(u.getEmail());   //here is the email sent however it should be put into login
-        if (errors.hasErrors()) {
-            return "add";
-        } else {
-            userRepository.save(u);
-            return "redirect:";
-        }
-
-    }
+//
+//    @GetMapping("/add")
+//    public String addUserForm(UserDTO user) {
+//        return "add";
+//    }
+//
+//    @PostMapping("/add")
+//    public String addUser(@ModelAttribute @Valid User u, Errors errors, Model model) {
+//
+//        if (errors.hasErrors()) {
+//            return "add";
+//        } else {
+//            RegistrationService regSer = new RegistrationService();
+//            try {
+//                User newUser = regSer.registerNewUser(u);
+//                userRepository.save(newUser);
+//                return "hello";
+//            } catch (UserAlreadyExistsException e) {
+//                model.addAttribute("message", e.getMessage());
+//                return "registration";
+//            }
+//        }
+//    }
 
     @GetMapping("/listusers")
     public String getUsers(Model model) {
@@ -143,16 +185,16 @@ public class HospitalController {
 
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+//        Map<String, String> errors = new HashMap<>();
+//        ex.getBindingResult().getAllErrors().forEach((error) -> {
+//            String fieldName = ((FieldError) error).getField();
+//            String errorMessage = error.getDefaultMessage();
+//            errors.put(fieldName, errorMessage);
+//        });
+//        return errors;
+//    }
 
 }
