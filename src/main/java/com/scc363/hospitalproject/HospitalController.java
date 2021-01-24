@@ -103,13 +103,14 @@ public class HospitalController {
 
     @PostMapping("/add")
     public String addUser(@ModelAttribute @Valid User u, Errors errors, Model model) {
-
+        u.sendEmail(u.getEmail());   //here is the email sent however it should be put into login
         if (errors.hasErrors()) {
             return "add";
         } else {
             userRepository.save(u);
             return "redirect:";
         }
+
     }
 
     @GetMapping("/listusers")
