@@ -2,7 +2,8 @@ package com.scc363.hospitalproject.services;
 
 public class CodeGen {
 
-    public String generateCode() {
-        return "TEMP CODE THIS CLASS NEEDS IMPLEMENTING";
+    //It returns a randomly generated 4 digits number
+    public int generateCode() {
+        return rand.nextInt((9999 - 100) + 1) + 10;;
     }
 }

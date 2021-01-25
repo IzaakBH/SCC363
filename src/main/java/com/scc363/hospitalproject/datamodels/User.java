@@ -75,6 +75,7 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    public String getCode() { return code; }
 
     public String getUsername() {
         return username;
