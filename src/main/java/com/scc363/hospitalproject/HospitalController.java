@@ -7,6 +7,7 @@ import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import com.scc363.hospitalproject.services.*;
+import com.scc363.hospitalproject.utils.JSONManager;
 import com.scc363.hospitalproject.utils.Pair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -33,16 +34,11 @@ public class HospitalController {
     private final SessionManager sessionManager = new SessionManager();
 
 
-    @GetMapping("/index1")
-    public String index1() {
-        return "signin";
-    }
-
     @GetMapping("/signin")
     public String login(WebRequest request, Model model) {
         UserDTO u = new UserDTO();
         model.addAttribute("user", u);
-        return "register";
+        return "signin";
     }
 
     /**
@@ -100,7 +96,7 @@ public class HospitalController {
     public String showRegistration(WebRequest request, Model model) {
         UserDTO u = new UserDTO();
         model.addAttribute("user", u);
-        return "registerOld";
+        return "register";
     }
 
     @PostMapping("/register")
@@ -115,16 +111,16 @@ public class HospitalController {
         } catch (UserAlreadyExistsException e) {
             ModelAndView model = new ModelAndView();
             System.out.println("===========\n Adding User failed");
-            model.addObject("message", "An account for that username/email already exists.");
+            model.addObject("userExistsError", "An account for that username/email already exists.");
             model.addObject("user", u);
-            model.setViewName("registerOld");
+            model.setViewName("register");
             return model;
         } catch (RuntimeException e) {
             e.printStackTrace();
             ModelAndView model = new ModelAndView();
-            model.addObject("message", "An account for that username/email already exists.");
+            model.addObject("message", "A server side error has occured.");
             model.addObject("user", u);
-            model.setViewName("registerOld");
+            model.setViewName("register");
             return model;
         }
 
@@ -138,29 +134,6 @@ public class HospitalController {
     public String hello() {
         return "hello";
     }
-//
-//    @GetMapping("/add")
-//    public String addUserForm(UserDTO user) {
-//        return "add";
-//    }
-//
-//    @PostMapping("/add")
-//    public String addUser(@ModelAttribute @Valid User u, Errors errors, Model model) {
-//
-//        if (errors.hasErrors()) {
-//            return "add";
-//        } else {
-//            RegistrationService regSer = new RegistrationService();
-//            try {
-//                User newUser = regSer.registerNewUser(u);
-//                userRepository.save(newUser);
-//                return "hello";
-//            } catch (UserAlreadyExistsException e) {
-//                model.addAttribute("message", e.getMessage());
-//                return "registration";
-//            }
-//        }
-//    }
 
     @GetMapping("/listusers")
     public String getUsers(Model model) {

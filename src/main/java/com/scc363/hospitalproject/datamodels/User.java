@@ -10,7 +10,7 @@ import com.scc363.hospitalproject.constraints.UniqueUsername;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.scc363.hospitalproject.services.CodeGen;
+import com.scc363.hospitalproject.utils.CodeGen;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;

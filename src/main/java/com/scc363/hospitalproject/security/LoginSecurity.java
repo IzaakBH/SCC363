@@ -24,7 +24,7 @@ public class LoginSecurity extends WebSecurityConfigurerAdapter {
         // Tells spring to authorise all requests with basic authentication
         http.csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/h2-console/**", "/h2-console/*", "/hello", "/signin", "/index1").permitAll()
+                    .antMatchers("/h2-console/**", "/h2-console/*", "/hello", "/signin").permitAll()
                     .antMatchers("/css/**", "/js/**", "/img/**").permitAll()  //Permit access to static files
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/", "/home", "/register").permitAll()

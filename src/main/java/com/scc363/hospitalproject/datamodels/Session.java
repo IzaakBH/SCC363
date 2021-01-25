@@ -1,6 +1,6 @@
 package com.scc363.hospitalproject.datamodels;
 
-import com.scc363.hospitalproject.services.CryptoManager;
+import com.scc363.hospitalproject.utils.CryptoManager;
 
 import javax.crypto.SecretKey;
 import java.security.PrivateKey;
