@@ -3,6 +3,7 @@
 <head>
     <title>SCC363</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" th:src="@{/PasswordValidator.js}"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -33,6 +34,7 @@
     <div>
         <label for="password">Password</label>
         <input name="password" th:field="*{password}" id="password" placeholder="Password" type = "text">
+        <div id="rating"/>
         <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
     </div>
 
