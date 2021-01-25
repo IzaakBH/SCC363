@@ -7,20 +7,27 @@ import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import com.scc363.hospitalproject.services.*;
+import com.scc363.hospitalproject.utils.DTOMapper;
 import com.scc363.hospitalproject.utils.JSONManager;
 import com.scc363.hospitalproject.utils.Pair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class HospitalController {
@@ -94,38 +101,38 @@ public class HospitalController {
 
     @GetMapping("/register")
     public String showRegistration(WebRequest request, Model model) {
-        UserDTO u = new UserDTO();
-        model.addAttribute("user", u);
+        UserDTO userDTO = new UserDTO();
+        model.addAttribute("userDTO", userDTO);
         return "register";
     }
 
     @PostMapping("/register")
-    public ModelAndView processRegistration(@ModelAttribute @Valid User u, HttpServletRequest request, Errors errors) {
-        if (errors.hasErrors()) {
-            System.out.print("Errors: " + errors.toString());
+    public ModelAndView processRegistration(@ModelAttribute @Valid UserDTO userDTO, BindingResult result, HttpServletRequest request, Errors errors) {
+
+        if (result.hasErrors()) {
+            System.out.println(result.getAllErrors());
+
+            ModelAndView model = new ModelAndView();
+            System.out.println("===========\n Adding User failed");
+            model.addObject("userDTO", userDTO);
+            model.setViewName("register");
+            return model;
         }
 
         try {
-            User registered = regService.registerNewUser(u);
+            User registered = regService.registerNewUser(DTOMapper.userDtoToEntity(userDTO));
+            registered.sendEmail(userDTO.getEmail());
             System.out.println("===========\n User added");
         } catch (UserAlreadyExistsException e) {
             ModelAndView model = new ModelAndView();
             System.out.println("===========\n Adding User failed");
             model.addObject("userExistsError", "An account for that username/email already exists.");
-            model.addObject("user", u);
-            model.setViewName("register");
-            return model;
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            ModelAndView model = new ModelAndView();
-            model.addObject("message", "A server side error has occured.");
-            model.addObject("user", u);
+            model.addObject("userDTO", userDTO);
             model.setViewName("register");
             return model;
         }
 
-        u.sendEmail(u.getEmail());
-        return new ModelAndView("hello", "user", u);
+        return new ModelAndView("hello", "user", userDTO);
     }
 
 
@@ -165,16 +172,17 @@ public class HospitalController {
 
     }
 
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-//        Map<String, String> errors = new HashMap<>();
-//        ex.getBindingResult().getAllErrors().forEach((error) -> {
-//            String fieldName = ((FieldError) error).getField();
-//            String errorMessage = error.getDefaultMessage();
-//            errors.put(fieldName, errorMessage);
-//        });
-//        return errors;
-//    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        System.out.println("=============\ntoads");
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
 
 }

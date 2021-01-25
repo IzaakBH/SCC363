@@ -17,6 +17,7 @@ public class RestResponseEntityExceptionHandler  extends ResponseEntityException
     @ExceptionHandler({ RepositoryConstraintViolationException.class })
     public ResponseEntity<Object> handleAccessDeniedException (Exception e, WebRequest req){
         RepositoryConstraintViolationException nevEx = (RepositoryConstraintViolationException) e;
+        System.out.println("===========\nHERE");
 
         String errors = nevEx.getErrors().getAllErrors().stream().map(p -> p.toString()).collect(Collectors.joining("\n"));
 

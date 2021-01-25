@@ -7,6 +7,7 @@ import javax.mail.internet.*;
 import javax.mail.Session;
 
 import com.scc363.hospitalproject.constraints.UniqueUsername;
+import com.scc363.hospitalproject.constraints.ValidPassword;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +31,7 @@ public class User implements UserDetails {
     @NotEmpty
     private String username;
 
-    //@ValidPassword
+    @ValidPassword
     @NotNull
     @NotEmpty
     private String password;
@@ -58,11 +59,13 @@ public class User implements UserDetails {
 
     }
 
-    public User(String username, String password, String email, String userType) {
+    public User(String username, String password, String email, String userType, String first, String last) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.userType = userType;
+        this.first = first;
+        this.last = last;
     }
 
     // Getters and setters

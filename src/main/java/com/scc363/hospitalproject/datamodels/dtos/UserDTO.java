@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 
@@ -37,7 +38,6 @@ public class UserDTO {
     @NotBlank(message = "Choose a user type")
     private String userType;
 
-
     @NotBlank(message = "Choose a user first name")
     private String first;
 
@@ -48,7 +48,7 @@ public class UserDTO {
 
     }
 
-    public UserDTO(String username, String password, String email, String userType) {
+    public UserDTO(String username, String password, String email, String userType, String first, String last) {
         this.username = username;
         this.password = password;
         this.email = email;
