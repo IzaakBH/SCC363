@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 
 @Configuration
 @EnableWebSecurity
@@ -20,24 +22,19 @@ public class LoginSecurity extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         // Tells spring to authorise all requests with basic authentication
-//        http.authorizeRequests()
-//                .anyRequest()
-//                .authenticated()
-//                .and()
-//                .formLogin()
-//                .and()
-//                .httpBasic();
         http.csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/h2-console/**", "/h2-console/*", "/hello").permitAll()
+                    .antMatchers("/h2-console/**", "/h2-console/*", "/hello", "/signin", "/index1").permitAll()
+                    .antMatchers("/css/**", "/js/**", "/img/**").permitAll()  //Permit access to static files
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/", "/home", "/register").permitAll()
                     .anyRequest().authenticated()
                     .and()
                 .formLogin()
-                    .loginProcessingUrl("/perform_login")   // Where we submit the username and password to
+                    .loginPage("/signin")
+                    .loginProcessingUrl("/signin")   // Where we submit the username and password to
                     .defaultSuccessUrl("/hello")
-                    .failureUrl("/login.html?error=true")
+                    .failureUrl("/register.html?error=true")
                     .and()
                 .logout()
                     .permitAll();

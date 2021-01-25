@@ -37,6 +37,13 @@ public class UserDTO {
     @NotBlank(message = "Choose a user type")
     private String userType;
 
+
+    @NotBlank(message = "Choose a user first name")
+    private String first;
+
+    @NotBlank(message = "Choose a user last name")
+    private String last;
+
     public UserDTO() {
 
     }
@@ -78,6 +85,22 @@ public class UserDTO {
 
     public void setUserType(String userType) {
         this.userType = userType;
+    }
+
+    public String getFirst() {
+        return first;
+    }
+
+    public void setFirst(String first) {
+        this.first = first;
+    }
+
+    public String getLast() {
+        return last;
+    }
+
+    public void setLast(String last) {
+        this.last = last;
     }
 
     @Override

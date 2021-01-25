@@ -33,9 +33,16 @@ public class HospitalController {
     private final SessionManager sessionManager = new SessionManager();
 
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
+    @GetMapping("/index1")
+    public String index1() {
+        return "signin";
+    }
+
+    @GetMapping("/signin")
+    public String login(WebRequest request, Model model) {
+        UserDTO u = new UserDTO();
+        model.addAttribute("user", u);
+        return "register";
     }
 
     /**
@@ -53,7 +60,7 @@ public class HospitalController {
      *     "username"   : "john123"
      * }
      */
-    @PostMapping("/login")
+    @PostMapping("/signin")
     public String login(@RequestParam String data, HttpServletRequest request)
     {
         JSONArray dataArr = new JSONManager().convertToJSONObject(data);
@@ -93,7 +100,7 @@ public class HospitalController {
     public String showRegistration(WebRequest request, Model model) {
         UserDTO u = new UserDTO();
         model.addAttribute("user", u);
-        return "register";
+        return "registerOld";
     }
 
     @PostMapping("/register")
@@ -110,14 +117,14 @@ public class HospitalController {
             System.out.println("===========\n Adding User failed");
             model.addObject("message", "An account for that username/email already exists.");
             model.addObject("user", u);
-            model.setViewName("register");
+            model.setViewName("registerOld");
             return model;
         } catch (RuntimeException e) {
             e.printStackTrace();
             ModelAndView model = new ModelAndView();
             model.addObject("message", "An account for that username/email already exists.");
             model.addObject("user", u);
-            model.setViewName("register");
+            model.setViewName("registerOld");
             return model;
         }
 
