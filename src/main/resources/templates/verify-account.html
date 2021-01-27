@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
     <title>SCC363 - Verify your account</title>
 </head>
 <body>
@@ -17,7 +17,7 @@
     </div>
 
     <div th:unless="${success}">
-        <form class="container register" action="#" th:action="@{/verify-account}" method="POST">
+        <form class="container register" th:action="@{/verify-account}" method="POST">
             <div>
                 <label for="email">Email address</label>
                 <input name="email" id="email" placeholder="Email Address" type = "text" >

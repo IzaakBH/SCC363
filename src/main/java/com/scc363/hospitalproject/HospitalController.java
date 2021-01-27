@@ -3,10 +3,12 @@ package com.scc363.hospitalproject;
 
 import com.scc363.hospitalproject.datamodels.*;
 import com.scc363.hospitalproject.datamodels.dtos.UserDTO;
+import com.scc363.hospitalproject.datamodels.dtos.VerificationDTO;
 import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import com.scc363.hospitalproject.services.*;
+import com.scc363.hospitalproject.utils.CodeGen;
 import com.scc363.hospitalproject.utils.DTOMapper;
 import com.scc363.hospitalproject.utils.JSONManager;
 import com.scc363.hospitalproject.utils.Pair;
@@ -147,13 +149,16 @@ public class HospitalController {
     }
 
     @PostMapping("/verify-account")
-    public ModelAndView processVerifyAccount(String email, int verificationCode, HttpServletRequest request, Errors errors) {
+    public ModelAndView processVerifyAccount(@RequestBody VerificationDTO ver, BindingResult result, HttpServletRequest request) {
         ModelAndView mav = new ModelAndView();
+        System.out.println("==========\nVerified user");
 
-        if (userRepository.existsByEmailAndCode(email, verificationCode)) {
+        if (userRepository.existsByEmailAndCode(ver.email(), Integer.parseInt(ver.code()))) {
+            System.out.println("==========\nVerified user");
             // User authenticated
-            User u = userRepository.findUserByEmail(email);
+            User u = userRepository.findUserByEmail(ver.email());
             u.enableAccount();
+            userRepository.save(u);
             mav.setViewName("verify-account");
 
             mav.addObject("success");

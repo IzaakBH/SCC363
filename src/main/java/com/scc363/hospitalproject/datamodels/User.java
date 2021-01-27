@@ -85,6 +85,10 @@ public class User implements UserDetails {
 
     public String getCode() { return code; }
 
+    public void setCode(int code) {
+        this.code = String.valueOf(code);
+    }
+
     public String getUsername() {
         return username;
     }
@@ -163,9 +167,6 @@ public class User implements UserDetails {
         String from = "scc363gr@gmail.com";
         String password = "SCC363group";
         String sub = "Code";
-        CodeGen c = new CodeGen();
-        String msg = String.valueOf(c.generateCode());
-        code = msg;
 
 
         Properties props = new Properties();
@@ -176,7 +177,7 @@ public class User implements UserDetails {
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.port", "465");
         //get Session
-        Session session = Session.getDefaultInstance(props,
+        Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(from,password);
@@ -184,11 +185,10 @@ public class User implements UserDetails {
                 });
         //compose message
         try {
-
             MimeMessage message = new MimeMessage(session);
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
             message.setSubject(sub);
-            message.setText(msg);
+            message.setText(getCode());
             //send message
             Transport.send(message);
             System.out.println("message sent successfully");
