@@ -52,7 +52,11 @@ public class User implements UserDetails {
     private String last;
 
     String code;
+
     private boolean locked;
+
+    // Account is enabled if it has been verified with the email 2fa code.
+    private boolean enabled;
 
 
     public User() {
@@ -66,6 +70,7 @@ public class User implements UserDetails {
         this.userType = userType;
         this.first = first;
         this.last = last;
+        this.enabled = false;
     }
 
     // Getters and setters
@@ -101,7 +106,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     public void setUsername(String username) {
@@ -124,6 +129,10 @@ public class User implements UserDetails {
 
     public String getPassword() {
         return password;
+    }
+
+    public void enableAccount() {
+        this.enabled = true;
     }
 
     public void setPassword(String password) {

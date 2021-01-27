@@ -132,7 +132,37 @@ public class HospitalController {
             return model;
         }
 
-        return new ModelAndView("hello", "user", userDTO);
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("verify-account");
+        mav.addObject("emailAddress", userDTO.getEmail());
+        return mav;
+    }
+
+    @GetMapping("/verify-account")
+    public ModelAndView showVerifyAccount(WebRequest request, Model model, UserDTO userDTO) {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("verify-account");
+        mav.addObject("user", userDTO);
+        return mav;
+    }
+
+    @PostMapping("/verify-account")
+    public ModelAndView processVerifyAccount(String email, int verificationCode, HttpServletRequest request, Errors errors) {
+        ModelAndView mav = new ModelAndView();
+
+        if (userRepository.existsByEmailAndCode(email, verificationCode)) {
+            // User authenticated
+            User u = userRepository.findUserByEmail(email);
+            u.enableAccount();
+            mav.setViewName("verify-account");
+
+            mav.addObject("success");
+            return mav;
+        } else {
+            mav.setViewName("verify-account");
+            mav.addObject("failure");
+            return mav;
+        }
     }
 
 
