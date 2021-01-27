@@ -1,8 +1,7 @@
-package com.scc363.hospitalproject.services;
+package com.scc363.hospitalproject.utils;
 
 import com.scc363.hospitalproject.datamodels.KeyValue;
 import com.scc363.hospitalproject.datamodels.Session;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.crypto.SecretKey;

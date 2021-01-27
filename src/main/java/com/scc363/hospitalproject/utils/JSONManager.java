@@ -1,4 +1,4 @@
-package com.scc363.hospitalproject.services;
+package com.scc363.hospitalproject.utils;
 
 import com.scc363.hospitalproject.datamodels.KeyValue;
 import org.json.simple.JSONArray;

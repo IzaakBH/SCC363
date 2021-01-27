@@ -3,8 +3,11 @@ package com.scc363.hospitalproject;
 
 import com.scc363.hospitalproject.datamodels.*;
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
+import com.scc363.hospitalproject.repositories.RoleRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import com.scc363.hospitalproject.services.*;
+import com.scc363.hospitalproject.utils.JSONManager;
+import com.scc363.hospitalproject.utils.SessionManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,10 @@ import javax.servlet.http.HttpServletRequest;
 public class HospitalController {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Autowired
     private PatientDetailsRepository patientDetailsRepository;
 
@@ -24,20 +31,24 @@ public class HospitalController {
     private final SessionManager sessionManager = new SessionManager();
 
 
+    /*
     @PostMapping("/add")
     public String addUser(@RequestParam String userName, @RequestParam String password, @RequestParam String userType){
         User u = new User();
         u.setUsername(userName);
         u.setPassword(password);
         //TODO: Validation for non proper type here if a manual request is made.
-        u.setUserType(UserTypes.valueOf(userType));
+        u.setUserType(String.valueOf(userType));
         userRepository.save(u);
         return String.format("Added %s to the database!", userName);
     }
 
     @GetMapping("/listusers")
-    public Iterable<User> getUsers() { return userRepository.findAll(); }
-
+    public Iterable<User> getUsers()
+    {
+        return userRepository.findAll();
+    }
+*/
 
     /**
      * Example login method to check, first of all if a user exists and if they have provided the correct password, secondly to
@@ -106,6 +117,20 @@ public class HospitalController {
         JSONObject sessionObject = (JSONObject) dataArr.get(0); //This is the position in the JSON array that the session credentials have been stored.
         return new JSONManager().getResponseObject(sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()));
 
+    }
+
+    @GetMapping("/testpriv")
+    public String testPriv(@RequestParam String username)
+    {
+        User user = userRepository.findUserByUsername(username);
+        if (user != null)
+        {
+            if (user.hasRole(roleRepository.findByName("DOCTOR")))
+            {
+                return "all good";
+            }
+        }
+        return "false";
     }
 
 }

@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Collection;
 import java.util.Date;
 
 @Entity
@@ -76,5 +77,31 @@ public class User {
         return String.format("Username: %s is a %s. Password: %s, EmailL %s]", username, userType, password, email);
     }
 
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles;
+
+    public void setRoles(Collection<Role> roles)
+    {
+        this.roles = roles;
+    }
+
+    public boolean hasRole(Role role)
+    {
+        for (Role assignedRole : this.roles)
+        {
+            if (assignedRole.getName().equals(role.getName()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
