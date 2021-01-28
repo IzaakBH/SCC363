@@ -1,8 +1,10 @@
 package com.scc363.hospitalproject.Components;
 
+import com.scc363.hospitalproject.datamodels.PatientDetails;
 import com.scc363.hospitalproject.datamodels.Privilege;
 import com.scc363.hospitalproject.datamodels.Role;
 import com.scc363.hospitalproject.datamodels.User;
+import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.scc363.hospitalproject.repositories.PrivilegeRepository;
 import com.scc363.hospitalproject.repositories.RoleRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
@@ -27,9 +29,11 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
-
     @Autowired
     private PrivilegeRepository privilegeRepository;
+
+    @Autowired
+    private PatientDetailsRepository patientDetailsRepository;
 
 
 
@@ -68,9 +72,11 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
         testUser.setUsername("xavier");
         testUser.setEmail("xavierhickman1234@gmail.com");
         testUser.setPassword("password");
-        testUser.setRoles(Collections.singletonList(roleRepository.findByName("REGULATOR")));
-        testUser.setUserType("REGULATOR");
+        testUser.setRoles(Collections.singletonList(roleRepository.findByName("DOCTOR")));
+        testUser.setUserType("DOCTOR");
         userRepository.save(testUser);
+
+
         setup = true;
     }
 

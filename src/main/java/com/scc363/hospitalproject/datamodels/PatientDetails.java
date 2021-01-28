@@ -9,6 +9,8 @@ import java.util.Date;
 
 @Entity
 public class PatientDetails {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -30,6 +32,9 @@ public class PatientDetails {
     private float weight; //KG
 
     private float height; //CM
+    private String doctor;
+
+
 
     // Formats date as so: 10 April 2020.
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMMM yyyy");
@@ -91,6 +96,11 @@ public class PatientDetails {
         return weight;
     }
 
+    public String getDoctor()
+    {
+        return doctor;
+    }
+
     public void setWeight(float weight) {
         this.weight = weight;
     }
@@ -118,4 +128,11 @@ public class PatientDetails {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public void setDoctor(String doctor)
+    {
+        this.doctor = doctor;
+    }
+
+
 }

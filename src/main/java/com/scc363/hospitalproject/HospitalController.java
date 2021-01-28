@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 @RestController
 public class HospitalController {
@@ -119,18 +120,26 @@ public class HospitalController {
 
     }
 
-    @GetMapping("/testpriv")
-    public String testPriv(@RequestParam String username)
+
+    @GetMapping("/findPatientsForDoctor")
+    public String findPatients(@RequestParam String doctor)
     {
-        User user = userRepository.findUserByUsername(username);
-        if (user != null)
+        User user = userRepository.findUserByUsername(doctor);
+        if (user.hasRole(roleRepository.findByName("DOCTOR")))
         {
-            if (user.hasRole(roleRepository.findByName("DOCTOR")))
-            {
-                return "all good";
-            }
+            return "patients " + patientDetailsRepository.getPatientDetailsByDoctor(doctor).size();
         }
-        return "false";
+        return "not a doctor";
     }
+
+
+    @GetMapping("/findPatientById")
+    public String findPatient(@RequestParam String patientID)
+    {
+        return "";
+    }
+
+
+
 
 }
