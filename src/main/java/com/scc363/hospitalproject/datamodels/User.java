@@ -60,7 +60,8 @@ public class User implements UserDetails {
 
 
     public User() {
-
+        this.enabled = false;
+        this.locked = false;
     }
 
     public User(String username, String password, String email, String userType, String first, String last) {
@@ -188,7 +189,7 @@ public class User implements UserDetails {
             MimeMessage message = new MimeMessage(session);
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
             message.setSubject(sub);
-            message.setText(getCode());
+            message.setText("http://localhost:8080/verify-account?email="+getEmail()+"&token="+getCode());
             //send message
             Transport.send(message);
             System.out.println("message sent successfully");

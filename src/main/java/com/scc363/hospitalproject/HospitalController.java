@@ -3,12 +3,10 @@ package com.scc363.hospitalproject;
 
 import com.scc363.hospitalproject.datamodels.*;
 import com.scc363.hospitalproject.datamodels.dtos.UserDTO;
-import com.scc363.hospitalproject.datamodels.dtos.VerificationDTO;
 import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import com.scc363.hospitalproject.services.*;
-import com.scc363.hospitalproject.utils.CodeGen;
 import com.scc363.hospitalproject.utils.DTOMapper;
 import com.scc363.hospitalproject.utils.JSONManager;
 import com.scc363.hospitalproject.utils.Pair;
@@ -135,58 +133,95 @@ public class HospitalController {
         }
 
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("verify-account");
+        mav.setViewName("verifymessage");
         return mav;
     }
 
+    @GetMapping("/verifymessage")
+    public String showVerifyMessage() {
+        return "verifymessage";
+    }
+
     @GetMapping("/verify-account")
-    public Model showVerifyAccount(WebRequest request, Model model) {
+    public String processVerification(Model model, @RequestParam("email") String email ,@RequestParam("token") String token) {
+        System.out.println(token);
+        System.out.println(email);
+
+        try {
+            if (userRepository.existsByEmail(email)) {
+                System.out.println("==========\nVerified user");
+                // User authenticated
+                User u = userRepository.findUserByEmail(email);
+
+                if (u.isEnabled()) {
+                    model.addAttribute("failure", false);
+                    return "notverified";
+                } else if (u.getCode().equals(token)) {
+                    u.enableAccount();
+                    userRepository.save(u);
+                    model.addAttribute("success", true);
+                    return "verified";
+                }
+            } else {
+                model.addAttribute("failure", false);
+                return "notverified";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("failure", false);
+            return "notverified";
+        }
+        return "notverified";
+    }
+
+//    @GetMapping("/verify-account")
+//    public String showVerifyAccount(WebRequest request, Model model) {
+////        ModelAndView mav = new ModelAndView();
+////        mav.setViewName("verify-account");
+////        mav.addObject("verification", new VerificationDTO());
+//        model.addAttribute("verification", new VerificationDTO());
+////        return mav;
+//        return "verify-account";
+//    }
+//
+//    @PostMapping("/verify-account")
+//    public ModelAndView processVerifyAccount(@ModelAttribute("verification") @Valid VerificationDTO verification, BindingResult result, HttpServletRequest request, Errors errors) {
+////        JSONArray data = new JSONManager().convertToJSONObject(ver);
+////        System.out.println(data);
+////        JSONObject dataObj = (JSONObject) data.get(0);
+////        String email = (String) dataObj.get("email");
+////        String code = (String) dataObj.get("code");
 //        ModelAndView mav = new ModelAndView();
-//        mav.setViewName("verify-account");
-//        mav.addObject("verification", new VerificationDTO());
-        model.addAttribute("verification", new VerificationDTO());
-//        return mav;
-        return model;
-    }
-
-    @PostMapping("/verify-account")
-    public ModelAndView processVerifyAccount(@ModelAttribute("verification") @Valid VerificationDTO verification, BindingResult result, HttpServletRequest request, Errors errors) {
-//        JSONArray data = new JSONManager().convertToJSONObject(ver);
-//        System.out.println(data);
-//        JSONObject dataObj = (JSONObject) data.get(0);
-//        String email = (String) dataObj.get("email");
-//        String code = (String) dataObj.get("code");
-        ModelAndView mav = new ModelAndView();
-//        System.out.println("==========\nVerified user");
-//        System.out.println(email);
-//        System.out.println(code);
-        String email = verification.email();
-        String code = verification.code();
-
-        if (result.hasErrors()) {
-            System.out.println(result.getAllErrors());
-
-            mav.setViewName("verify-account");
-
-            return mav;
-        }
-
-        if (userRepository.existsByEmailAndCode(email, Integer.parseInt(code))) {
-            System.out.println("==========\nVerified user");
-            // User authenticated
-            User u = userRepository.findUserByEmail(email);
-            u.enableAccount();
-            userRepository.save(u);
-            mav.setViewName("verify-account");
-
-            mav.addObject("success");
-            return mav;
-        } else {
-            mav.setViewName("verify-account");
-            mav.addObject("failure");
-            return mav;
-        }
-    }
+////        System.out.println("==========\nVerified user");
+////        System.out.println(email);
+////        System.out.println(code);
+//        String email = verification.email();
+//        String code = verification.code();
+//
+//        if (result.hasErrors()) {
+//            System.out.println(result.getAllErrors());
+//
+//            mav.setViewName("verify-account");
+//
+//            return mav;
+//        }
+//
+//        if (userRepository.existsByEmailAndCode(email, Integer.parseInt(code))) {
+//            System.out.println("==========\nVerified user");
+//            // User authenticated
+//            User u = userRepository.findUserByEmail(email);
+//            u.enableAccount();
+//            userRepository.save(u);
+//            mav.setViewName("verify-account");
+//
+//            mav.addObject("success");
+//            return mav;
+//        } else {
+//            mav.setViewName("verify-account");
+//            mav.addObject("failure");
+//            return mav;
+//        }
+//    }
 
 
     // Test mapping

@@ -27,7 +27,7 @@ public class LoginSecurity extends WebSecurityConfigurerAdapter {
                     .antMatchers("/h2-console/**", "/h2-console/*", "/hello", "/signin").permitAll()
                     .antMatchers("/css/**", "/js/**", "/img/**").permitAll()  //Permit access to static files
                     .antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/", "/home", "/register", "/verify-account").permitAll()
+                    .antMatchers("/", "/home", "/register", "/verify-account", "/verifymessage", "/verified", "/notverified").permitAll()
                     .anyRequest().authenticated()
                     .and()
                 .formLogin()
