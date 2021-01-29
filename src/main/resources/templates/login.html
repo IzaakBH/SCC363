@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <script src="Service.js"></script>
+    <script src="Services.js"></script>
+
 </head>
 <body>
-
     <fieldset>
         <input id="username" placeholder="Username"><br>
         <input id="password" placeholder="Password" type="password"><br>
-        <button id="loginButton">Login</button>
+        <button id="loginButton" onclick="new StateManger('http://localhost:8080/testFo', {'username': document.getElementById('username').value, 'password': document.getElementById('password').value}).changeState()">Login</button>
+
     </fieldset>
+
 
 </body>
 </html>

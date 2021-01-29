@@ -336,4 +336,19 @@ public class HospitalController {
     }
 
 
+    @GetMapping("/login")
+    public String showLogin()
+    {
+        return "login.html";
+    }
+
+
+
+    @PostMapping("/testFo")
+    @ResponseBody public String testFor(@RequestParam String data)
+    {
+        return String.format("%s", data);
+    }
+
+
 }

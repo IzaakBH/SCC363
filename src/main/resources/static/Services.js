@@ -19,7 +19,7 @@ class CredentialManager
         let privateKey = sessionStorage.getItem("privateKey");
         let username = sessionStorage.getItem("username");
 
-        return JSON.stringify([{"sessionID": sessionID !== null ? sessionID : "null", "privateKey": privateKey !== null ? privateKey : "null", "username": username !== null ? username : "null"}]);
+        return {"sessionID": sessionID !== null ? sessionID : "null", "privateKey": privateKey !== null ? privateKey : "null", "username": username !== null ? username : "null"};
     }
 
 
@@ -61,28 +61,36 @@ class CommunicationManager
 
 }
 
-// tests
-function requestNewSession()
+
+class StateManger
 {
-    new CommunicationManager("http://localhost:8080/auth", JSON.stringify([{"userName":"xavier", "password":"passwprd"}])).makePostRequest(setCredentials)
+    constructor(stateTarget, dataObj)
+    {
+        this.stateTarget = stateTarget;
+        this.dataObj = dataObj;
+    }
+
+
+    changeState()
+    {
+        const form = document.createElement("form");
+        form.method = "post";
+        form.action = this.stateTarget;
+
+        let dataObj = JSON.stringify([new CredentialManager().getCredentials(), this.dataObj]);
+        const field = document.createElement("input");
+        field.type = "hidden";
+        field.name = "data";
+        field.value = dataObj;
+        form.appendChild(field);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
 }
 
-function setCredentials(obj)
-{
-    new CredentialManager().setCredentials(obj.sessionID, obj.privateKey, obj.username);
-}
 
-//tests
-function testAuthentication()
-{
-    new CommunicationManager("http://localhost:8080/isAuth", new CredentialManager().getCredentials()).makePostRequest(showResult)
-}
-
-function showResult(obj)
-{
-    alert(obj.result);
-}
-
+/*
 function login()
 {
     let username = document.getElementById("username");
@@ -97,5 +105,11 @@ function login()
 
 function handleResult(obj)
 {
-    
+    if (obj.sessionID !== "undefined")
+    {
+        new CredentialManager().setCredentials(obj.sessionID, obj.privateKey, obj.username);
+
+    }
 }
+
+ */
