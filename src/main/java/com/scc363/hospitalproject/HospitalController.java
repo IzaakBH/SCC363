@@ -2,55 +2,71 @@ package com.scc363.hospitalproject;
 
 
 import com.scc363.hospitalproject.datamodels.*;
+
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
+import com.scc363.hospitalproject.repositories.PrivilegeRepository;
 import com.scc363.hospitalproject.repositories.RoleRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import com.scc363.hospitalproject.services.*;
+
 import com.scc363.hospitalproject.utils.JSONManager;
 import com.scc363.hospitalproject.utils.SessionManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-@RestController
+@Controller
 public class HospitalController {
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private PatientDetailsRepository patientDetailsRepository;
     @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
-    private PatientDetailsRepository patientDetailsRepository;
+    private PrivilegeRepository privilegeRepository;
 
-    private LoginAuthService loginAuthService;
-
+    /*
+    @Autowired
+    private RegistrationService regService;
+*/
     private final SessionManager sessionManager = new SessionManager();
 
 
     /*
-    @PostMapping("/add")
-    public String addUser(@RequestParam String userName, @RequestParam String password, @RequestParam String userType){
-        User u = new User();
-        u.setUsername(userName);
-        u.setPassword(password);
-        //TODO: Validation for non proper type here if a manual request is made.
-        u.setUserType(String.valueOf(userType));
-        userRepository.save(u);
-        return String.format("Added %s to the database!", userName);
+    @GetMapping("/signin")
+    public String login(WebRequest request, Model model) {
+        UserDTO u = new UserDTO();
+        model.addAttribute("user", u);
+        return "signin";
     }
 
-    @GetMapping("/listusers")
-    public Iterable<User> getUsers()
-    {
-        return userRepository.findAll();
-    }
-*/
 
+     */
     /**
      * Example login method to check, first of all if a user exists and if they have provided the correct password, secondly to
      * create a new session having destroy any existing ones using the ifUserHasSessionDestroy() method, then returning the
@@ -66,7 +82,7 @@ public class HospitalController {
      *     "username"   : "john123"
      * }
      */
-    @PostMapping("/login")
+    @PostMapping("/signin")
     public String login(@RequestParam String data, HttpServletRequest request)
     {
         JSONArray dataArr = new JSONManager().convertToJSONObject(data);
@@ -81,7 +97,7 @@ public class HospitalController {
          4. Compare digest with DB stored version
          5. If equal, success, if not failure.
          */
-        if (userName.length() > 0 && password.length() > 0 /* loginMethod(username, password) */)
+        if (userRepository.findUserByUsername(userName) != null)
         {
             sessionManager.ifUserHasSessionDestroy(userName);
             JSONObject sessionData = sessionManager.createSession(userName, request.getRemoteAddr());
@@ -102,6 +118,95 @@ public class HospitalController {
         }
     }
 
+    /*
+    @GetMapping("/register")
+    public String showRegistration(WebRequest request, Model model) {
+        UserDTO userDTO = new UserDTO();
+        model.addAttribute("userDTO", userDTO);
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public ModelAndView processRegistration(@ModelAttribute @Valid UserDTO userDTO, BindingResult result, HttpServletRequest request, Errors errors) {
+
+        if (result.hasErrors()) {
+            System.out.println(result.getAllErrors());
+
+            ModelAndView model = new ModelAndView();
+            System.out.println("===========\n Adding User failed");
+            model.addObject("userDTO", userDTO);
+            model.setViewName("register");
+            return model;
+        }
+
+        try {
+            User registered = regService.registerNewUser(DTOMapper.userDtoToEntity(userDTO));
+            registered.sendEmail(userDTO.getEmail());
+            System.out.println("===========\n User added");
+        } catch (UserAlreadyExistsException e) {
+            ModelAndView model = new ModelAndView();
+            System.out.println("===========\n Adding User failed");
+            model.addObject("userExistsError", "An account for that username/email already exists.");
+            model.addObject("userDTO", userDTO);
+            model.setViewName("register");
+            return model;
+        }
+
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("verify-account");
+        mav.addObject("emailAddress", userDTO.getEmail());
+        return mav;
+    }
+
+    @GetMapping("/verify-account")
+    public ModelAndView showVerifyAccount(WebRequest request, Model model, UserDTO userDTO) {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("verify-account");
+        mav.addObject("user", userDTO);
+        return mav;
+    }
+
+    @PostMapping("/verify-account")
+    public ModelAndView processVerifyAccount(@RequestBody VerificationDTO ver, BindingResult result, HttpServletRequest request) {
+        ModelAndView mav = new ModelAndView();
+        System.out.println("==========\nVerified user");
+
+        if (userRepository.existsByEmailAndCode(ver.email(), Integer.parseInt(ver.code()))) {
+            System.out.println("==========\nVerified user");
+            // User authenticated
+            User u = userRepository.findUserByEmail(ver.email());
+            u.enableAccount();
+            userRepository.save(u);
+            mav.setViewName("verify-account");
+
+            mav.addObject("success");
+            return mav;
+        } else {
+            mav.setViewName("verify-account");
+            mav.addObject("failure");
+            return mav;
+        }
+    }
+
+
+    // Test mapping
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
+    }
+
+    @GetMapping("/listusers")
+    public String getUsers(Model model) {
+        model.addAttribute("users", userRepository.findAll());
+        return "listusers";
+    }
+
+    @GetMapping("/getuser{id}")
+    public String getUserById(@RequestParam int id) {
+        return userRepository.findUserById(id).toString();
+    }
+
+
 
     /**
      * Example method to test if a given user and computer have an active and valid session. Takes in a JSON request object, obtains the client stored username, sessionID
@@ -120,26 +225,115 @@ public class HospitalController {
 
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        System.out.println("=============\ntoads");
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
+    }
 
-    @GetMapping("/findPatientsForDoctor")
-    public String findPatients(@RequestParam String doctor)
+
+
+
+
+
+    @PostMapping("/controlPanel")
+    public String provideControlPanel(@RequestParam String data, HttpServletRequest request)
     {
-        User user = userRepository.findUserByUsername(doctor);
-        if (user.hasRole(roleRepository.findByName("DOCTOR")))
+        JSONArray dataArr = new JSONManager().convertToJSONObject(data);
+        JSONObject sessionObject = (JSONObject) dataArr.get(0);
+        if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
         {
-            return "patients " + patientDetailsRepository.getPatientDetailsByDoctor(doctor).size();
+            User user = userRepository.findUserByUsername((String) sessionObject.get("username"));
+            return "control panel";
         }
-        return "not a doctor";
+        else
+        {
+            return "redirect:login";
+        }
     }
 
 
-    @GetMapping("/findPatientById")
-    public String findPatient(@RequestParam String patientID)
+    @PostMapping("/createPatientService")
+    public String createPatient(@RequestParam String data, HttpServletRequest request)
     {
-        return "";
+        JSONArray dataArr = new JSONManager().convertToJSONObject(data);
+        if (dataArr != null)
+        {
+            if (dataArr.size() > 0)
+            {
+                JSONObject sessionObject = (JSONObject) dataArr.get(0);
+                if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
+                {
+                    User user = userRepository.findUserByUsername((String) sessionObject.get("username"));
+                    if (user.hasRole(roleRepository.findByName("REGULATOR")) || user.hasRole(roleRepository.findByName("MED_ADMIN")))
+                    {
+                        JSONObject dataObject = (JSONObject) dataArr.get(1);
+                        PatientDetails newPatient = new PatientDetails();
+                        newPatient.setFirstName((String) dataObject.get("firstName"));
+                        newPatient.setLastName((String) dataObject.get("firstName"));
+                        newPatient.setMedicalID((int) dataObject.get("medId"));
+                        newPatient.setPhoneNumber((int) dataObject.get("phone"));
+                        newPatient.setAddressL1((String) dataObject.get("firstName"));
+                        newPatient.setAddressTown((String) dataObject.get("firstName"));
+                        newPatient.setAddressPostcode((String) dataObject.get("firstName"));
+                        newPatient.setWeight(Float.parseFloat((String) dataObject.get("firstName")));
+                        newPatient.setHeight(Float.parseFloat((String) dataObject.get("firstName")));
+                        newPatient.setDoctor((String) dataObject.get("firstName"));
+                        patientDetailsRepository.save(newPatient);
+
+                    }
+                    else
+                    {
+                        return "access denied";
+                    }
+                }
+            }
+        }
+
+        return "redirect:login";
     }
 
 
+    @PostMapping("/getUsersService")
+    public String listUsers(@RequestParam String data, HttpServletRequest request)
+    {
+        JSONArray dataArr = new JSONManager().convertToJSONObject(data);
+        if (dataArr != null)
+        {
+            if (dataArr.size() > 0)
+            {
+                JSONObject sessionObject = (JSONObject) dataArr.get(0);
+                if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
+                {
+                    User user = userRepository.findUserByUsername((String) sessionObject.get("username"));
+                    if (user.getRoles().get(0).hasPrivileges(privilegeRepository.findByName("READ_USERS")))
+                    {
+                        ArrayList<User> allUsers = new ArrayList<User>((Collection<? extends User>) userRepository.findAll());
+                        JSONArray usersArray = new JSONArray();
+                        for (User currentUser : allUsers)
+                        {
+                            JSONObject userObj = new JSONObject();
+                            userObj.put("id", currentUser.getId());
+                            userObj.put("username", currentUser.getUsername());
+                            userObj.put("email", currentUser.getEmail());
+                            userObj.put("userType", currentUser.getUserType());
+                            usersArray.add(userObj);
+                        }
+                        return usersArray.toString();
+                    }
+                }
+            }
+        }
+
+        return "redirect:login";
+    }
 
 
 }

@@ -12,6 +12,11 @@ public class Privilege {
 
     private String name;
 
+    public String getName()
+    {
+        return this.name;
+    }
+
     public Privilege(String name)
     {
         this.name = name;

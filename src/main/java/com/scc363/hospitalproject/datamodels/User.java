@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -68,6 +69,12 @@ public class User {
         userType = type;
     }
 
+    public Integer getId()
+    {
+        return this.id;
+    }
+
+
     public String getPassword() {
         return password;
     }
@@ -94,6 +101,11 @@ public class User {
     public void setRoles(Collection<Role> roles)
     {
         this.roles = roles;
+    }
+
+    public ArrayList<Role> getRoles()
+    {
+        return new ArrayList<Role>(this.roles);
     }
 
     public boolean hasRole(Role role)

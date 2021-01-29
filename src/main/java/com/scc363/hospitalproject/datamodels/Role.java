@@ -1,6 +1,7 @@
 package com.scc363.hospitalproject.datamodels;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
@@ -45,6 +46,18 @@ public class Role {
     public void setPrivileges(Collection<Privilege> privileges)
     {
         this.privileges = privileges;
+    }
+
+    public boolean hasPrivileges(Privilege privilege)
+    {
+        for (Privilege assignedPrivilege : this.privileges)
+        {
+            if (assignedPrivilege.getName().equals(privilege.getName()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
