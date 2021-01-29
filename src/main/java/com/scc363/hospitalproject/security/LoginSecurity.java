@@ -1,6 +1,7 @@
 package com.scc363.hospitalproject.security;
 
 import com.scc363.hospitalproject.services.UserDetailsServiceImpl;
+import com.scc363.hospitalproject.utils.CustomPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -63,5 +64,9 @@ public class LoginSecurity extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean PasswordEncoder customPasswordEncoder() {
+        return new CustomPasswordEncoder();
     }
 }
