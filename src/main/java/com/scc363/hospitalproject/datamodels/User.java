@@ -54,6 +54,8 @@ public class User implements UserDetails {
     String code;
     private boolean locked;
 
+    private boolean enabled;
+
 
     public User() {
 
@@ -66,6 +68,8 @@ public class User implements UserDetails {
         this.userType = userType;
         this.first = first;
         this.last = last;
+        this.enabled = false;
+        this.locked = false;
     }
 
     // Getters and setters
@@ -101,7 +105,11 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void setUsername(String username) {
@@ -179,7 +187,7 @@ public class User implements UserDetails {
             MimeMessage message = new MimeMessage(session);
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
             message.setSubject(sub);
-            message.setText(msg);
+            message.setText("http://localhost:8080/verify-account?email=" + getEmail() + "&token=" + msg);
             //send message
             Transport.send(message);
             System.out.println("message sent successfully");
