@@ -56,7 +56,7 @@ public class User implements UserDetails {
     private boolean locked;
 
     // Account is enabled if it has been verified with the email 2fa code.
-    private boolean enabled
+    private boolean enabled;
 
 
     public User() {
@@ -190,7 +190,7 @@ public class User implements UserDetails {
             MimeMessage message = new MimeMessage(session);
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
             message.setSubject(sub);
-            message.setText("http://localhost:8080/verify-account?email=" + getEmail() + "&token=" + msg);
+            message.setText("http://localhost:8080/verify-account?email=" + getEmail() + "&token=" + getCode());
             //send message
             Transport.send(message);
             System.out.println("message sent successfully");

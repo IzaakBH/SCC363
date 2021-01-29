@@ -157,7 +157,7 @@ public class HospitalController {
                     model.addAttribute("failure", false);
                     return "notverified";
                 } else if (u.getCode().equals(token)) {
-                    u.enableAccount();
+                    u.setEnabled(true);
                     userRepository.save(u);
                     model.addAttribute("success", true);
                     return "verified";

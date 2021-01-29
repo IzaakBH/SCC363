@@ -24,7 +24,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = repo.findUserByEmail(email);
 
-
         if (user == null) {
             throw new UsernameNotFoundException("No user exists with the email " + email);
         }
