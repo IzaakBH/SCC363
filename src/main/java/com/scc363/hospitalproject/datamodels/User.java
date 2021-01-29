@@ -52,13 +52,16 @@ public class User implements UserDetails {
     private String last;
 
     String code;
+
     private boolean locked;
 
-    private boolean enabled;
+    // Account is enabled if it has been verified with the email 2fa code.
+    private boolean enabled
 
 
     public User() {
-
+        this.enabled = false;
+        this.locked = false;
     }
 
     public User(String username, String password, String email, String userType, String first, String last) {
@@ -83,6 +86,10 @@ public class User implements UserDetails {
     }
 
     public String getCode() { return code; }
+
+    public void setCode(int code) {
+        this.code = String.valueOf(code);
+    }
 
     public String getUsername() {
         return username;
@@ -162,9 +169,6 @@ public class User implements UserDetails {
         String from = "scc363gr@gmail.com";
         String password = "SCC363group";
         String sub = "Code";
-        CodeGen c = new CodeGen();
-        String msg = String.valueOf(c.generateCode());
-        code = msg;
 
 
         Properties props = new Properties();
@@ -175,7 +179,7 @@ public class User implements UserDetails {
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.port", "465");
         //get Session
-        Session session = Session.getDefaultInstance(props,
+        Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(from,password);
@@ -183,7 +187,6 @@ public class User implements UserDetails {
                 });
         //compose message
         try {
-
             MimeMessage message = new MimeMessage(session);
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
             message.setSubject(sub);

@@ -8,7 +8,7 @@
     </head>
     <body>
 
-        <form class="container register" action="#" th:action="@{/register}" th:object="${userDTO}" method="POST">
+        <form class="container register" th:action="@{/register}" th:object="${userDTO}" method="POST">
 
             <div th:if="${userExistsError}">
                 <p th:text="${userExistsError}"></p>
@@ -69,8 +69,6 @@
             <br>
         </form>
 
-    <!--<form action="/listusers" method="GET">-->
-    <!--    <button>List users</button>-->
-    <!--</form>-->
+
     </body>
 </html>
