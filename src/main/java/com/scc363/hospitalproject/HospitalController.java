@@ -67,42 +67,42 @@ public class HospitalController {
      *     "username"   : "john123"
      * }
      */
-//    @PostMapping("/signin")
-//    public String login(@RequestParam String data, HttpServletRequest request)
-//    {
-//        JSONArray dataArr = new JSONManager().convertToJSONObject(data);
-//        JSONObject dataObj = (JSONObject) dataArr.get(0);
-//        String userName = (String) dataObj.get("userName");
-//        String password = (String) dataObj.get("password");
-//        System.out.println(userName + password);
-//        /*
-//         Example conditional. Should be replaced to login method to check user exists and has provided correct password.
-//         1. Extract salt from DB.
-//         2. Append it to provided password plaintext.
-//         3. Hash new plaintext.
-//         4. Compare digest with DB stored version
-//         5. If equal, success, if not failure.
-//         */
-//        if (userName.length() > 0 && password.length() > 0 /* loginMethod(username, password) */)
-//        {
-//            sessionManager.ifUserHasSessionDestroy(userName);
-//            JSONObject sessionData = sessionManager.createSession(userName, request.getRemoteAddr());
-//            if (sessionData != null)
-//            {
-//                return sessionData.toString();
-//            }
-//            else
-//            {
-//                return new JSONManager(new Pair[]{
-//                        new Pair("result", "incorrect login details")
-//                }).generateJSONObject().toString();
-//            }
-//        }
-//        else
-//        {
-//            return "error[no data provided]";
-//        }
-//    }
+    @PostMapping("/signin")
+    public String login(@RequestParam String data, HttpServletRequest request)
+    {
+        JSONArray dataArr = new JSONManager().convertToJSONObject(data);
+        JSONObject dataObj = (JSONObject) dataArr.get(0);
+        String userName = (String) dataObj.get("userName");
+        String password = (String) dataObj.get("password");
+        System.out.println(userName + password);
+        /*
+         Example conditional. Should be replaced to login method to check user exists and has provided correct password.
+         1. Extract salt from DB.
+         2. Append it to provided password plaintext.
+         3. Hash new plaintext.
+         4. Compare digest with DB stored version
+         5. If equal, success, if not failure.
+         */
+        if (userName.length() > 0 && password.length() > 0 /* loginMethod(username, password) */)
+        {
+            sessionManager.ifUserHasSessionDestroy(userName);
+            JSONObject sessionData = sessionManager.createSession(userName, request.getRemoteAddr());
+            if (sessionData != null)
+            {
+                return sessionData.toString();
+            }
+            else
+            {
+                return new JSONManager(new Pair[]{
+                        new Pair("result", "incorrect login details")
+                }).generateJSONObject().toString();
+            }
+        }
+        else
+        {
+            return "error[no data provided]";
+        }
+    }
 
     @GetMapping("/register")
     public String showRegistration(WebRequest request, Model model) {
