@@ -18,29 +18,29 @@
             <div>
                 <label for="first">First name</label>
                 <input name="first" th:field="*{first}" id="first" placeholder="First Name" type = "text" >
-                <div th:if="${#fields.hasErrors('first')}" th:errors="*{first}"></div>
+                <div style="color:red;" th:if="${#fields.hasErrors('first')}" th:errors="*{first}"/>
             </div>
             <div>
                 <label for="last">Last name</label>
                 <input name="last" th:field="*{last}" id="last" placeholder="Last Name"  type = "text" >
-                <div th:if="${#fields.hasErrors('last')}" th:errors="*{last}"></div>
+                <div style="color:red;" th:if="${#fields.hasErrors('last')}" th:errors="*{last}"/>
             </div>
 
             <div>
                 <label for="userName">Username</label>
                 <input name="userName" th:field="*{username}" id="userName" placeholder="Username" type = "text" >
-                <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                <div style="color:red;" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"/>
             </div>
             <div>
                 <label for="email">Email address</label>
                 <input name="email" th:field="*{email}" id="email" placeholder="example@example.com" type = "text">
-                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                <div style="color:red;" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"/>
             </div>
             <div>
                 <label for="password">Password</label>
                 <input name="password" th:field="*{password}" id="password" placeholder="Password" type = "text" onkeyup="evaluatePassword(this)" onpaste="evaluatePassword(this)">
                 <div id="rating"/>
-                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"/>
             </div>
 
             <br>
