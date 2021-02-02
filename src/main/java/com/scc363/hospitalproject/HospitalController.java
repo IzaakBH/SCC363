@@ -14,6 +14,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,8 +30,12 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @Controller
-public class HospitalController {
+public class HospitalController
+{
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -38,19 +43,17 @@ public class HospitalController {
     @Autowired
     private RegistrationService regService;
 
+    @Autowired
+    private LoginService loginService;
+
     private final SessionManager sessionManager = new SessionManager();
 
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
-
     @GetMapping("/signin")
-    public String login(WebRequest request, Model model) {
-        UserDTO u = new UserDTO();
-        model.addAttribute("user", u);
+    public String login()
+    {
         return "signin";
     }
+
 
     /**
      * Example login method to check, first of all if a user exists and if they have provided the correct password, secondly to
@@ -67,41 +70,33 @@ public class HospitalController {
      *     "username"   : "john123"
      * }
      */
-    @PostMapping("/signin")
+    @PostMapping("/createSession")
+    @ResponseBody
     public String login(@RequestParam String data, HttpServletRequest request)
     {
         JSONArray dataArr = new JSONManager().convertToJSONObject(data);
         JSONObject dataObj = (JSONObject) dataArr.get(0);
-        String userName = (String) dataObj.get("userName");
+        String userName = (String) dataObj.get("username");
         String password = (String) dataObj.get("password");
         System.out.println(userName + password);
-        /*
-         Example conditional. Should be replaced to login method to check user exists and has provided correct password.
-         1. Extract salt from DB.
-         2. Append it to provided password plaintext.
-         3. Hash new plaintext.
-         4. Compare digest with DB stored version
-         5. If equal, success, if not failure.
-         */
-        if (userName.length() > 0 && password.length() > 0 /* loginMethod(username, password) */)
+        if (loginService.isAuthenticated(userName, password))
         {
             sessionManager.ifUserHasSessionDestroy(userName);
             JSONObject sessionData = sessionManager.createSession(userName, request.getRemoteAddr());
             if (sessionData != null)
             {
+                System.out.println("========= created session ---------");
                 return sessionData.toString();
             }
-            else
-            {
-                return new JSONManager(new Pair[]{
-                        new Pair("result", "incorrect login details")
-                }).generateJSONObject().toString();
-            }
         }
-        else
-        {
-            return "error[no data provided]";
-        }
+        return new JSONManager().getResponseObject(false);
+    }
+
+    @RequestMapping(value="/testHome", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String testAll()
+    {
+        return "test home";
     }
 
     @GetMapping("/register")
@@ -255,14 +250,20 @@ public class HospitalController {
      * @param request automatically provided request header to extract client IP from
      * @return JSON string result of authenticatio.
      */
-    @PostMapping("/isAuth")
-    public String isAuthenticated(@RequestParam String data, HttpServletRequest request)
+    @PostMapping("/controlPanel")
+    public String isAuthenticated(@RequestParam(required = false) String data, HttpServletRequest request)
     {
 
-        JSONArray dataArr = new JSONManager().convertToJSONObject(data); //converts JSON string into JSON object
-        JSONObject sessionObject = (JSONObject) dataArr.get(0); //This is the position in the JSON array that the session credentials have been stored.
-        return new JSONManager().getResponseObject(sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()));
-
+        if (data != null)
+        {
+            JSONArray dataArr = new JSONManager().convertToJSONObject(data); //converts JSON string into JSON object
+            JSONObject sessionObject = (JSONObject) dataArr.get(0); //This is the position in the JSON array that the session credentials have been stored.
+            if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
+            {
+                return "hello";
+            }
+        }
+        return "signin";
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -277,5 +278,6 @@ public class HospitalController {
         });
         return errors;
     }
+
 
 }
