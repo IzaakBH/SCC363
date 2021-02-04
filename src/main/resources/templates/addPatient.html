@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>363</title>
+</head>
+<body>
+
+<form action="#" th:action="@{/addPatient}" th:object="${patient}" method="POST">
+  <p>Add customer</p>
+
+  <div>
+    <label for="firstName">First Name</label>
+    <input name="firstName" th:field="*{firstName}" id="firstName" placeholder="John">
+    <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+  </div>
+  <div>
+    <label for="lastName">Last Name</label>
+    <input name="lastName" th:field="*{lastName}" id="lastName" placeholder="Appleseed">
+    <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+  </div>
+  <div>
+    <label for="medicalID">Medical ID</label>
+    <input name="medicalID" th:field="*{medicalID}" id="medicalID" placeholder="D12345">
+    <span th:if="${#fields.hasErrors('medicalID')}" th:errors="*{medicalID}"></span>
+  </div>
+
+  <div>
+    <label for="address">Address</label>
+    <input name="address" th:field="*{address}" id="address" placeholder="1 Balmoral Road, Lancaster, Lancashire, LA1 3BT">
+    <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+  </div>
+
+  <div>
+    <label for="dateOfBirth">Date of Birth</label>
+    <input type="date" name="dateOfBirth" th:field="*{dateOfBirth}" id="dateOfBirth">
+    <span th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></span>
+  </div>
+
+  <div>
+    <label for="weight">Weight (KG)</label>
+    <input name="weight" th:field="*{weight}" id="weight" placeholder="100">
+    <span th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}"></span>
+  </div>
+
+  <div>
+    <label for="height">Height (cm)</label>
+    <input name="height" th:field="*{height}" id="height" placeholder="100">
+    <span th:if="${#fields.hasErrors('height')}" th:errors="*{height}"></span>
+  </div>
+
+  <div>
+    <label for="doctor">Patient's Doctor</label>
+    <select id="doctor" th:field="*{doctor}" name="doctor">
+      <option value="SYSADMIN">Doc1</option>
+      <option value="DOCTOR">doc2</option>
+      <option value="NURSE">doc3</option>
+      <option value="PATIENT">doc4</option>
+      <option value="REGULATOR">doc5</option>
+      <option value="MEDADMIN">doc6</option>
+    </select>
+  </div>
+  <div>
+    <button>Add Patient</button>
+  </div>
+</form>
+</body>
+</html>

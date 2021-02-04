@@ -22,9 +22,7 @@ public class PatientDetails {
 
     private Integer phoneNumber;
 
-    private String addressL1; //House number and street /name
-    private String addressTown;
-    private String addressPostcode;
+    private String address;
 
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
@@ -60,28 +58,12 @@ public class PatientDetails {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAddressL1() {
-        return addressL1;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAddressL1(String addressL1) {
-        this.addressL1 = addressL1;
-    }
-
-    public String getAddressTown() {
-        return addressTown;
-    }
-
-    public void setAddressTown(String addressTown) {
-        this.addressTown = addressTown;
-    }
-
-    public String getAddressPostcode() {
-        return addressPostcode;
-    }
-
-    public void setAddressPostcode(String addressPostcode) {
-        this.addressPostcode = addressPostcode;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getDateOfBirth() {

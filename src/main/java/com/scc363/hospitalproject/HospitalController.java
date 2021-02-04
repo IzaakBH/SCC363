@@ -280,9 +280,7 @@ public class HospitalController {
                         newPatient.setLastName((String) dataObject.get("firstName"));
                         newPatient.setMedicalID((int) dataObject.get("medId"));
                         newPatient.setPhoneNumber((int) dataObject.get("phone"));
-                        newPatient.setAddressL1((String) dataObject.get("firstName"));
-                        newPatient.setAddressTown((String) dataObject.get("firstName"));
-                        newPatient.setAddressPostcode((String) dataObject.get("firstName"));
+                        newPatient.setAddress((String) dataObject.get("firstName"));
                         newPatient.setWeight(Float.parseFloat((String) dataObject.get("firstName")));
                         newPatient.setHeight(Float.parseFloat((String) dataObject.get("firstName")));
                         newPatient.setDoctor((String) dataObject.get("firstName"));
