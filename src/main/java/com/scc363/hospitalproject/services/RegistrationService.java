@@ -4,7 +4,7 @@ import com.scc363.hospitalproject.datamodels.User;
 import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import com.scc363.hospitalproject.utils.CodeGen;
-import com.scc363.hospitalproject.security.LoginSecurity;
+//import com.scc363.hospitalproject.security.LoginSecurity;
 import com.scc363.hospitalproject.utils.DTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

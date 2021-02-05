@@ -11,13 +11,7 @@ import com.scc363.hospitalproject.constraints.ValidPassword;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.scc363.hospitalproject.utils.CodeGen;
-import com.scc363.hospitalproject.Constraints.UniqueEmail;
-import com.scc363.hospitalproject.Constraints.UniqueUsername;
-import com.scc363.hospitalproject.Constraints.ValidPassword;
-import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.sun.istack.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
