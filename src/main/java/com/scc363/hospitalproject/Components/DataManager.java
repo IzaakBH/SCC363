@@ -61,11 +61,11 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
         Privilege deletePatients = createPrivilege("DELETE_PATIENTS");
 
 
-        createRole("REGULATOR", Arrays.asList(readUsers, readPatients, writeUsers, writePatients, updateUsers, updatePatients, deleteUsers, deletePatients));
+        createRole("REGULATOR", Arrays.asList(readUsers, readPatients, updateUsers, updatePatients));
         createRole("SYSTEM_ADMIN", Arrays.asList(readUsers, writeUsers, updateUsers, deleteUsers));
         createRole("DOCTOR", Arrays.asList(readPatients, updatePatients));
         createRole("NURSE", Arrays.asList(readPatients, updatePatients));
-        createRole("MED_ADMIN", Arrays.asList(readPatients, writePatients));
+        createRole("MED_ADMIN", Arrays.asList(readPatients, writePatients, deletePatients));
         createRole("PATIENT", Collections.singletonList(readPatients));
 
         User testUser = new User();

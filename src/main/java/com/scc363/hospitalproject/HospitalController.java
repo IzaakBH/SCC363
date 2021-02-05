@@ -333,7 +333,7 @@ public class HospitalController {
                 if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
                 {
                     User user = userRepository.findUserByUsername((String) sessionObject.get("username"));
-                    if (user.hasRole(roleRepository.findByName("REGULATOR")) || user.hasRole(roleRepository.findByName("MED_ADMIN")))
+                    if (user.hasRole(roleRepository.findByName("MED_ADMIN")))
                     {
                         JSONObject dataObject = (JSONObject) dataArr.get(1);
                         PatientDetails newPatient = new PatientDetails();
