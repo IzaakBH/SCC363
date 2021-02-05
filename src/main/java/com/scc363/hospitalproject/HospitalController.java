@@ -69,24 +69,8 @@ public class HospitalController {
     @GetMapping("/test")
     public String test() {
         return "test";
-
-    /*
-    @GetMapping("/signin")
-    public String login(WebRequest request, Model model) {
-        UserDTO u = new UserDTO();
-        model.addAttribute("user", u);
-        return "signin";
     }
 
-    @GetMapping("/signin")
-    public String login(WebRequest request, Model model) {
-        UserDTO u = new UserDTO();
-        model.addAttribute("user", u);
-        return "signin";
-    }
-
-
-     */
     /**
      * Example login method to check, first of all if a user exists and if they have provided the correct password, secondly to
      * create a new session having destroy any existing ones using the ifUserHasSessionDestroy() method, then returning the
