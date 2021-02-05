@@ -12,15 +12,31 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.scc363.hospitalproject.utils.CodeGen;
+import com.scc363.hospitalproject.Constraints.UniqueEmail;
+import com.scc363.hospitalproject.Constraints.UniqueUsername;
+import com.scc363.hospitalproject.Constraints.ValidPassword;
+import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
+import com.sun.istack.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 @Entity
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -131,6 +147,12 @@ public class User implements UserDetails {
         userType = type;
     }
 
+    public Integer getId()
+    {
+        return this.id;
+    }
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority sga = new SimpleGrantedAuthority(userType);
@@ -197,6 +219,37 @@ public class User implements UserDetails {
         } catch (MessagingException e) {throw new RuntimeException(e);}
     }
 
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles;
+
+    public void setRoles(Collection<Role> roles)
+    {
+        this.roles = roles;
+    }
+
+    public ArrayList<Role> getRoles()
+    {
+        return new ArrayList<Role>(this.roles);
+    }
+
+    public boolean hasRole(Role role)
+    {
+        for (Role assignedRole : this.roles)
+        {
+            if (assignedRole.getName().equals(role.getName()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
 

@@ -9,6 +9,8 @@ import java.util.Date;
 
 @Entity
 public class PatientDetails {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -20,9 +22,7 @@ public class PatientDetails {
 
     private Integer phoneNumber;
 
-    private String addressL1; //House number and street /name
-    private String addressTown;
-    private String addressPostcode;
+    private String address;
 
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
@@ -30,6 +30,9 @@ public class PatientDetails {
     private float weight; //KG
 
     private float height; //CM
+    private String doctor;
+
+
 
     // Formats date as so: 10 April 2020.
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMMM yyyy");
@@ -55,28 +58,12 @@ public class PatientDetails {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAddressL1() {
-        return addressL1;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAddressL1(String addressL1) {
-        this.addressL1 = addressL1;
-    }
-
-    public String getAddressTown() {
-        return addressTown;
-    }
-
-    public void setAddressTown(String addressTown) {
-        this.addressTown = addressTown;
-    }
-
-    public String getAddressPostcode() {
-        return addressPostcode;
-    }
-
-    public void setAddressPostcode(String addressPostcode) {
-        this.addressPostcode = addressPostcode;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getDateOfBirth() {
@@ -89,6 +76,11 @@ public class PatientDetails {
 
     public float getWeight() {
         return weight;
+    }
+
+    public String getDoctor()
+    {
+        return doctor;
     }
 
     public void setWeight(float weight) {
@@ -118,4 +110,11 @@ public class PatientDetails {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public void setDoctor(String doctor)
+    {
+        this.doctor = doctor;
+    }
+
+
 }
