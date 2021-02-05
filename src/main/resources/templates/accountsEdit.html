@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+    <head>
+        <title>Accounts</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body>
+        <div class="expand editPage">
+            <div style = "margin-left: 40%; margin-top: 10%;">
+                <p id="text">First Name:</p>
+                <input></input>
+                <p id="text">Last Name:</p>
+                <input></input>
+                <p id="text">Email address:</p>
+                <input></input>
+                <p id="text">Password:</p>
+                <input></input>
+                <p id="text">Account type:</p>
+                <select id="userType" name="userType">
+                    <option value="SYSADMIN">Sysadmin</option>
+                    <option value="DOCTOR">Doctor</option>
+                    <option value="NURSE">Nurse</option>
+                    <option value="PATIENT">Patient</option>
+                    <option value="REGULATOR">Regulator</option>
+                    <option value="MEDADMIN">Medical Admin</option>
+                </select>
+                <br><br><br>
+                <button id = "unlock">Unlock this account</button>
+                <button id = "lock">Locked this account</button>
+            </div>
+            
+            <button id = "save" style = "margin-left: 70%; margin-top: 10%;" >Save</button>
+            <button id = "delete">Delete</button>
+            <button id = "cancel">Cancel/Back</button>
+        </div>
+    </body>
+</html>
