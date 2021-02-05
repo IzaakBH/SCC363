@@ -20,6 +20,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -60,15 +61,26 @@ public class HospitalController {
     @Autowired
     private RegistrationService regService;
 
+    @Autowired
+    private LoginService loginService;
+
+    private final SessionManager sessionManager = new SessionManager();
+
     /*
     @Autowired
     private RegistrationService regService;
-*/
-    private final SessionManager sessionManager = new SessionManager();
+
 
     @GetMapping("/test")
     public String test() {
         return "test";
+    }
+
+    @GetMapping("/signin")
+    public String login(WebRequest request, Model model) {
+        UserDTO u = new UserDTO();
+        model.addAttribute("user", u);
+        return "signin";
     }
 
     /**
@@ -86,28 +98,22 @@ public class HospitalController {
      *     "username"   : "john123"
      * }
      */
-    @PostMapping("/signin")
+    @PostMapping("/createSession")
+    @ResponseBody
     public String login(@RequestParam String data, HttpServletRequest request)
     {
         JSONArray dataArr = new JSONManager().convertToJSONObject(data);
         JSONObject dataObj = (JSONObject) dataArr.get(0);
-        String userName = (String) dataObj.get("userName");
+        String userName = (String) dataObj.get("username");
         String password = (String) dataObj.get("password");
         System.out.println(userName + password);
-        /*
-         Example conditional. Should be replaced to login method to check user exists and has provided correct password.
-         1. Extract salt from DB.
-         2. Append it to provided password plaintext.
-         3. Hash new plaintext.
-         4. Compare digest with DB stored version
-         5. If equal, success, if not failure.
-         */
-        if (userRepository.findUserByUsername(userName) != null)
+        if (loginService.isAuthenticated(userName, password))
         {
             sessionManager.ifUserHasSessionDestroy(userName);
             JSONObject sessionData = sessionManager.createSession(userName, request.getRemoteAddr());
             if (sessionData != null)
             {
+                System.out.println("========= created session ---------");
                 return sessionData.toString();
             }
             else
@@ -117,11 +123,9 @@ public class HospitalController {
                 }).generateJSONObject().toString();
             }
         }
-        else
-        {
-            return "error[no data provided]";
-        }
+        return new JSONManager().getResponseObject(false);
     }
+
 
     @GetMapping("/register")
     public String showRegistration(WebRequest request, Model model) {
@@ -266,95 +270,6 @@ public class HospitalController {
     }
 
 
-    /*
-    @GetMapping("/register")
-    public String showRegistration(WebRequest request, Model model) {
-        UserDTO userDTO = new UserDTO();
-        model.addAttribute("userDTO", userDTO);
-        return "register";
-    }
-
-    @PostMapping("/register")
-    public ModelAndView processRegistration(@ModelAttribute @Valid UserDTO userDTO, BindingResult result, HttpServletRequest request, Errors errors) {
-
-        if (result.hasErrors()) {
-            System.out.println(result.getAllErrors());
-
-            ModelAndView model = new ModelAndView();
-            System.out.println("===========\n Adding User failed");
-            model.addObject("userDTO", userDTO);
-            model.setViewName("register");
-            return model;
-        }
-
-        try {
-            User registered = regService.registerNewUser(DTOMapper.userDtoToEntity(userDTO));
-            registered.sendEmail(userDTO.getEmail());
-            System.out.println("===========\n User added");
-        } catch (UserAlreadyExistsException e) {
-            ModelAndView model = new ModelAndView();
-            System.out.println("===========\n Adding User failed");
-            model.addObject("userExistsError", "An account for that username/email already exists.");
-            model.addObject("userDTO", userDTO);
-            model.setViewName("register");
-            return model;
-        }
-
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("verify-account");
-        mav.addObject("emailAddress", userDTO.getEmail());
-        return mav;
-    }
-
-    @GetMapping("/verify-account")
-    public ModelAndView showVerifyAccount(WebRequest request, Model model, UserDTO userDTO) {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("verify-account");
-        mav.addObject("user", userDTO);
-        return mav;
-    }
-
-    @PostMapping("/verify-account")
-    public ModelAndView processVerifyAccount(@RequestBody VerificationDTO ver, BindingResult result, HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView();
-        System.out.println("==========\nVerified user");
-
-        if (userRepository.existsByEmailAndCode(ver.email(), Integer.parseInt(ver.code()))) {
-            System.out.println("==========\nVerified user");
-            // User authenticated
-            User u = userRepository.findUserByEmail(ver.email());
-            u.enableAccount();
-            userRepository.save(u);
-            mav.setViewName("verify-account");
-
-            mav.addObject("success");
-            return mav;
-        } else {
-            mav.setViewName("verify-account");
-            mav.addObject("failure");
-            return mav;
-        }
-    }
-
-
-    // Test mapping
-    @GetMapping("/hello")
-    public String hello() {
-        return "hello";
-    }
-
-    @GetMapping("/listusers")
-    public String getUsers(Model model) {
-        model.addAttribute("users", userRepository.findAll());
-        return "listusers";
-    }
-
-    @GetMapping("/getuser{id}")
-    public String getUserById(@RequestParam int id) {
-        return userRepository.findUserById(id).toString();
-    }
-
-
 
     /**
      * Example method to test if a given user and computer have an active and valid session. Takes in a JSON request object, obtains the client stored username, sessionID
@@ -363,14 +278,20 @@ public class HospitalController {
      * @param request automatically provided request header to extract client IP from
      * @return JSON string result of authenticatio.
      */
-    @PostMapping("/isAuth")
-    public String isAuthenticated(@RequestParam String data, HttpServletRequest request)
+    @PostMapping("/controlPanel")
+    public String isAuthenticated(@RequestParam(required = false) String data, HttpServletRequest request)
     {
 
-        JSONArray dataArr = new JSONManager().convertToJSONObject(data); //converts JSON string into JSON object
-        JSONObject sessionObject = (JSONObject) dataArr.get(0); //This is the position in the JSON array that the session credentials have been stored.
-        return new JSONManager().getResponseObject(sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()));
-
+        if (data != null)
+        {
+            JSONArray dataArr = new JSONManager().convertToJSONObject(data); //converts JSON string into JSON object
+            JSONObject sessionObject = (JSONObject) dataArr.get(0); //This is the position in the JSON array that the session credentials have been stored.
+            if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
+            {
+                return "hello";
+            }
+        }
+        return "signin";
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -391,21 +312,7 @@ public class HospitalController {
 
 
 
-    @PostMapping("/controlPanel")
-    public String provideControlPanel(@RequestParam String data, HttpServletRequest request)
-    {
-        JSONArray dataArr = new JSONManager().convertToJSONObject(data);
-        JSONObject sessionObject = (JSONObject) dataArr.get(0);
-        if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
-        {
-            User user = userRepository.findUserByUsername((String) sessionObject.get("username"));
-            return "control panel";
-        }
-        else
-        {
-            return "redirect:login";
-        }
-    }
+
 
     @GetMapping("/addPatient")
     public String getCreatePatient(Model model) {
@@ -488,19 +395,6 @@ public class HospitalController {
     }
 
 
-    @GetMapping("/login")
-    public String showLogin()
-    {
-        return "login.html";
-    }
-
-
-
-    @PostMapping("/testFo")
-    @ResponseBody public String testFor(@RequestParam String data)
-    {
-        return String.format("%s", data);
-    }
 
 
 }

@@ -1,20 +1,16 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html>
     <head>
         <title>Register_Login</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link rel="stylesheet" href="css/style.css">
+        <script src="js/Services.js"></script>
     </head>
     <body>
 
-        <form th:action="@{/signin}" method="POST">
 
             <div class="container">
 
-                <div th:if="${param.error}">
-                    Invalid username and password.
-                </div>
                 <br>
                 <br>
                 <br>
@@ -23,15 +19,15 @@
                 <br>
                 <br>
                 <label >Username : </label>
-                <input type="text" placeholder="Enter Username" name="username" required>
+                <input type="text" id="username" placeholder="Enter Username" name="username" required>
                 <br>
                 <br>
                 <label >Password : </label>
-                <input type="password" placeholder="Enter Password" name="password" required>
+                <input type="password" id="password" placeholder="Enter Password" name="password" required>
                 <br>
                 <br>
 
-                <button>Sign in</button>
+                <button onclick="login(document.getElementById('username').value, document.getElementById('password').value)">Sign in</button>
                 <br>
                 <br>
                 <a href="#">Forgot password? </a>
@@ -41,6 +37,5 @@
                 <br>
                 <br>
             </div>
-        </form>
     </body>
 </html>

@@ -17,6 +17,7 @@ public class Session
     private String user;
     private byte[] challenge;
 
+
     public Session(PublicKey key, String sessionID, SecretKey aesKey, String user, byte[] challenge)
     {
         this.publicKey = key;
