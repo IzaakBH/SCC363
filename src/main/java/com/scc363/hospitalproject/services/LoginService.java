@@ -25,13 +25,7 @@ public class LoginService implements LoginInterface
         User user = repo.findUserByUsername(username);
         if(user != null)
         {
-            System.out.println("provided password " + pEncoder.encode(password));
-            System.out.println("password ONF " + user.getPassword());
             return (user.getUsername().equals(username) && pEncoder.matches(password, user.getPassword()));
-        }
-        else
-        {
-            System.out.println("no user found");
         }
         return false;
     }

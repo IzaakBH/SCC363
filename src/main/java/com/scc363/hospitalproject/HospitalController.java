@@ -92,12 +92,6 @@ public class HospitalController
         return new JSONManager().getResponseObject(false);
     }
 
-    @RequestMapping(value="/testHome", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public String testAll()
-    {
-        return "test home";
-    }
 
     @GetMapping("/register")
     public String showRegistration(WebRequest request, Model model) {
@@ -173,56 +167,6 @@ public class HospitalController
         }
         return "notverified";
     }
-
-//    @GetMapping("/verify-account")
-//    public String showVerifyAccount(WebRequest request, Model model) {
-////        ModelAndView mav = new ModelAndView();
-////        mav.setViewName("verify-account");
-////        mav.addObject("verification", new VerificationDTO());
-//        model.addAttribute("verification", new VerificationDTO());
-////        return mav;
-//        return "verify-account";
-//    }
-//
-//    @PostMapping("/verify-account")
-//    public ModelAndView processVerifyAccount(@ModelAttribute("verification") @Valid VerificationDTO verification, BindingResult result, HttpServletRequest request, Errors errors) {
-////        JSONArray data = new JSONManager().convertToJSONObject(ver);
-////        System.out.println(data);
-////        JSONObject dataObj = (JSONObject) data.get(0);
-////        String email = (String) dataObj.get("email");
-////        String code = (String) dataObj.get("code");
-//        ModelAndView mav = new ModelAndView();
-////        System.out.println("==========\nVerified user");
-////        System.out.println(email);
-////        System.out.println(code);
-//        String email = verification.email();
-//        String code = verification.code();
-//
-//        if (result.hasErrors()) {
-//            System.out.println(result.getAllErrors());
-//
-//            mav.setViewName("verify-account");
-//
-//            return mav;
-//        }
-//
-//        if (userRepository.existsByEmailAndCode(email, Integer.parseInt(code))) {
-//            System.out.println("==========\nVerified user");
-//            // User authenticated
-//            User u = userRepository.findUserByEmail(email);
-//            u.enableAccount();
-//            userRepository.save(u);
-//            mav.setViewName("verify-account");
-//
-//            mav.addObject("success");
-//            return mav;
-//        } else {
-//            mav.setViewName("verify-account");
-//            mav.addObject("failure");
-//            return mav;
-//        }
-//    }
-
 
     // Test mapping
     @GetMapping("/hello")
