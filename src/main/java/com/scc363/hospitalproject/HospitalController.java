@@ -259,6 +259,12 @@ public class HospitalController {
         }
     }
 
+    @GetMapping("/addPatient")
+    public String getCreatePatient(Model model) {
+        model.addAttribute("patient", new PatientDetails());
+        return "addPatient";
+    }
+
 
     @PostMapping("/createPatientService")
     public String createPatient(@RequestParam String data, HttpServletRequest request)
