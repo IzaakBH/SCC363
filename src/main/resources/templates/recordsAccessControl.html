@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+    <head>
+        <title>Records Access Control</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body>
+        <div class="expand editPage">
+            <div style = "margin-left: 35%; margin-top: 10%;">
+                <p id="text">Patient:</p>
+                <select id="patient" name="patient">
+                    <option value="patient 1">patient 1</option>
+                    <option value="patient 2">patient 2</option>
+                    <option value="patient 3 ">patient 3</option>
+                    <option value="patient 4">patient 4</option>
+                    <option value="patient 5">patient 5</option>
+                    <option value="patient 6">patient 6</option>
+                </select>
+                <p id="text">Assign to: (Hold control to select multiple)</p>
+                <select id="patient" name="patient" multiple>
+                    <option value="Doctor 1">Doctor 1</option>
+                    <option value="Doctor 2">Doctor 2</option>
+                    <option value="Doctor 3 ">Doctor 3</option>
+                    <option value="Nurse 1">Nurse 1</option>
+                    <option value="Nurse 2">Nurse 2</option>
+                    <option value="Nurse 3">Nurse 3</option>
+                </select><br><br><br>
+                <input type="checkbox" id= "transfer" />
+                <label for="transfer" id="text"> Transfer patient (You will lose access to this patient's record after transfer)</label>
+            </div>
+            
+            <button id = "save" style = "margin-left: 70%; margin-top: 10%;" >Save</button>
+            <button id = "cancel">Cancel/Back</button>
+        </div>
+    </body>
+</html>

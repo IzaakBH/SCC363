@@ -15,6 +15,7 @@ function evaluatePassword(pass){
     var length = pass.value.length;
     if (length < 11) {
         document.getElementById("rating").innerHTML = "Password must be at least 11 in length";
+        document.getElementById("rating").style.color = "red";
         document.getElementById("submit").disabled = true;
         return;
     }
@@ -64,6 +65,7 @@ function evaluatePassword(pass){
     if(spCharCheckFail !=0){
         rating = "Password must contain ".concat(rating);
         document.getElementById("rating").innerHTML = rating;
+        document.getElementById("rating").style.color = "red";
         document.getElementById("submit").disabled = true;
         return;
     }
@@ -100,12 +102,15 @@ function evaluatePassword(pass){
 
     if (score < 50 && score != 0){
         rating = "Weak Password";
+        document.getElementById("rating").style.color = "red";
     }
     else if(score <70){
         rating = "Good Password";
+        document.getElementById("rating").style.color = "yellow";
     }
     else{
         rating = "Strong Password"
+        document.getElementById("rating").style.color = "green";
     }
     document.getElementById("rating").innerHTML = rating;
     if (score > 50){

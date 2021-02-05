@@ -1,64 +1,137 @@
 body{
-    font-family:Arial, Helvetica, sans-serif;
-    background-image : url("../img/background.jpg");
-    background-repeat: no-repeat; 
+  font-family:Arial, Helvetica, sans-serif;
+  background-image : url("../img/background.jpg");
+  background-repeat: no-repeat; 
 }
 
 button {   
-    background-color: #484849;
-    align-items: center;   
-    width: 70%;
-    padding: 10px;
-    color: rgb(255, 255, 255);    
-    border: none;   
-    cursor: pointer;   
+  background-color: #484849;
+  align-items: center;  
+  border: none;   
+  cursor: pointer;   
 }
-    
-    
+
+#text {
+  color: white;
+}
+
+#save, #unlock{
+  padding: 10px;
+  color: lime;
+  font-weight: bold;
+}
+
+#delete, #lock{
+  padding: 10px;
+  color: rgb(255, 53, 38);
+  font-weight: bold;
+}
+
+#cancel {
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+
+}
+
+#new {
+  margin-left: 80%;
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+}
+
+#ac {
+  margin-bottom: 20%;
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+}
+
+.edit {
+  background-color: #484849;
+  color: white;
+} 
+
+#submit {
+  width: 70%;
+  padding: 10px;
+  color: rgb(255, 255, 255);  
+}
+
+.records {
+Color: white;
+column-fill: balance;
+}
+  
+  
 form {
-    color: rgba(255, 153, 36, 0.5);
-    /*height: relative;*/
-    float:right;
-    margin-right: 100px;
-    border: 3px solid #f1f1f1;  
-    width: 30%;
-    margin-top: 100px;
-    opacity: 80%;
-    text-align: center;
-    margin-left: 50px;
+  color: rgba(255, 153, 36, 0.5);
+  /*height: relative;*/
+  float:right;
+  margin-right: 100px;
+  border: 3px solid #f1f1f1;  
+  width: 30%;
+  margin-top: 100px;
+  opacity: 80%;
+  text-align: center;
+  margin-left: 50px;
 }   
 
 
 input[type=text], input[type=password] {   
-    width: 35%;   
-    margin: 8px 0;  
-    padding: 12px 20px;   
-    display: inline-block;   
-    border: 2px solid rgb(255, 255, 255);   
-    box-sizing: border-box; 
+  width: 35%;   
+  margin: 8px 0;  
+  padding: 12px 20px;   
+  display: inline-block;   
+  border: 2px solid rgb(255, 255, 255);   
+  box-sizing: border-box; 
 }  
 
 input[type=code]{   
-    width: 35%;  
-    text-align: center; 
-    margin: 8px 0;  
-    padding: 12px 20px;   
-    display: inline-block;   
-    border: 2px solid rgb(0, 0, 0);   
-    box-sizing: border-box; 
+  width: 35%;  
+  text-align: center; 
+  margin: 8px 0;  
+  padding: 12px 20px;   
+  display: inline-block;   
+  border: 2px solid rgb(0, 0, 0);   
+  box-sizing: border-box; 
 }  
 
 
 button:hover {   
-    opacity: 0.7;   
+  opacity: 0.7;   
 }   
         
      
 .container {  
-    text-align:center;
-    height:100%;  
-    background-color: black;
+  text-align:center;
+  height:100%;  
+  background-color: black;
 }
+
+.expand {
+  margin: auto;
+  background-color: black;
+  width: 93%;
+  height: 670px;
+  opacity: 80%;
+  column-count: 5;
+}
+
+.editPage{
+  height: 735px;
+  column-count: 1;
+}
+
+/* #recordName {
+  margin-left: 60%;
+} */
+
+/* #editArea {
+  margin-left: 60%;
+  margin-top: 10%;
+} */
     
 .name{
     margin-top: 50px;
@@ -72,51 +145,75 @@ button:hover {
 
 /* The Modal (background) */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  }
-  
-  /* Modal Content */
-  .modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-  }
-  
-  /* The Close Button */
-  
-  .close {
-    float: right;
-    color: #aaaaaa;
-    text-align: center;
-    font-weight: bold;
-    width: 20%;
-  }
-  
-  .close:hover,
-  .close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-  }
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
 
-  .label{
-      margin-top: 100px;
-      margin-bottom: 200px;
-  }
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
   
-  .a{
-    margin-top: 200px;
+/* The Close Button */
+
+.close {
+  float: right;
+  color: #aaaaaa;
+  text-align: center;
+  font-weight: bold;
+  width: 20%;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.label{
+    margin-top: 100px;
     margin-bottom: 200px;
+}
+
+.a{
+  margin-top: 200px;
+  margin-bottom: 200px;
+}
+
+.btn-group button {
+  background-color: #525252;
+  color: white;
+  cursor: pointer;
+  padding: 10px 150px;
+  float: left;
+}
+
+.btn-group {
+  margin: auto;
+  width: 95%;
+  padding-left: 2%;
+}
+
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+  
+.btn-group button:hover {
+  opacity: 0.7;
 }
