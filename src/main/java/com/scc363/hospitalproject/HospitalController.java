@@ -23,7 +23,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
-
+import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -38,6 +38,7 @@ public class HospitalController {
     @Autowired
     private RegistrationService regService;
 
+    private Logger logger = Logger.getLogger(HospitalController.class);
     private final SessionManager sessionManager = new SessionManager();
 
     @GetMapping("/test")
@@ -106,6 +107,7 @@ public class HospitalController {
 
     @GetMapping("/register")
     public String showRegistration(WebRequest request, Model model) {
+        logger.info("registration");
         UserDTO userDTO = new UserDTO();
         model.addAttribute("userDTO", userDTO);
         return "register";
@@ -113,7 +115,7 @@ public class HospitalController {
 
     @PostMapping("/register")
     public ModelAndView processRegistration(@ModelAttribute @Valid UserDTO userDTO, BindingResult result, HttpServletRequest request, Errors errors) {
-
+        logger.info("registration");
         if (result.hasErrors()) {
             System.out.println(result.getAllErrors());
 
