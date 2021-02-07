@@ -66,6 +66,11 @@ public class HospitalController {
 
     private final SessionManager sessionManager = new SessionManager();
 
+    @GetMapping("/login")
+    public String login() {
+        return "signin";
+    }
+
     /*
     @Autowired
     private RegistrationService regService;
