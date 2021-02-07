@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,9 +56,15 @@ public class HospitalController {
 
     @GetMapping("/signin")
     public String login(WebRequest request, Model model) {
-        logsRepository.save( new Log(LocalDateTime.now(), "info", "signin", null));
+
         UserDTO u = new UserDTO();
         model.addAttribute("user", u);
+        logsRepository.save( new Log(LocalDateTime.now(), "info", "signin", u.getUsername()));
+        ArrayList<Log> users= logsRepository.findByLevelUsername(u.getUsername(), "info");
+        System.out.println(users);
+        if(users.size()>=3){
+            System.out.println("Send email");
+        }
         return "signin";
     }
 
