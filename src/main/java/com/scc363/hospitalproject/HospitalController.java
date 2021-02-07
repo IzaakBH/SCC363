@@ -4,6 +4,7 @@ package com.scc363.hospitalproject;
 import com.scc363.hospitalproject.datamodels.*;
 import com.scc363.hospitalproject.datamodels.dtos.UserDTO;
 import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
+import com.scc363.hospitalproject.repositories.LogsRepository;
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.scc363.hospitalproject.repositories.UserRepository;
 import com.scc363.hospitalproject.services.*;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,8 +40,13 @@ public class HospitalController {
     @Autowired
     private RegistrationService regService;
 
-    private Logger logger = Logger.getLogger(HospitalController.class);
+    @Autowired
+    private LogsRepository logsRepository;
+
+
     private final SessionManager sessionManager = new SessionManager();
+
+
 
     @GetMapping("/test")
     public String test() {
@@ -48,6 +55,7 @@ public class HospitalController {
 
     @GetMapping("/signin")
     public String login(WebRequest request, Model model) {
+        logsRepository.save( new Log(LocalDateTime.now(), "info", "signin", null));
         UserDTO u = new UserDTO();
         model.addAttribute("user", u);
         return "signin";
@@ -107,7 +115,7 @@ public class HospitalController {
 
     @GetMapping("/register")
     public String showRegistration(WebRequest request, Model model) {
-        logger.info("registration");
+
         UserDTO userDTO = new UserDTO();
         model.addAttribute("userDTO", userDTO);
         return "register";
@@ -115,7 +123,8 @@ public class HospitalController {
 
     @PostMapping("/register")
     public ModelAndView processRegistration(@ModelAttribute @Valid UserDTO userDTO, BindingResult result, HttpServletRequest request, Errors errors) {
-        logger.info("registration");
+
+        logsRepository.save(new Log(LocalDateTime.now(), "info", "registration", null));
         if (result.hasErrors()) {
             System.out.println(result.getAllErrors());
 
@@ -130,9 +139,11 @@ public class HospitalController {
             User registered = regService.registerNewUser(DTOMapper.userDtoToEntity(userDTO));
             registered.sendEmail(userDTO.getEmail());
             System.out.println("===========\n User added");
+            logsRepository.save(new Log(LocalDateTime.now(), "info", "user added" + registered.getUsername() , null));
         } catch (UserAlreadyExistsException e) {
             ModelAndView model = new ModelAndView();
             System.out.println("===========\n Adding User failed");
+            logsRepository.save(new Log(LocalDateTime.now(), "error", "registration failed", null));
             model.addObject("userExistsError", "An account for that username/email already exists.");
             model.addObject("userDTO", userDTO);
             model.setViewName("register");
