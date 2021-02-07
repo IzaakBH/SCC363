@@ -60,7 +60,7 @@ public class HospitalController {
         UserDTO u = new UserDTO();
         model.addAttribute("user", u);
         logsRepository.save( new Log(LocalDateTime.now(), "info", "signin", u.getUsername()));
-        ArrayList<Log> users= logsRepository.findByLevelUsername(u.getUsername(), "info");
+        ArrayList<Log> users= logsRepository.findByLevelAndUserName(u.getUsername(), "info");
         System.out.println(users);
         if(users.size()>=3){
             System.out.println("Send email");
