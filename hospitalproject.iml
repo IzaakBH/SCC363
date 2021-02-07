@@ -33,10 +33,15 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/.mvn" />
+      <excludeFolder url="file://$MODULE_DIR$/data" />
+      <excludeFolder url="file://$MODULE_DIR$/logs" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="json-simple-1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-jdbc:2.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-core:2.4.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.session:spring-session-jdbc:2.4.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.session:spring-session-core:2.4.2" level="project" />
     <orderEntry type="library" name="Maven: com.h2database:h2:1.4.200" level="project" />

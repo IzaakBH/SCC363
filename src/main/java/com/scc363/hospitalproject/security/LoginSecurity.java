@@ -25,6 +25,7 @@ public class LoginSecurity extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception
     {
         http.cors().and().csrf().disable();
+        http.headers().frameOptions().disable();
         /*
          //Tells spring to authorise all requests with basic authentication
         http.csrf().disable()
@@ -43,7 +44,6 @@ public class LoginSecurity extends WebSecurityConfigurerAdapter {
                     .permitAll();
 
          //USed to allow access to h2-console, disable in production.
-        http.headers().frameOptions().disable();
 
         /*
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
