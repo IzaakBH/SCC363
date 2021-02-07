@@ -3,6 +3,7 @@ package com.scc363.hospitalproject;
 
 import com.scc363.hospitalproject.datamodels.*;
 import com.scc363.hospitalproject.datamodels.dtos.UserDTO;
+import com.scc363.hospitalproject.exceptions.PatientAlreadyExistsException;
 import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
 
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
@@ -55,12 +56,13 @@ public class HospitalController {
     private PatientDetailsRepository patientDetailsRepository;
     @Autowired
     private RoleRepository roleRepository;
-
     @Autowired
     private PrivilegeRepository privilegeRepository;
+
     @Autowired
     private RegistrationService regService;
-
+    @Autowired
+    private PatientService patientService;
     @Autowired
     private LoginService loginService;
 
@@ -274,8 +276,6 @@ public class HospitalController {
         return userRepository.findUserById(id).toString();
     }
 
-
-
     /**
      * Example method to test if a given user and computer have an active and valid session. Takes in a JSON request object, obtains the client stored username, sessionID
      * and encrypted private key, passes this data to the SessionManager class for validation and then provides a result in JSON format using the JSONManager class.
@@ -284,8 +284,7 @@ public class HospitalController {
      * @return JSON string result of authenticatio.
      */
     @PostMapping("/controlPanel")
-    public String isAuthenticated(@RequestParam(required = false) String data, HttpServletRequest request)
-    {
+    public String isAuthenticated(@RequestParam(required = false) String data, HttpServletRequest request) {
 
         if (data != null)
         {
@@ -312,17 +311,47 @@ public class HospitalController {
         return errors;
     }
 
-
-
-
-
-
-
-
     @GetMapping("/addPatient")
     public String getCreatePatient(Model model) {
         model.addAttribute("patient", new PatientDetails());
         return "addPatient";
+    }
+
+    @PostMapping("/addPatient")
+    public ModelAndView addPatient(@RequestParam PatientDetails patientDetails, BindingResult result, HttpServletRequest request, Errors errors) {
+        if (result.hasErrors()) {
+            System.out.println(result.getAllErrors());
+
+            ModelAndView model = new ModelAndView();
+            System.out.println("===========\n Adding Patient failed");
+            model.addObject("patient", patientDetails);
+            model.setViewName("addPatient");
+            return model;
+        }
+
+        //TODO: Add user validation to make sure they can add patients
+
+        try {
+            PatientDetails registered = patientService.registerPatient(patientDetails);
+            System.out.println("===========\n Patient added");
+        } catch (PatientAlreadyExistsException e) {
+            ModelAndView model = new ModelAndView();
+            System.out.println("===========\n Adding Patient failed");
+            model.addObject("patientExistsError", "An patient already exists with this medial ID.");
+            model.addObject("patient", patientDetails);
+            model.setViewName("addPatient");
+            return model;
+        }
+
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("verifymessage");
+        return mav;
+    }
+
+    @GetMapping("/listPatients")
+    public String listPatients() {
+        // Add logic to check if user is authenticated and to fetch patients.
+        return "listPatients";
     }
 
 
@@ -344,7 +373,7 @@ public class HospitalController {
                         PatientDetails newPatient = new PatientDetails();
                         newPatient.setFirstName((String) dataObject.get("firstName"));
                         newPatient.setLastName((String) dataObject.get("firstName"));
-                        newPatient.setMedicalID((int) dataObject.get("medId"));
+                        newPatient.setMedicalID((String) dataObject.get("medId"));
                         newPatient.setPhoneNumber((int) dataObject.get("phone"));
                         newPatient.setAddress((String) dataObject.get("firstName"));
                         newPatient.setWeight(Float.parseFloat((String) dataObject.get("firstName")));

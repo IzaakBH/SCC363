@@ -1,5 +1,7 @@
 package com.scc363.hospitalproject.datamodels;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -18,13 +20,13 @@ public class PatientDetails {
     private String firstName;
     private String lastName;
 
-    private Integer medicalID;
+    private String medicalID;
 
     private Integer phoneNumber;
 
     private String address;
 
-    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date dateOfBirth;
 
     private float weight; //KG
@@ -42,11 +44,11 @@ public class PatientDetails {
         return String.format("%d years and %d days", p.getYears(), p.getDays());
     }
 
-    public Integer getMedicalID() {
+    public String getMedicalID() {
         return medicalID;
     }
 
-    public void setMedicalID(Integer medicalID) {
+    public void setMedicalID(String medicalID) {
         this.medicalID = medicalID;
     }
 
@@ -66,8 +68,8 @@ public class PatientDetails {
         this.address = address;
     }
 
-    public String getDateOfBirth() {
-        return dateFormatter.format(dateOfBirth);
+    public Date getDateOfBirth() {
+        return dateOfBirth;
     }
 
     public void setDateOfBirth(Date dateOfBirth) {
