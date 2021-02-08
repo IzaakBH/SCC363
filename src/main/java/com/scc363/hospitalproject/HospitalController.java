@@ -6,6 +6,7 @@ import com.scc363.hospitalproject.datamodels.dtos.UserDTO;
 import com.scc363.hospitalproject.exceptions.PatientAlreadyExistsException;
 import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
 
+import com.scc363.hospitalproject.repositories.LogsRepository;
 import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
 import com.scc363.hospitalproject.repositories.PrivilegeRepository;
 import com.scc363.hospitalproject.repositories.RoleRepository;
@@ -32,9 +33,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
-
+import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,6 +71,10 @@ public class HospitalController {
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private LogsRepository logsRepository;
+
+
     private final SessionManager sessionManager = new SessionManager();
 
     @GetMapping("/login")
@@ -80,18 +87,30 @@ public class HospitalController {
     private RegistrationService regService;
 
 
+
+
     @GetMapping("/test")
     public String test() {
         return "test";
     }
+    */
+
 
     @GetMapping("/signin")
     public String login(WebRequest request, Model model) {
+
         UserDTO u = new UserDTO();
         model.addAttribute("user", u);
+        logsRepository.save( new Log(LocalDateTime.now(), "info", "signin", u.getUsername()));
+        ArrayList<Log> users= logsRepository.findByLevelAndUserName(u.getUsername(), "info");
+        System.out.println(users);
+        if(users.size()>=3){
+            System.out.println("Send email");
+        }
         return "signin";
     }
 
+    /*
     /**
      * Example login method to check, first of all if a user exists and if they have provided the correct password, secondly to
      * create a new session having destroy any existing ones using the ifUserHasSessionDestroy() method, then returning the
@@ -138,6 +157,7 @@ public class HospitalController {
 
     @GetMapping("/register")
     public String showRegistration(WebRequest request, Model model) {
+
         UserDTO userDTO = new UserDTO();
         model.addAttribute("userDTO", userDTO);
         return "register";
@@ -146,6 +166,7 @@ public class HospitalController {
     @PostMapping("/register")
     public ModelAndView processRegistration(@ModelAttribute @Valid UserDTO userDTO, BindingResult result, HttpServletRequest request, Errors errors) {
 
+        logsRepository.save(new Log(LocalDateTime.now(), "info", "registration", null));
         if (result.hasErrors()) {
             System.out.println(result.getAllErrors());
 
@@ -160,9 +181,11 @@ public class HospitalController {
             User registered = regService.registerNewUser(DTOMapper.userDtoToEntity(userDTO));
             registered.sendEmail(userDTO.getEmail());
             System.out.println("===========\n User added");
+            logsRepository.save(new Log(LocalDateTime.now(), "info", "user added" + registered.getUsername() , null));
         } catch (UserAlreadyExistsException e) {
             ModelAndView model = new ModelAndView();
             System.out.println("===========\n Adding User failed");
+            logsRepository.save(new Log(LocalDateTime.now(), "error", "registration failed", null));
             model.addObject("userExistsError", "An account for that username/email already exists.");
             model.addObject("userDTO", userDTO);
             model.setViewName("register");
