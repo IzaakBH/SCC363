@@ -3,6 +3,9 @@ package com.scc363.hospitalproject.datamodels;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -17,24 +20,48 @@ public class PatientDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank
     private String firstName;
+    @NotBlank
     private String lastName;
 
+    @NotBlank
+    @Column(unique = true)
     private String medicalID;
 
-    private Integer phoneNumber;
-
+    @NotNull
+    private Long phoneNumber;
+    @NotBlank
     private String address;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
-    private float weight; //KG
+    @NotNull
+    private Integer weight; //KG
 
-    private float height; //CM
+    @NotNull
+    private Integer height; //CM
+    @NotBlank
     private String doctor;
 
+    public PatientDetails() {
 
+    }
+
+    public PatientDetails(String firstName, String lastName, String medicalID, String phoneNumber, String address, String date, Integer weight, Integer height, String doctor) throws ParseException {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.medicalID = medicalID;
+        this.phoneNumber = Long.parseLong(phoneNumber);
+        this.address = address;
+        this.dateOfBirth = dateFormatter.parse(date);
+        this.weight = weight;
+        this.height = height;
+        this.doctor = doctor;
+    }
 
     // Formats date as so: 10 April 2020.
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMMM yyyy");
@@ -52,11 +79,11 @@ public class PatientDetails {
         this.medicalID = medicalID;
     }
 
-    public Integer getPhoneNumber() {
+    public Long getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(Integer phoneNumber) {
+    public void setPhoneNumber(Long phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -76,7 +103,7 @@ public class PatientDetails {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public float getWeight() {
+    public Integer getWeight() {
         return weight;
     }
 
@@ -85,15 +112,15 @@ public class PatientDetails {
         return doctor;
     }
 
-    public void setWeight(float weight) {
+    public void setWeight(Integer weight) {
         this.weight = weight;
     }
 
-    public float getHeight() {
+    public Integer getHeight() {
         return height;
     }
 
-    public void setHeight(float height) {
+    public void setHeight(Integer height) {
         this.height = height;
     }
 

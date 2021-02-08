@@ -9,6 +9,10 @@
 <form action="#" th:action="@{/addPatient}" th:object="${patient}" method="POST">
   <p>Add customer</p>
 
+  <div th:if="${patientExistsError}">
+    <p th:text="${patientExistsError}"></p>
+  </div>
+
   <div>
     <label for="firstName">First Name</label>
     <input name="firstName" th:field="*{firstName}" id="firstName" placeholder="John">
@@ -29,6 +33,12 @@
     <label for="address">Address</label>
     <input name="address" th:field="*{address}" id="address" placeholder="1 Balmoral Road, Lancaster, Lancashire, LA1 3BT">
     <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+  </div>
+
+  <div>
+    <label for="phone">phone Number</label>
+    <input type="number" name="phone" th:field="*{phoneNumber}" id="phone" placeholder="07834556885">
+    <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
   </div>
 
   <div>

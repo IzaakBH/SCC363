@@ -61,7 +61,7 @@ public class User implements UserDetails {
     @NotBlank(message = "Choose a user last name")
     private String last;
 
-    String code;
+    private String code;
 
     private boolean locked;
 

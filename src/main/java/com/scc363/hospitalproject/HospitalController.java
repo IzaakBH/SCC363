@@ -20,6 +20,7 @@ import com.scc363.hospitalproject.utils.SessionManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
@@ -318,8 +320,8 @@ public class HospitalController {
     }
 
     @PostMapping("/addPatient")
-    public ModelAndView addPatient(@RequestParam PatientDetails patientDetails, BindingResult result, HttpServletRequest request, Errors errors) {
-        if (result.hasErrors()) {
+    public ModelAndView addPatient(@ModelAttribute @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Valid PatientDetails patientDetails, BindingResult result, HttpServletRequest request, Errors errors) {
+            if (result.hasErrors()) {
             System.out.println(result.getAllErrors());
 
             ModelAndView model = new ModelAndView();
@@ -328,6 +330,7 @@ public class HospitalController {
             model.setViewName("addPatient");
             return model;
         }
+
 
         //TODO: Add user validation to make sure they can add patients
 
@@ -344,7 +347,7 @@ public class HospitalController {
         }
 
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("verifymessage");
+        mav.setViewName("listPatients");
         return mav;
     }
 
@@ -356,8 +359,7 @@ public class HospitalController {
 
 
     @PostMapping("/createPatientService")
-    public String createPatient(@RequestParam String data, HttpServletRequest request)
-    {
+    public String createPatient(@RequestParam String data, HttpServletRequest request) {
         JSONArray dataArr = new JSONManager().convertToJSONObject(data);
         if (dataArr != null)
         {
@@ -374,10 +376,10 @@ public class HospitalController {
                         newPatient.setFirstName((String) dataObject.get("firstName"));
                         newPatient.setLastName((String) dataObject.get("firstName"));
                         newPatient.setMedicalID((String) dataObject.get("medId"));
-                        newPatient.setPhoneNumber((int) dataObject.get("phone"));
+                        newPatient.setPhoneNumber((Long) dataObject.get("phoneNumber"));
                         newPatient.setAddress((String) dataObject.get("firstName"));
-                        newPatient.setWeight(Float.parseFloat((String) dataObject.get("firstName")));
-                        newPatient.setHeight(Float.parseFloat((String) dataObject.get("firstName")));
+                        newPatient.setWeight(Integer.parseInt((String) dataObject.get("firstName")));
+                        newPatient.setHeight(Integer.parseInt((String) dataObject.get("firstName")));
                         newPatient.setDoctor((String) dataObject.get("firstName"));
                         patientDetailsRepository.save(newPatient);
 
