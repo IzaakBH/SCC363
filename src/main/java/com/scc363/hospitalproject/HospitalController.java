@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -343,7 +344,7 @@ public class HospitalController {
 
     @PostMapping("/addPatient")
     public ModelAndView addPatient(@ModelAttribute @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Valid PatientDetails patientDetails, BindingResult result, HttpServletRequest request, Errors errors) {
-            if (result.hasErrors()) {
+        if (result.hasErrors()) {
             System.out.println(result.getAllErrors());
 
             ModelAndView model = new ModelAndView();
@@ -352,7 +353,6 @@ public class HospitalController {
             model.setViewName("addPatient");
             return model;
         }
-
 
         //TODO: Add user validation to make sure they can add patients
 
@@ -379,43 +379,60 @@ public class HospitalController {
         return "listPatients";
     }
 
-
-    @PostMapping("/createPatientService")
-    public String createPatient(@RequestParam String data, HttpServletRequest request) {
-        JSONArray dataArr = new JSONManager().convertToJSONObject(data);
-        if (dataArr != null)
-        {
-            if (dataArr.size() > 0)
-            {
-                JSONObject sessionObject = (JSONObject) dataArr.get(0);
-                if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
-                {
-                    User user = userRepository.findUserByUsername((String) sessionObject.get("username"));
-                    if (user.hasRole(roleRepository.findByName("MED_ADMIN")))
-                    {
-                        JSONObject dataObject = (JSONObject) dataArr.get(1);
-                        PatientDetails newPatient = new PatientDetails();
-                        newPatient.setFirstName((String) dataObject.get("firstName"));
-                        newPatient.setLastName((String) dataObject.get("firstName"));
-                        newPatient.setMedicalID((String) dataObject.get("medId"));
-                        newPatient.setPhoneNumber((Long) dataObject.get("phoneNumber"));
-                        newPatient.setAddress((String) dataObject.get("firstName"));
-                        newPatient.setWeight(Integer.parseInt((String) dataObject.get("firstName")));
-                        newPatient.setHeight(Integer.parseInt((String) dataObject.get("firstName")));
-                        newPatient.setDoctor((String) dataObject.get("firstName"));
-                        patientDetailsRepository.save(newPatient);
-
-                    }
-                    else
-                    {
-                        return "access denied";
-                    }
-                }
-            }
+    @GetMapping("/viewPatient/{id}")
+    public String viewPatient(@PathVariable String id, Model model) {
+        try {
+            PatientDetails patient = patientDetailsRepository.getPatientDetailsByMedicalID(id);
+            model.addAttribute("patient", patient);
+        } catch (Exception e) {
+            e.printStackTrace();
+            PatientDetails patient = new PatientDetails();
         }
 
-        return "redirect:login";
+        return "viewPatient";
+
+
+
+
     }
+
+//
+//    @PostMapping("/createPatientService")
+//    public String createPatient(@RequestParam String data, HttpServletRequest request) {
+//        JSONArray dataArr = new JSONManager().convertToJSONObject(data);
+//        if (dataArr != null)
+//        {
+//            if (dataArr.size() > 0)
+//            {
+//                JSONObject sessionObject = (JSONObject) dataArr.get(0);
+//                if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
+//                {
+//                    User user = userRepository.findUserByUsername((String) sessionObject.get("username"));
+//                    if (user.hasRole(roleRepository.findByName("MED_ADMIN")))
+//                    {
+//                        JSONObject dataObject = (JSONObject) dataArr.get(1);
+//                        PatientDetails newPatient = new PatientDetails();
+//                        newPatient.setFirstName((String) dataObject.get("firstName"));
+//                        newPatient.setLastName((String) dataObject.get("firstName"));
+//                        newPatient.setMedicalID((String) dataObject.get("medId"));
+//                        newPatient.setPhoneNumber((Long) dataObject.get("phoneNumber"));
+//                        newPatient.setAddress((String) dataObject.get("firstName"));
+//                        newPatient.setWeight(Integer.parseInt((String) dataObject.get("firstName")));
+//                        newPatient.setHeight(Integer.parseInt((String) dataObject.get("firstName")));
+//                        newPatient.setDoctor((String) dataObject.get("firstName"));
+//                        patientDetailsRepository.save(newPatient);
+//
+//                    }
+//                    else
+//                    {
+//                        return "access denied";
+//                    }
+//                }
+//            }
+//        }
+//
+//        return "redirect:login";
+//    }
 
 
     @PostMapping("/getUsersService")
