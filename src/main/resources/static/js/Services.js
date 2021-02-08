@@ -102,11 +102,21 @@ function handleResult(response)
 {
     if (response !== undefined)
     {
+    /*
         let dataObj = JSON.parse(response);
         if (dataObj.result === undefined)
         {
             new CredentialManager().setCredentials(dataObj.sessionID, dataObj.privateKey, dataObj.username);
             new StateManger("http://localhost:8080/controlPanel", {}).changeState();
+        }
+        else
+        {
+            alert("login failed");
+        }
+        */
+        if (response == "success")
+        {
+            window.location.assign('http://localhost:8080/controlPanel');
         }
         else
         {

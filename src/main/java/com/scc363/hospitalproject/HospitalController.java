@@ -34,7 +34,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -110,50 +113,61 @@ public class HospitalController {
         return "signin";
     }
 
-    /*
-    /**
-     * Example login method to check, first of all if a user exists and if they have provided the correct password, secondly to
-     * create a new session having destroy any existing ones using the ifUserHasSessionDestroy() method, then returning the
-     * session data to be stored client side.
-     * @param data post data in JSON format
-     * @param request automatically provided request header to extract client IP from
-     * @return returns a result based on decisions made inside the class either login failed or session data in JSON format for the client to store.
-     *
-     * example of returned JSON object -
-     * {
-     *     "sessionID"  : "h434gh34bjg4yrf78dee78",
-     *     "privateKey" : "h434gh34bjg4yrf78dee78h434gh34bjg4+rf78dee78h434gh34bjg4yrf78dee78h434gh34bjg4yrf78de/\+78h434gh34bjg4yrf78dee78h434gh34bjg4yrf78dee78h434gh34bjg4yrf78dee78h434gh34bjg4yrf78dee78",
-     *     "username"   : "john123"
-     * }
-     */
+
+
+
+
+
     @PostMapping("/createSession")
     @ResponseBody
-    public String login(@RequestParam String data, HttpServletRequest request)
+    public String login(@RequestParam String data, HttpServletRequest request, HttpServletResponse response)
     {
         JSONArray dataArr = new JSONManager().convertToJSONObject(data);
         JSONObject dataObj = (JSONObject) dataArr.get(0);
         String userName = (String) dataObj.get("username");
         String password = (String) dataObj.get("password");
         System.out.println(userName + password);
-        if (loginService.isAuthenticated(userName, password))
+        if (/*loginService.isAuthenticated(userName, password)*/true)
         {
             sessionManager.ifUserHasSessionDestroy(userName);
-            JSONObject sessionData = sessionManager.createSession(userName, request.getRemoteAddr());
-            if (sessionData != null)
+            //JSONObject sessionData = sessionManager.createSession(userName, request.getRemoteAddr());
+            ArrayList<Cookie> cookies = sessionManager.createSessionC(userName, request.getRemoteAddr());
+            if (cookies != null)
             {
+
                 System.out.println("========= created session ---------");
-                return sessionData.toString();
+
+                for (Cookie cookie : cookies)
+                {
+                    response.addCookie(cookie);
+                }
+                return "success";
+                //return sessionData.toString();
             }
             else
             {
+                /*
                 return new JSONManager(new Pair[]{
                         new Pair("result", "incorrect login details")
                 }).generateJSONObject().toString();
+                 */
+                return "failure";
             }
         }
-        return new JSONManager().getResponseObject(false);
+        return "failure user deets are wrong";
     }
 
+    @GetMapping("/controlPanel")
+    public String isAuthenticated(HttpServletRequest request) {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorisedC(request.getCookies(), request.getRemoteAddr()))
+            {
+                return "hello";
+            }
+        }
+        return "signin";
+    }
 
     @GetMapping("/register")
     public String showRegistration(WebRequest request, Model model) {
@@ -299,28 +313,6 @@ public class HospitalController {
     @GetMapping("/getuser{id}")
     public String getUserById(@RequestParam int id) {
         return userRepository.findUserById(id).toString();
-    }
-
-    /**
-     * Example method to test if a given user and computer have an active and valid session. Takes in a JSON request object, obtains the client stored username, sessionID
-     * and encrypted private key, passes this data to the SessionManager class for validation and then provides a result in JSON format using the JSONManager class.
-     * @param data post data in JSON format
-     * @param request automatically provided request header to extract client IP from
-     * @return JSON string result of authenticatio.
-     */
-    @PostMapping("/controlPanel")
-    public String isAuthenticated(@RequestParam(required = false) String data, HttpServletRequest request) {
-
-        if (data != null)
-        {
-            JSONArray dataArr = new JSONManager().convertToJSONObject(data); //converts JSON string into JSON object
-            JSONObject sessionObject = (JSONObject) dataArr.get(0); //This is the position in the JSON array that the session credentials have been stored.
-            if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
-            {
-                return "hello";
-            }
-        }
-        return "signin";
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
