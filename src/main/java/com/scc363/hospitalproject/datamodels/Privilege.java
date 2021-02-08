@@ -12,6 +12,10 @@ public class Privilege {
 
     private String name;
 
+    public Privilege() {
+
+    }
+
     public String getName()
     {
         return this.name;
