@@ -322,7 +322,7 @@ public class HospitalController {
 
     @PostMapping("/addPatient")
     public ModelAndView addPatient(@ModelAttribute @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Valid PatientDetails patientDetails, BindingResult result, HttpServletRequest request, Errors errors) {
-            if (result.hasErrors()) {
+        if (result.hasErrors()) {
             System.out.println(result.getAllErrors());
 
             ModelAndView model = new ModelAndView();
@@ -331,7 +331,6 @@ public class HospitalController {
             model.setViewName("addPatient");
             return model;
         }
-
 
         //TODO: Add user validation to make sure they can add patients
 
@@ -363,7 +362,6 @@ public class HospitalController {
         try {
             PatientDetails patient = patientDetailsRepository.getPatientDetailsByMedicalID(id);
             model.addAttribute("patient", patient);
-            model.addAttribute("patientAge", patient.getAge());
         } catch (Exception e) {
             e.printStackTrace();
             PatientDetails patient = new PatientDetails();
