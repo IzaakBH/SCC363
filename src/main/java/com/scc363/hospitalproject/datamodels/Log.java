@@ -19,9 +19,6 @@ public class Log {
     private LocalDateTime date;
 
     @Column
-    private String error;
-
-    @Column
     private String level;
 
     @Column
@@ -35,7 +32,6 @@ public class Log {
         this.level = level;
         this.message = message;
         this.userName = userName;
-        this.error = "Error";
     }
 
 }
