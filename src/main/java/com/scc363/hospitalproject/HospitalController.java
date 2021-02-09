@@ -77,46 +77,12 @@ public class HospitalController {
     @Autowired
     private LogsRepository logsRepository;
 
-
     private final SessionManager sessionManager = new SessionManager();
 
     @GetMapping("/login")
     public String login() {
         return "signin";
     }
-
-    /*
-    @Autowired
-    private RegistrationService regService;
-
-
-
-
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
-    */
-
-
-    @GetMapping("/signin")
-    public String login(WebRequest request, Model model) {
-
-        UserDTO u = new UserDTO();
-        model.addAttribute("user", u);
-        logsRepository.save( new Log(LocalDateTime.now(), "info", "signin", u.getUsername()));
-        ArrayList<Log> users= logsRepository.findByLevelAndUserName(u.getUsername(), "info");
-        System.out.println(users);
-        if(users.size()>=3){
-            System.out.println("Send email");
-        }
-        return "signin";
-    }
-
-
-
-
-
 
     @PostMapping("/createSession")
     @ResponseBody
@@ -130,38 +96,28 @@ public class HospitalController {
         if (/*loginService.isAuthenticated(userName, password)*/true)
         {
             sessionManager.ifUserHasSessionDestroy(userName);
-            //JSONObject sessionData = sessionManager.createSession(userName, request.getRemoteAddr());
-            ArrayList<Cookie> cookies = sessionManager.createSessionC(userName, request.getRemoteAddr());
+            ArrayList<Cookie> cookies = sessionManager.createSession(userName, request.getRemoteAddr());
             if (cookies != null)
             {
-
-                System.out.println("========= created session ---------");
-
                 for (Cookie cookie : cookies)
                 {
                     response.addCookie(cookie);
                 }
                 return "success";
-                //return sessionData.toString();
             }
             else
             {
-                /*
-                return new JSONManager(new Pair[]{
-                        new Pair("result", "incorrect login details")
-                }).generateJSONObject().toString();
-                 */
                 return "failure";
             }
         }
-        return "failure user deets are wrong";
+        return "failure";
     }
 
     @GetMapping("/controlPanel")
     public String isAuthenticated(HttpServletRequest request) {
         if (request.getCookies().length == 3)
         {
-            if (sessionManager.isAuthorisedC(request.getCookies(), request.getRemoteAddr()))
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
                 return "hello";
             }
@@ -248,76 +204,55 @@ public class HospitalController {
         return "notverified";
     }
 
-//    @GetMapping("/verify-account")
-//    public String showVerifyAccount(WebRequest request, Model model) {
-////        ModelAndView mav = new ModelAndView();
-////        mav.setViewName("verify-account");
-////        mav.addObject("verification", new VerificationDTO());
-//        model.addAttribute("verification", new VerificationDTO());
-////        return mav;
-//        return "verify-account";
-//    }
-//
-//    @PostMapping("/verify-account")
-//    public ModelAndView processVerifyAccount(@ModelAttribute("verification") @Valid VerificationDTO verification, BindingResult result, HttpServletRequest request, Errors errors) {
-////        JSONArray data = new JSONManager().convertToJSONObject(ver);
-////        System.out.println(data);
-////        JSONObject dataObj = (JSONObject) data.get(0);
-////        String email = (String) dataObj.get("email");
-////        String code = (String) dataObj.get("code");
-//        ModelAndView mav = new ModelAndView();
-////        System.out.println("==========\nVerified user");
-////        System.out.println(email);
-////        System.out.println(code);
-//        String email = verification.email();
-//        String code = verification.code();
-//
-//        if (result.hasErrors()) {
-//            System.out.println(result.getAllErrors());
-//
-//            mav.setViewName("verify-account");
-//
-//            return mav;
-//        }
-//
-//        if (userRepository.existsByEmailAndCode(email, Integer.parseInt(code))) {
-//            System.out.println("==========\nVerified user");
-//            // User authenticated
-//            User u = userRepository.findUserByEmail(email);
-//            u.enableAccount();
-//            userRepository.save(u);
-//            mav.setViewName("verify-account");
-//
-//            mav.addObject("success");
-//            return mav;
-//        } else {
-//            mav.setViewName("verify-account");
-//            mav.addObject("failure");
-//            return mav;
-//        }
-//    }
-
-
-    // Test mapping
-    @GetMapping("/hello")
-    public String hello() {
-        return "hello";
-    }
 
     @GetMapping("/listusers")
-    public String getUsers(Model model) {
-        model.addAttribute("users", userRepository.findAll());
-        return "listusers";
+    public String getUsers(Model model, HttpServletRequest request)
+    {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (user.hasPrivilege(privilegeRepository.findByName("READ_USERS")))
+                    {
+                        model.addAttribute("users", userRepository.findAll());
+                        return "listusers";
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
     }
 
     @GetMapping("/getuser{id}")
-    public String getUserById(@RequestParam int id) {
-        return userRepository.findUserById(id).toString();
+    public String getUserById(@RequestParam int id, HttpServletRequest request)
+    {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (user.hasPrivilege(privilegeRepository.findByName("READ_USERS")))
+                    {
+                        return userRepository.findUserById(id).toString();
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
     }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex)
+    {
         System.out.println("=============\ntoads");
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
@@ -329,137 +264,132 @@ public class HospitalController {
     }
 
     @GetMapping("/addPatient")
-    public String getCreatePatient(Model model) {
-        model.addAttribute("patient", new PatientDetails());
-        return "addPatient";
+    public String getCreatePatient(Model model, HttpServletRequest request)
+    {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+
+                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (user.hasPrivilege(privilegeRepository.findByName("WRITE_PATIENTS")))
+                    {
+                        model.addAttribute("patient", new PatientDetails());
+                        return "addPatient";
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
     }
 
     @PostMapping("/addPatient")
-    public ModelAndView addPatient(@ModelAttribute @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Valid PatientDetails patientDetails, BindingResult result, HttpServletRequest request, Errors errors) {
-        if (result.hasErrors()) {
-            System.out.println(result.getAllErrors());
-
-            ModelAndView model = new ModelAndView();
-            System.out.println("===========\n Adding Patient failed");
-            model.addObject("patient", patientDetails);
-            model.setViewName("addPatient");
-            return model;
-        }
-
-        //TODO: Add user validation to make sure they can add patients
-
-        try {
-            PatientDetails registered = patientService.registerPatient(patientDetails);
-            System.out.println("===========\n Patient added");
-        } catch (PatientAlreadyExistsException e) {
-            ModelAndView model = new ModelAndView();
-            System.out.println("===========\n Adding Patient failed");
-            model.addObject("patientExistsError", "An patient already exists with this medial ID.");
-            model.addObject("patient", patientDetails);
-            model.setViewName("addPatient");
-            return model;
-        }
-
+    public ModelAndView addPatient(@ModelAttribute @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Valid PatientDetails patientDetails, BindingResult result, HttpServletRequest request, Errors errors)
+    {
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("listPatients");
+
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (user.hasPrivilege(privilegeRepository.findByName("WRITE_PATIENTS")))
+                    {
+                        if (result.hasErrors()) {
+                            System.out.println(result.getAllErrors());
+
+                            ModelAndView model = new ModelAndView();
+                            System.out.println("===========\n Adding Patient failed");
+                            model.addObject("patient", patientDetails);
+                            model.setViewName("addPatient");
+                            return model;
+                        }
+
+                        //TODO: Add user validation to make sure they can add patients
+
+                        try {
+                            PatientDetails registered = patientService.registerPatient(patientDetails);
+                            System.out.println("===========\n Patient added");
+                        } catch (PatientAlreadyExistsException e) {
+                            ModelAndView model = new ModelAndView();
+                            System.out.println("===========\n Adding Patient failed");
+                            model.addObject("patientExistsError", "An patient already exists with this medial ID.");
+                            model.addObject("patient", patientDetails);
+                            model.setViewName("addPatient");
+                            return model;
+                        }
+
+                        mav.setViewName("listPatients");
+                        return mav;
+                    }
+                    mav.setViewName("error2");
+                }
+            }
+        }
+        mav.setViewName("sigin");
         return mav;
     }
 
     @GetMapping("/listPatients")
-    public String listPatients() {
-        // Add logic to check if user is authenticated and to fetch patients.
-        return "listPatients";
-    }
-
-    @GetMapping("/viewPatient/{id}")
-    public String viewPatient(@PathVariable String id, Model model) {
-        try {
-            PatientDetails patient = patientDetailsRepository.getPatientDetailsByMedicalID(id);
-            model.addAttribute("patient", patient);
-        } catch (Exception e) {
-            e.printStackTrace();
-            PatientDetails patient = new PatientDetails();
-        }
-
-        return "viewPatient";
-
-
-
-
-    }
-
-//
-//    @PostMapping("/createPatientService")
-//    public String createPatient(@RequestParam String data, HttpServletRequest request) {
-//        JSONArray dataArr = new JSONManager().convertToJSONObject(data);
-//        if (dataArr != null)
-//        {
-//            if (dataArr.size() > 0)
-//            {
-//                JSONObject sessionObject = (JSONObject) dataArr.get(0);
-//                if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
-//                {
-//                    User user = userRepository.findUserByUsername((String) sessionObject.get("username"));
-//                    if (user.hasRole(roleRepository.findByName("MED_ADMIN")))
-//                    {
-//                        JSONObject dataObject = (JSONObject) dataArr.get(1);
-//                        PatientDetails newPatient = new PatientDetails();
-//                        newPatient.setFirstName((String) dataObject.get("firstName"));
-//                        newPatient.setLastName((String) dataObject.get("firstName"));
-//                        newPatient.setMedicalID((String) dataObject.get("medId"));
-//                        newPatient.setPhoneNumber((Long) dataObject.get("phoneNumber"));
-//                        newPatient.setAddress((String) dataObject.get("firstName"));
-//                        newPatient.setWeight(Integer.parseInt((String) dataObject.get("firstName")));
-//                        newPatient.setHeight(Integer.parseInt((String) dataObject.get("firstName")));
-//                        newPatient.setDoctor((String) dataObject.get("firstName"));
-//                        patientDetailsRepository.save(newPatient);
-//
-//                    }
-//                    else
-//                    {
-//                        return "access denied";
-//                    }
-//                }
-//            }
-//        }
-//
-//        return "redirect:login";
-//    }
-
-
-    @PostMapping("/getUsersService")
-    public String listUsers(@RequestParam String data, HttpServletRequest request)
+    public String listPatients(HttpServletRequest request)
     {
-        JSONArray dataArr = new JSONManager().convertToJSONObject(data);
-        if (dataArr != null)
+        if (request.getCookies().length == 3)
         {
-            if (dataArr.size() > 0)
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
-                JSONObject sessionObject = (JSONObject) dataArr.get(0);
-                if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
+                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
                 {
-                    User user = userRepository.findUserByUsername((String) sessionObject.get("username"));
-                    if (user.getRoles().get(0).hasPrivileges(privilegeRepository.findByName("READ_USERS")))
+                    if (user.hasPrivilege(privilegeRepository.findByName("READ_PATIENTS")))
                     {
-                        ArrayList<User> allUsers = new ArrayList<User>((Collection<? extends User>) userRepository.findAll());
-                        JSONArray usersArray = new JSONArray();
-                        for (User currentUser : allUsers)
-                        {
-                            JSONObject userObj = new JSONObject();
-                            userObj.put("id", currentUser.getId());
-                            userObj.put("username", currentUser.getUsername());
-                            userObj.put("email", currentUser.getEmail());
-                            userObj.put("userType", currentUser.getUserType());
-                            usersArray.add(userObj);
-                        }
-                        return usersArray.toString();
+                        return "listPatients";
                     }
+                    return "error2";
                 }
             }
         }
-
-        return "redirect:login";
+        return "signin";
     }
+
+    @GetMapping("/viewPatient/{id}")
+    public String viewPatient(@PathVariable String id, Model model, HttpServletRequest request)
+    {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (user.hasPrivilege(privilegeRepository.findByName("READ_PATIENTS")))
+                    {
+                        if (patientDetailsRepository.hasDoctor(user.getUsername(), id))
+                        {
+                            try {
+                                PatientDetails patient = patientDetailsRepository.getPatientDetailsByMedicalID(id);
+                                model.addAttribute("patient", patient);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                PatientDetails patient = new PatientDetails();
+                            }
+                            return "viewPatient";
+                        }
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
+
+    }
+
+
+
 
 
 

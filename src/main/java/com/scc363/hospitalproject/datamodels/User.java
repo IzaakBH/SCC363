@@ -245,6 +245,18 @@ public class User implements UserDetails {
         return false;
     }
 
+    public boolean hasPrivilege(Privilege privilege)
+    {
+        for (Role assignedRole : this.roles)
+        {
+            if (assignedRole.hasPrivileges(privilege))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
 enum UserTypes {
