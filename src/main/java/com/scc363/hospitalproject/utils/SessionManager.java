@@ -47,14 +47,6 @@ public class SessionManager
         if (sessionCache.createSession(session))
         {
             String privKCipher = cryptoManager.encryptAES(cryptoManager.keyToString(keyPair.getPrivate()), aesKey);
-            /*
-            return new JSONManager(
-                    new Pair[]{
-                            new Pair("sessionID", sessionID),
-                            new Pair("privateKey", privKCipher),
-                            new Pair("username", username)
-                    }).generateJSONObject();
-*/
             Cookie sessionIDCookie = new Cookie("sessionID", sessionID);
             Cookie privateKeyCookie = new Cookie("privateKey", privKCipher);
             Cookie usernameCookie = new Cookie("username", username);
