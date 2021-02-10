@@ -319,6 +319,9 @@ public class HospitalController {
         return "listusers";
     }
 
+
+
+
     @GetMapping("/getuser{id}")
     public String getUserById(@RequestParam int id) {
         logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User with given name checked", userRepository.findUserById(id).getUsername()));
@@ -497,15 +500,10 @@ public class HospitalController {
         return "redirect:login";
     }
 
-
-    @GetMapping("/listlogs")
+    @GetMapping("/logslist")
     public String getLogs(Model model) {
-        model.addAttribute("logsdata", logsRepository.findAll());
-        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "debug", "User list requested", null));
-        return "listlogs";
+        model.addAttribute("logs", logsRepository.findAll());
+        return "logslist";
     }
-
-
-
 
 }

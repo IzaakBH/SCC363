@@ -13,10 +13,10 @@ public class Log {
     private Integer errorId;
 
     @Column
-    private LocalDate date;
+    private String date;
 
     @Column
-    private LocalTime time;
+    private String time;
 
     @Column
     private String level;
@@ -33,25 +33,25 @@ public class Log {
 
 
     public Log(LocalDate date, LocalTime time, String level, String message, String userName){
-        this.date = date;
-        this.time = time;
+        this.date = date.toString();
+        this.time = time.toString();
         this.level = level;
         this.message = message;
         this.userName = userName;
     }
 
+//
+//    @Override
+//
+//    public String toString() {
+//        return date + " " + time + " " + level + " " + message + " " + userName;
+//    }
 
-    @Override
-
-    public String toString(){
-        return String.format("[Log:   date:  "+ date + "  time:  " + time + "  level  "+ level+ "  message:"+message+ "  username "+userName +" ]");
-    }
-
-    public LocalDate getDate(){
+    public String getDate(){
         return date;
     }
 
-    public LocalTime getTime(){
+    public String getTime(){
         return time;
     }
 
