@@ -1,6 +1,4 @@
 package com.scc363.hospitalproject;
-
-
 import com.scc363.hospitalproject.datamodels.*;
 import com.scc363.hospitalproject.datamodels.dtos.UserDTO;
 import com.scc363.hospitalproject.exceptions.PatientAlreadyExistsException;
@@ -16,15 +14,12 @@ import com.scc363.hospitalproject.utils.DTOMapper;
 import com.scc363.hospitalproject.utils.JSONManager;
 import com.scc363.hospitalproject.utils.Pair;
 
-import com.scc363.hospitalproject.utils.JSONManager;
 import com.scc363.hospitalproject.utils.SessionManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,20 +36,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.validation.Valid;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class HospitalController {
