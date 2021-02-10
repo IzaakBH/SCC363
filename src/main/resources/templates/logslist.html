@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:switch="${logs}">
+    <h2 th:case="null">No logs yet!</h2>
+    <div th:case="*">
+        <h2>Logs</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>UserName</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Level</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:each="log : ${logs}">
+                <td th:text="${log.userName}"></td>
+                <td th:text="${log.date}"></td>
+                <td th:text="${log.time}"></td>
+                <td th:text="${log.level}"></td>
+                <td th:text="${log.message}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p><a href="/add">Add a new user</a></p>
+</div>
+
+</body>
+</html>
