@@ -63,7 +63,7 @@ public class Log {
         return message;
     }
 
-    public String getUsername(){
+    public String getUserName(){
         return userName;
     }
 }
