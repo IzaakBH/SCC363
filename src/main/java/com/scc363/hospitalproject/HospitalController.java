@@ -36,11 +36,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.LocalTime;
+import java.util.*;
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +49,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,6 +78,7 @@ public class HospitalController {
 
     @GetMapping("/login")
     public String login() {
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Login page loaded", null));
         return "signin";
     }
 
@@ -101,12 +101,8 @@ public class HospitalController {
 
         UserDTO u = new UserDTO();
         model.addAttribute("user", u);
-        logsRepository.save( new Log(LocalDateTime.now(), "info", "signin", u.getUsername()));
-        ArrayList<Log> users= logsRepository.findByLevelAndUserName(u.getUsername(), "info");
-        System.out.println(users);
-        if(users.size()>=3){
-            System.out.println("Send email");
-        }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Sign in form requested", "null"));
+
         return "signin";
     }
 
@@ -130,6 +126,7 @@ public class HospitalController {
     @ResponseBody
     public String login(@RequestParam String data, HttpServletRequest request)
     {
+
         JSONArray dataArr = new JSONManager().convertToJSONObject(data);
         JSONObject dataObj = (JSONObject) dataArr.get(0);
         String userName = (String) dataObj.get("username");
@@ -137,6 +134,7 @@ public class HospitalController {
         System.out.println(userName + password);
         if (loginService.isAuthenticated(userName, password))
         {
+            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User signed in", userName));
             sessionManager.ifUserHasSessionDestroy(userName);
             JSONObject sessionData = sessionManager.createSession(userName, request.getRemoteAddr());
             if (sessionData != null)
@@ -146,10 +144,30 @@ public class HospitalController {
             }
             else
             {
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "warn", "User couldn't sign in, incorrect details", userName));
+                int users= logsRepository.countByLevelAndUserNameAndDate(userName, "warn", LocalDate.now());
+                System.out.println(users);
+                if(users>=5){
+                    Email warnEmail = new Email();
+                    warnEmail.sendEmail(userRepository.findUserByUsername(userName).getEmail(), "Someone tried to login to your account for 3 times with the wrong credentials");
+                }
                 return new JSONManager(new Pair[]{
                         new Pair("result", "incorrect login details")
                 }).generateJSONObject().toString();
             }
+        }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "warn", "User couldn't sign in, incorrect details", userName));
+        int users= logsRepository.countByLevelAndUserNameAndDate("warn", userName, LocalDate.now());
+        System.out.println(users);
+        if(users>=5){
+            Email warnEmail = new Email();
+            warnEmail.sendEmail(userRepository.findUserByUsername(userName).getEmail(), "Someone tried to login to your account for 3 times with the wrong credentials");
+        }
+
+        int warns = logsRepository.countByLevel("warn");
+        if(warns>=500){
+            Email warnEmail = new Email();
+            warnEmail.sendEmail("scc363gr@gmail.com", "Many warns available");
         }
         return new JSONManager().getResponseObject(false);
     }
@@ -157,7 +175,7 @@ public class HospitalController {
 
     @GetMapping("/register")
     public String showRegistration(WebRequest request, Model model) {
-
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Registration page loaded", null));
         UserDTO userDTO = new UserDTO();
         model.addAttribute("userDTO", userDTO);
         return "register";
@@ -166,10 +184,10 @@ public class HospitalController {
     @PostMapping("/register")
     public ModelAndView processRegistration(@ModelAttribute @Valid UserDTO userDTO, BindingResult result, HttpServletRequest request, Errors errors) {
 
-        logsRepository.save(new Log(LocalDateTime.now(), "info", "registration", null));
+        logsRepository.save(new Log(LocalDate.now(), LocalTime.now(), "info", "registration", null));
         if (result.hasErrors()) {
             System.out.println(result.getAllErrors());
-
+            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User couldn't register", null));
             ModelAndView model = new ModelAndView();
             System.out.println("===========\n Adding User failed");
             model.addObject("userDTO", userDTO);
@@ -181,17 +199,16 @@ public class HospitalController {
             User registered = regService.registerNewUser(DTOMapper.userDtoToEntity(userDTO));
             registered.sendEmail(userDTO.getEmail());
             System.out.println("===========\n User added");
-            logsRepository.save(new Log(LocalDateTime.now(), "info", "user added" + registered.getUsername() , null));
+            logsRepository.save(new Log(LocalDate.now(), LocalTime.now(), "info", "user added" , registered.getUsername()));
         } catch (UserAlreadyExistsException e) {
             ModelAndView model = new ModelAndView();
             System.out.println("===========\n Adding User failed");
-            logsRepository.save(new Log(LocalDateTime.now(), "error", "registration failed", null));
+            logsRepository.save(new Log(LocalDate.now(), LocalTime.now(), "error", "registration failed, user exists", null));
             model.addObject("userExistsError", "An account for that username/email already exists.");
             model.addObject("userDTO", userDTO);
             model.setViewName("register");
             return model;
         }
-
         ModelAndView mav = new ModelAndView();
         mav.setViewName("verifymessage");
         return mav;
@@ -215,22 +232,27 @@ public class HospitalController {
 
                 if (u.isEnabled()) {
                     model.addAttribute("failure", false);
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Can't verify user", null));
                     return "notverified";
                 } else if (u.getCode().equals(token)) {
                     u.setEnabled(true);
                     userRepository.save(u);
                     model.addAttribute("success", true);
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User verified", u.getUsername()));
                     return "verified";
                 }
             } else {
                 model.addAttribute("failure", false);
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Can't verify user", null));
                 return "notverified";
             }
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("failure", false);
+            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Can't verify user", null));
             return "notverified";
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Can't verify user", null));
         return "notverified";
     }
 
@@ -293,11 +315,13 @@ public class HospitalController {
     @GetMapping("/listusers")
     public String getUsers(Model model) {
         model.addAttribute("users", userRepository.findAll());
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "debug", "User list requested", null));
         return "listusers";
     }
 
     @GetMapping("/getuser{id}")
     public String getUserById(@RequestParam int id) {
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User with given name checked", userRepository.findUserById(id).getUsername()));
         return userRepository.findUserById(id).toString();
     }
 
@@ -317,6 +341,7 @@ public class HospitalController {
             JSONObject sessionObject = (JSONObject) dataArr.get(0); //This is the position in the JSON array that the session credentials have been stored.
             if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
             {
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Is authenticated ", null));
                 return "hello";
             }
         }
@@ -348,6 +373,7 @@ public class HospitalController {
             System.out.println(result.getAllErrors());
 
             ModelAndView model = new ModelAndView();
+            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Adding patient failed", null));
             System.out.println("===========\n Adding Patient failed");
             model.addObject("patient", patientDetails);
             model.setViewName("addPatient");
@@ -359,9 +385,11 @@ public class HospitalController {
         try {
             PatientDetails registered = patientService.registerPatient(patientDetails);
             System.out.println("===========\n Patient added");
+            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "New patient added", patientDetails.getLastName() ));
         } catch (PatientAlreadyExistsException e) {
             ModelAndView model = new ModelAndView();
             System.out.println("===========\n Adding Patient failed");
+            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Patient already existing", null));
             model.addObject("patientExistsError", "An patient already exists with this medial ID.");
             model.addObject("patient", patientDetails);
             model.setViewName("addPatient");
@@ -376,6 +404,7 @@ public class HospitalController {
     @GetMapping("/listPatients")
     public String listPatients() {
         // Add logic to check if user is authenticated and to fetch patients.
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "User is authenticated to track patients ", null));
         return "listPatients";
     }
 
@@ -384,16 +413,14 @@ public class HospitalController {
         try {
             PatientDetails patient = patientDetailsRepository.getPatientDetailsByMedicalID(id);
             model.addAttribute("patient", patient);
+            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "warn ", "A patients data is viewed  ", null));
         } catch (Exception e) {
             e.printStackTrace();
+            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "No data of the patient exists", null));
             PatientDetails patient = new PatientDetails();
         }
 
         return "viewPatient";
-
-
-
-
     }
 
 //
@@ -466,7 +493,16 @@ public class HospitalController {
             }
         }
 
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Users connected to the service", null));
         return "redirect:login";
+    }
+
+
+    @GetMapping("/listlogs")
+    public String getLogs(Model model) {
+        model.addAttribute("logsdata", logsRepository.findAll());
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "debug", "User list requested", null));
+        return "listlogs";
     }
 
 
