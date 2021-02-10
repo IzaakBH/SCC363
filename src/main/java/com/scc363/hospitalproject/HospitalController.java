@@ -122,6 +122,9 @@ public class HospitalController {
      *     "username"   : "john123"
      * }
      */
+
+    private User u1;
+
     @PostMapping("/createSession")
     @ResponseBody
     public String login(@RequestParam String data, HttpServletRequest request)
@@ -336,15 +339,23 @@ public class HospitalController {
      * @return JSON string result of authenticatio.
      */
     @PostMapping("/controlPanel")
-    public String isAuthenticated(@RequestParam(required = false) String data, HttpServletRequest request) {
+    public String isAuthenticated(@RequestParam(required = false) String data, HttpServletRequest request, User u) {
 
         if (data != null)
         {
             JSONArray dataArr = new JSONManager().convertToJSONObject(data); //converts JSON string into JSON object
             JSONObject sessionObject = (JSONObject) dataArr.get(0); //This is the position in the JSON array that the session credentials have been stored.
+            JSONObject dataObj = (JSONObject) dataArr.get(0);
+            String userName = (String) dataObj.get("username");
+            String password = (String) dataObj.get("password");
             if (sessionManager.isAuthorised(sessionObject, request.getRemoteAddr()))
             {
                 logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Is authenticated ", null));
+                User user = userRepository.findUserByUsername(userName);
+                if(user.getUserType().equals("SYSADMIN")){
+                    return "hellosysadmin";
+                }
+
                 return "hello";
             }
         }

@@ -13,25 +13,25 @@
         <table>
             <thead>
                 <tr>
-                    <th>UserName</th>
                     <th>Date</th>
                     <th>Time</th>
                     <th>Level</th>
                     <th>Message</th>
+                    <th>UserName</th>
                 </tr>
             </thead>
             <tbody>
             <tr th:each="log : ${logs}">
-                <td th:text="${log.userName}"></td>
                 <td th:text="${log.date}"></td>
                 <td th:text="${log.time}"></td>
                 <td th:text="${log.level}"></td>
                 <td th:text="${log.message}"></td>
+                <td th:text="${log.userName}"></td>
             </tr>
             </tbody>
         </table>
     </div>
-    <p><a href="/add">Add a new user</a></p>
+    <p><a href="/hellosysadmin">Go back</a></p>
 </div>
 
 </body>
