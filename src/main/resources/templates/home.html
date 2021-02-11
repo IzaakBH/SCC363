@@ -11,12 +11,11 @@
             <button onclick="window.location.href='/records'">Records</button>
             <button onclick="window.location.href='/accounts'">Accounts</button>
             <button onclick="window.location.href='/logs'">Logs</button>
+            <button th:value="${username}" onclick="window.location.assign(`http://localhost:8080/updateUser/?username=` + this.value);">Update my details</button>
         </div>
         <div class="expand view">
             <p id="text">HELLO</p>
-            <form th:action="@{/logout}" method="post">
-                <input type="submit" value="Sign Out"/>
-            </form>
+            <button onclick="window.location.assign(`/logout`);">Logout</button>
       </div>
       <button id = "new" >+ New Account</button>
     </body>
