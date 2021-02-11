@@ -55,6 +55,10 @@ public class SessionManager
             privateKeyCookie.isHttpOnly();
             usernameCookie.isHttpOnly();
 
+            //max age is 30 minutes
+            usernameCookie.setMaxAge(18000000);
+            privateKeyCookie.setMaxAge(18000000);
+            privateKeyCookie.setMaxAge(18000000);
             ArrayList<Cookie> cookies = new ArrayList<>(Arrays.asList(sessionIDCookie, privateKeyCookie, usernameCookie));
             return cookies;
 

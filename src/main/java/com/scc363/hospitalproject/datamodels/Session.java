@@ -22,7 +22,7 @@ public class Session
     {
         this.publicKey = key;
         this.sessionID = sessionID;
-        this.expiry = System.currentTimeMillis() + 300000;
+        this.expiry = System.currentTimeMillis() + 18000000;
         this.aesKey = aesKey;
         this.user = user;
         this.challenge = challenge;
