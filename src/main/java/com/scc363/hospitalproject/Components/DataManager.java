@@ -49,6 +49,7 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
 
         Privilege readUsers = createPrivilege("READ_USERS");
         Privilege readPatients = createPrivilege("READ_PATIENTS");
+        Privilege readAllPatients = createPrivilege("READ_ALL_PATIENTS");
 
         Privilege readLog = createPrivilege("READ_LOGS");
 
@@ -62,7 +63,7 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
         Privilege deletePatients = createPrivilege("DELETE_PATIENTS");
 
 
-        createRole("REGULATOR", Arrays.asList(readUsers, readPatients, updateUsers, updatePatients, readLog));
+        createRole("REGULATOR", Arrays.asList(readUsers, readPatients, updateUsers, updatePatients, readLog, readAllPatients));
         createRole("SYSTEM_ADMIN", Arrays.asList(readUsers, writeUsers, updateUsers, deleteUsers, readLog));
         createRole("DOCTOR", Arrays.asList(readPatients, updatePatients));
         createRole("NURSE", Arrays.asList(readPatients, updatePatients));
