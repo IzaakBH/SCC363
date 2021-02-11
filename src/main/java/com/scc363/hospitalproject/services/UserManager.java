@@ -27,7 +27,7 @@ public class UserManager implements UserManagerInterface
         User user = userRepository.findUserByUsername(username);
         if (user != null)
         {
-            user.setRoles(new ArrayList<Role>(Collections.singleton(roleRepository.findByName(user.getUserType()))));
+            user.setRoles(new ArrayList<Role>(Collections.singleton(roleRepository.findRoleByName(user.getUserType()))));
         }
         return user;
     }

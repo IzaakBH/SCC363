@@ -11,6 +11,7 @@ public class RequestErrorHandler implements ErrorController {
     @RequestMapping("/error")
     public String redirect()
     {
+        System.out.println("error occurred so redirecting");
         return "signin";
     }
 
