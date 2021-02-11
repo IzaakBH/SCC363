@@ -519,7 +519,7 @@ public class HospitalController {
 
 
 
-    @GetMapping("/deleteUser")
+    @PostMapping("/deleteUser")
     public String deleteUser(@RequestParam String username, HttpServletRequest request)
     {
         if (request.getCookies().length == 3)
@@ -544,7 +544,7 @@ public class HospitalController {
     }
 
 
-    @GetMapping("/deletePatient")
+    @PostMapping("/deletePatient")
     public String deletePatient(@RequestParam String medicalID, HttpServletRequest request)
     {
         if (request.getCookies().length == 3)
