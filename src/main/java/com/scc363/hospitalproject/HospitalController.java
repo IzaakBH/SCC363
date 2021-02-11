@@ -193,7 +193,7 @@ public class HospitalController {
     }
 
 
-    @GetMapping("/listusers")
+    @GetMapping("/accounts")
     public String getUsers(Model model, HttpServletRequest request)
     {
         if (request.getCookies().length == 3)
@@ -206,7 +206,7 @@ public class HospitalController {
                     if (user.hasPrivilege(privilegeRepository.findByName("READ_USERS")))
                     {
                         model.addAttribute("users", userRepository.findAll());
-                        return "listusers";
+                        return "accounts";
                     }
                     return "error2";
                 }
@@ -323,8 +323,8 @@ public class HospitalController {
         return mav;
     }
 
-    @GetMapping("/listPatients")
-    public String listPatients(HttpServletRequest request)
+    @GetMapping("/records")
+    public String records(Model model, HttpServletRequest request)
     {
         if (request.getCookies().length == 3)
         {
@@ -335,7 +335,8 @@ public class HospitalController {
                 {
                     if (user.hasPrivilege(privilegeRepository.findByName("READ_PATIENTS")))
                     {
-                        return "listPatients";
+                        model.addAttribute("patients", patientDetailsRepository.findAll());
+                        return "records";
                     }
                     return "error2";
                 }
@@ -374,10 +375,56 @@ public class HospitalController {
             }
         }
         return "signin";
-
     }
 
+    @GetMapping("/accountsEdit/{username}")
+    public String accountsEdit(@PathVariable String username, Model model, HttpServletRequest request)
+    {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (user.hasPrivilege(privilegeRepository.findByName("READ_USERS")))
+                    {
+                            try {
+                                User targetuser = userRepository.findUserByUsername(username);
+                                model.addAttribute("user", targetuser);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            return "accountsEdit";
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
+    }
 
+    @GetMapping("/logs")
+    public String logs(Model model, HttpServletRequest request)
+    {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (user.hasPrivilege(privilegeRepository.findByName("READ_LOGS")))
+                    {
+                        model.addAttribute("logs", logsRepository.findAll());
+                        return "logs";
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
+    }
 
 
 

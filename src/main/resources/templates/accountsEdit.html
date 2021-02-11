@@ -9,14 +9,15 @@
         <div class="expand editPage">
             <div style = "margin-left: 40%; margin-top: 10%;">
                 <p id="text">First Name:</p>
-                <input></input>
+                <input th:placeholder="${user.first}"></input>
                 <p id="text">Last Name:</p>
-                <input></input>
+                <input th:placeholder="${user.last}"></input>
                 <p id="text">Email address:</p>
-                <input></input>
+                <input th:placeholder="${user.email}"></input>
                 <p id="text">Password:</p>
                 <input></input>
                 <p id="text">Account type:</p>
+                <p id="text" th:text="${'Current type is: ' + user.userType}"></p>
                 <select id="userType" name="userType">
                     <option value="SYSADMIN">Sysadmin</option>
                     <option value="DOCTOR">Doctor</option>
@@ -32,7 +33,7 @@
             
             <button id = "save" style = "margin-left: 70%; margin-top: 10%;" >Save</button>
             <button id = "delete">Delete</button>
-            <button id = "cancel">Cancel/Back</button>
+            <button id = "cancel" onclick="window.location.href='/accounts'">Cancel/Back</button>
         </div>
     </body>
 </html>
