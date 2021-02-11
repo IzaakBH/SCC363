@@ -32,7 +32,7 @@
             </div>
             
             <button id = "save" style = "margin-right: 3%; margin-top: 60%;" >Save</button>
-            <button id = "delete" th:onclick="|window.location.assign(`http://localhost:8080/deleteUser/${user.id}`);|">Delete</button>
+            <button id = "delete" th:onclick="|window.location.assign(`http://localhost:8080/deleteUser/?id=${user.id}`);|">Delete</button>
             <button id = "cancel" onclick="window.location.href='/accounts'">Cancel/Back</button>
         </div>
     </body>

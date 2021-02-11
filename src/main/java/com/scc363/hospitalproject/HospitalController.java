@@ -533,7 +533,7 @@ public class HospitalController {
                     {
                         if (userRepository.findUserById(id) != null)
                         {
-                            userRepository.deleteUserById(id);
+                            userRepository.delete(userRepository.findUserById(id));
                             return "success";
                         }
                     }
@@ -545,7 +545,7 @@ public class HospitalController {
     }
 
 
-    @GetMapping("/deletePatient/{id}")
+    @GetMapping("/deletePatient")
     public String deletePatient(@RequestParam String medicalID, HttpServletRequest request)
     {
         if (request.getCookies().length == 3)
@@ -558,7 +558,7 @@ public class HospitalController {
                     {
                         if (patientDetailsRepository.getPatientDetailsByMedicalID(medicalID) != null)
                         {
-                            patientDetailsRepository.deleteById(patientDetailsRepository.getPatientDetailsByMedicalID(medicalID).getID());
+                            patientDetailsRepository.delete(patientDetailsRepository.getPatientDetailsByMedicalID(medicalID));
                             return "success";
                         }
                     }
