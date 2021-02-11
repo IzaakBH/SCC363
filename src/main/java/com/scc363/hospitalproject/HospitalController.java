@@ -29,12 +29,16 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.*;
 import javax.validation.Valid;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Collection;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.*;
 
 @Controller
 public class HospitalController {
@@ -64,8 +68,11 @@ public class HospitalController {
 
     private final SessionManager sessionManager = new SessionManager();
 
+    private boolean checkDB = false;
+
     @GetMapping("/login")
     public String login() {
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -88,12 +95,39 @@ public class HospitalController {
                 {
                     response.addCookie(cookie);
                 }
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User logged in", userName));
                 return "success";
             }
             else
             {
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "warn", "Error loggin in", userName));
+                int users= logsRepository.countByLevelAndUserNameAndDate("warn", userName, LocalDate.now());
+                System.out.println(users);
+                if(users>=5){
+                    Email warnEmail = new Email();
+                    warnEmail.sendEmail(userRepository.findUserByUsername(userName).getEmail(), "Someone tried to login to your account for 3 times with the wrong credentials");
+                }
+
+                int warns = logsRepository.countByLevel("warn");
+                if(warns>=500){
+                    Email warnEmail = new Email();
+                    warnEmail.sendEmail("scc363gr@gmail.com", "Many warns available");
+                }
                 return "failure";
             }
+        }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "warn", "Error logging in", userName));
+        int users= logsRepository.countByLevelAndUserNameAndDate("warn", userName, LocalDate.now());
+        System.out.println(users);
+        if(users>=5){
+            Email warnEmail = new Email();
+            warnEmail.sendEmail(userRepository.findUserByUsername(userName).getEmail(), "Someone tried to login to your account for 3 times with the wrong credentials");
+        }
+
+        int warns = logsRepository.countByLevel("warn");
+        if(warns>=500){
+            Email warnEmail = new Email();
+            warnEmail.sendEmail("scc363gr@gmail.com", "Many warns available");
         }
         return "failure";
     }
@@ -104,10 +138,12 @@ public class HospitalController {
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Home page loaded", null));
                 return "home";
             }
 
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "debug", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -121,13 +157,12 @@ public class HospitalController {
 
     @PostMapping("/register")
     public ModelAndView processRegistration(@ModelAttribute @Valid UserDTO userDTO, BindingResult result, HttpServletRequest request, Errors errors) {
-
-        logsRepository.save(new Log(LocalDateTime.now(), "info", "registration", null));
         if (result.hasErrors()) {
             System.out.println(result.getAllErrors());
 
             ModelAndView model = new ModelAndView();
             System.out.println("===========\n Adding User failed");
+            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Adding user failed", null));
             model.addObject("userDTO", userDTO);
             model.setViewName("register");
             return model;
@@ -142,11 +177,11 @@ public class HospitalController {
                 registered.sendEmail(userDTO.getEmail());
                 System.out.println("===========\n User added");
                 System.out.println("user type " + registered.getUserType());
-                logsRepository.save(new Log(LocalDateTime.now(), "info", "user added" + registered.getUsername(), null));
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User is registered", null));
             } catch (UserAlreadyExistsException e) {
                 ModelAndView model = new ModelAndView();
                 System.out.println("===========\n Adding User failed");
-                logsRepository.save(new Log(LocalDateTime.now(), "error", "registration failed", null));
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User registration failed", null));
                 model.addObject("userExistsError", "An account for that username/email already exists.");
                 model.addObject("userDTO", userDTO);
                 model.setViewName("register");
@@ -166,6 +201,7 @@ public class HospitalController {
 
     @GetMapping("/verifymessage")
     public String showVerifyMessage() {
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "debig", "Verification message sent", null));
         return "verifymessage";
     }
 
@@ -182,24 +218,30 @@ public class HospitalController {
 
                 if (u.isEnabled()) {
                     model.addAttribute("failure", false);
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User not verified", u.getUsername()));
                     return "notverified";
                 } else if (u.getCode().equals(token)) {
                     u.setEnabled(true);
                     userRepository.save(u);
                     model.addAttribute("success", true);
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "debug", "User verified", u.getUsername()));
                     return "verified";
                 }
             } else {
                 model.addAttribute("failure", false);
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User not verified", null));
                 return "notverified";
             }
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("failure", false);
+            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User not verified", null));
             return "notverified";
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User not verified", null));
         return "notverified";
     }
+
 
     @GetMapping("/delete-account/{id}")
     public String accountsEdit(@PathVariable Integer id, Model model, HttpServletRequest request)
@@ -217,13 +259,17 @@ public class HospitalController {
                             userRepository.deleteUserById(id);
                         } catch (Exception e) {
                             e.printStackTrace();
+                            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Account could not be deleted", userRepository.findUserById(id).getUsername()));
                         }
+                        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Account deleted", userRepository.findUserById(id).getUsername()));
                         return "delete-account";
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Account could not be deleted", userRepository.findUserById(id).getUsername()));
                     return "error2";
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -241,12 +287,15 @@ public class HospitalController {
                     if (user.hasPrivilege(privilegeRepository.findByName("READ_USERS")))
                     {
                         model.addAttribute("users", userRepository.findAll());
+                        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Account list loaded", null));
                         return "accounts";
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Account list could not be loaded", null));
                     return "error2";
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -262,12 +311,15 @@ public class HospitalController {
                 {
                     if (user.hasPrivilege(privilegeRepository.findByName("READ_USERS")))
                     {
+                        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User retrieved", user.getUsername()));
                         return userRepository.findUserById(id).toString();
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Error while retrieving user", user.getUsername()));
                     return "error2";
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -300,12 +352,15 @@ public class HospitalController {
                     if (user.hasPrivilege(privilegeRepository.findByName("WRITE_PATIENTS")))
                     {
                         model.addAttribute("patient", new PatientDetails());
+                        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "New patient added", null));
                         return "addPatient";
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Could not add new patient", null));
                     return "error2";
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -371,12 +426,15 @@ public class HospitalController {
                     if (user.hasPrivilege(privilegeRepository.findByName("READ_PATIENTS")))
                     {
                         model.addAttribute("patients", patientDetailsRepository.findAll());
+                        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Patients records retireved", null));
                         return "records";
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Error while loading patients records", null));
                     return "error2";
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -402,13 +460,16 @@ public class HospitalController {
                                 e.printStackTrace();
                                 PatientDetails patient = new PatientDetails();
                             }
+                            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Patients data viewed", patientDetails.getFirstName()+ patientDetails.getLastName()));
                             return "viewPatient";
                         }
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Patients data loading error", null));
                     return "error2";
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
 
     }
@@ -425,12 +486,15 @@ public class HospitalController {
                 if (user != null) {
                     if (user.hasRole(roleRepository.findRoleByName("SYSTEM_ADMIN")))
                     {
+                        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Permitted user showed", user.getUsername()));
                         return "addpermitteduser";
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Could not show permitted user", null));
                     return "error2";
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -454,16 +518,20 @@ public class HospitalController {
                                 {
                                     PermittedUser permittedUser = new PermittedUser(email, userType);
                                     permittedUserRepository.save(permittedUser);
+                                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User is preauthenticated", user.getUsername()));
                                     return "controlpanel";
                                 }
+                                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User could not be preauthenticated", null));
                                 return "error3";
                             }
                         }
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User could not be preauthenticated", null));
                     return "error2";
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -482,15 +550,18 @@ public class HospitalController {
                             try {
                                 User targetuser = userRepository.findUserByUsername(username);
                                 model.addAttribute("user", targetuser);
+                                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Account is edited", username));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             return "accountsEdit";
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Could not edit account", null));
                     return "error2";
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -513,6 +584,7 @@ public class HospitalController {
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -534,13 +606,16 @@ public class HospitalController {
                         if (userRepository.findUserById(id) != null)
                         {
                             userRepository.delete(userRepository.findUserById(id));
+                            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User deleted"+ userRepository.findUserById(id).getUsername(), userRepository.findUserById(id).getUsername()));
                             return "success";
                         }
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Could not delete user", null));
                     return "error2";
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -566,9 +641,41 @@ public class HospitalController {
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
+    @GetMapping("/logslist")
+    public String getLogs(Model model) {
+        model.addAttribute("logs", logsRepository.findAll());
+        return "logslist";
+    }
 
+    /* Backup database */
+
+    private void backupDB() {
+
+        Date date = new Date();
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int day = localDate.getDayOfMonth();
+
+        if (day == 1 && checkDB == false) {
+            try {
+                Class.forName("org.h2.Driver");
+                Connection con = DriverManager.getConnection("jdbc:h2:" + "./data/userdata", "sa", "password");
+                Statement stmt = con.createStatement();
+                con.prepareStatement("BACKUP TO 'backup.zip'").executeUpdate();
+                checkDB = true;
+                System.out.println("hola");
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "debug", "Database backup created", null));
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, ex.toString());
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Problem backing up the db", null));
+            }
+        }
+        if (day == 2){
+            checkDB= false;
+        }
+    }
 
 }
