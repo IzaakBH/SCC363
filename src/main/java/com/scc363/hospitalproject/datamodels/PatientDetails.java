@@ -66,6 +66,10 @@ public class PatientDetails {
     // Formats date as so: 10 April 2020.
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd MMMM yyyy");
 
+    public int getID()
+    {
+        return this.id;
+    }
     public String getMedicalID() {
         return medicalID;
     }
