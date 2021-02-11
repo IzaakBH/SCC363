@@ -53,6 +53,8 @@ public class UserDTO {
         this.password = password;
         this.email = email;
         this.userType = userType;
+        this.first = first;
+        this.last = last;
     }
 
     public String getUsername() {

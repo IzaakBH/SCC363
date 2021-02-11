@@ -2,10 +2,7 @@ package com.scc363.hospitalproject.datamodels;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Date;
 
 @Entity
@@ -16,7 +13,10 @@ public class Log {
     private Integer errorId;
 
     @Column
-    private LocalDateTime date;
+    private String date;
+
+    @Column
+    private String time;
 
     @Column
     private String level;
@@ -27,11 +27,43 @@ public class Log {
     @Column
     private String userName;
 
-    public Log(LocalDateTime date, String level, String message, String userName){
-        this.date = date;
+    public Log() {
+
+    }
+
+
+    public Log(LocalDate date, LocalTime time, String level, String message, String userName){
+        this.date = date.toString();
+        this.time = time.toString();
         this.level = level;
         this.message = message;
         this.userName = userName;
     }
 
+//
+//    @Override
+//
+//    public String toString() {
+//        return date + " " + time + " " + level + " " + message + " " + userName;
+//    }
+
+    public String getDate(){
+        return date;
+    }
+
+    public String getTime(){
+        return time;
+    }
+
+    public String getLevel(){
+        return level;
+    }
+
+    public String getMessage(){
+        return message;
+    }
+
+    public String getUserName(){
+        return userName;
+    }
 }
