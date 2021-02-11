@@ -35,10 +35,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.*;
 import javax.validation.Valid;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.text.ParseException;
 import javax.validation.Valid;
@@ -72,6 +77,8 @@ public class HospitalController {
 
     @Autowired
     private LogsRepository logsRepository;
+
+    private boolean checkDB = false;
 
 
     private final SessionManager sessionManager = new SessionManager();
@@ -123,18 +130,16 @@ public class HospitalController {
      * }
      */
 
-    private User u1;
-
     @PostMapping("/createSession")
     @ResponseBody
     public String login(@RequestParam String data, HttpServletRequest request)
     {
-
         JSONArray dataArr = new JSONManager().convertToJSONObject(data);
         JSONObject dataObj = (JSONObject) dataArr.get(0);
         String userName = (String) dataObj.get("username");
         String password = (String) dataObj.get("password");
         System.out.println(userName + password);
+        backupDB();
         if (loginService.isAuthenticated(userName, password))
         {
             logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User signed in", userName));
@@ -178,9 +183,11 @@ public class HospitalController {
 
     @GetMapping("/register")
     public String showRegistration(WebRequest request, Model model) {
+
         logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Registration page loaded", null));
         UserDTO userDTO = new UserDTO();
         model.addAttribute("userDTO", userDTO);
+
         return "register";
     }
 
@@ -310,10 +317,10 @@ public class HospitalController {
 
 
     // Test mapping
-    @GetMapping("/hello")
-    public String hello() {
-        return "hello";
-    }
+//    @GetMapping("/hello")
+//    public String hello() {
+//        return "backupDb";
+//    }
 
     @GetMapping("/listusers")
     public String getUsers(Model model) {
@@ -515,6 +522,33 @@ public class HospitalController {
     public String getLogs(Model model) {
         model.addAttribute("logs", logsRepository.findAll());
         return "logslist";
+    }
+
+    /* Backup database */
+
+    private void backupDB() {
+
+        Date date = new Date();
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int day = localDate.getDayOfMonth();
+
+        if (day == 1 && checkDB == false) {
+            try {
+                Class.forName("org.h2.Driver");
+                Connection con = DriverManager.getConnection("jdbc:h2:" + "./data/userdata", "sa", "password");
+                Statement stmt = con.createStatement();
+                con.prepareStatement("BACKUP TO 'backup.zip'").executeUpdate();
+                checkDB = true;
+                System.out.println("hola");
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "debug", "Database backup created", null));
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, ex.toString());
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Problem backing up the db", null));
+            }
+        }
+        if (day == 2){
+            checkDB= false;
+        }
     }
 
 }
