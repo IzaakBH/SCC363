@@ -678,4 +678,32 @@ public class HospitalController {
         }
     }
 
+    /* Backup database */
+
+    @GetMapping("/backuplogs")
+    public void backupLogs() {
+
+        Date date = new Date();
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int day = localDate.getDayOfMonth();
+
+        if (checkDB == false) {
+            try {
+                Class.forName("org.h2.Driver");
+                Connection con = DriverManager.getConnection("jdbc:h2:" + "./data/userdata", "sa", "password");
+                Statement stmt = con.createStatement();
+                con.prepareStatement("BACKUP TO 'backup.zip'").executeUpdate();
+                checkDB = true;
+                System.out.println("hola");
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "debug", "Database backup created", null));
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, ex.toString());
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Problem backing up the db", null));
+            }
+        }
+        if (day == 2){
+            checkDB= false;
+        }
+    }
+
 }
