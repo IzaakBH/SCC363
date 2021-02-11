@@ -106,6 +106,7 @@ public class HospitalController {
             {
                 return "home";
             }
+
         }
         return "signin";
     }
@@ -520,7 +521,7 @@ public class HospitalController {
 
 
     @GetMapping("/deleteUser")
-    public String deleteUser(@RequestParam String username, HttpServletRequest request)
+    public String deleteUser(@RequestParam Integer id, HttpServletRequest request)
     {
         if (request.getCookies().length == 3)
         {
@@ -530,9 +531,9 @@ public class HospitalController {
                 if (user != null) {
                     if (user.hasPrivilege(privilegeRepository.findByName("DELETE_USERS")))
                     {
-                        if (userRepository.findUserByUsername(username) != null)
+                        if (userRepository.findUserById(id) != null)
                         {
-                            userRepository.deleteUserById(userRepository.findUserByUsername(username).getId());
+                            userRepository.deleteUserById(id);
                             return "success";
                         }
                     }
@@ -544,7 +545,7 @@ public class HospitalController {
     }
 
 
-    @GetMapping("/deletePatient")
+    @GetMapping("/deletePatient/{id}")
     public String deletePatient(@RequestParam String medicalID, HttpServletRequest request)
     {
         if (request.getCookies().length == 3)
