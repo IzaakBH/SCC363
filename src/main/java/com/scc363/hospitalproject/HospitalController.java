@@ -519,5 +519,55 @@ public class HospitalController {
 
 
 
+    @GetMapping("/deleteUser")
+    public String deleteUser(@RequestParam String username, HttpServletRequest request)
+    {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null) {
+                    if (user.hasPrivilege(privilegeRepository.findByName("DELETE_USERS")))
+                    {
+                        if (userRepository.findUserByUsername(username) != null)
+                        {
+                            userRepository.deleteUserById(userRepository.findUserByUsername(username).getId());
+                            return "success";
+                        }
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
+    }
+
+
+    @GetMapping("/deletePatient")
+    public String deletePatient(@RequestParam String medicalID, HttpServletRequest request)
+    {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null) {
+                    if (user.hasPrivilege(privilegeRepository.findByName("DELETE_PATIENTS")))
+                    {
+                        if (patientDetailsRepository.getPatientDetailsByMedicalID(medicalID) != null)
+                        {
+                            patientDetailsRepository.deleteById(patientDetailsRepository.getPatientDetailsByMedicalID(medicalID).getID());
+                            return "success";
+                        }
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
+    }
+
+
 
 }
