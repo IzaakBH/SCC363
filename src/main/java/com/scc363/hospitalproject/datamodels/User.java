@@ -214,23 +214,16 @@ public class User implements UserDetails {
     }
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(
-                    name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"))
-    private Collection<Role> roles;
+    private ArrayList<Role> roles;
 
-    public void setRoles(Collection<Role> roles)
+    public void setRoles(ArrayList<Role> roles)
     {
         this.roles = roles;
     }
 
     public ArrayList<Role> getRoles()
     {
-        return new ArrayList<Role>(this.roles);
+        return this.roles;
     }
 
     public boolean hasRole(Role role)
@@ -259,11 +252,3 @@ public class User implements UserDetails {
 
 }
 
-enum UserTypes {
-    REGULATOR,
-    SYSADMIN,
-    DOCTOR,
-    NURSE,
-    MEDADMIN,
-    PATIENT
-}

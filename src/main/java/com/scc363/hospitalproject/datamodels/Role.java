@@ -60,4 +60,9 @@ public class Role {
         return false;
     }
 
+    public Collection<Privilege> getPrivileges()
+    {
+        return this.privileges;
+    }
+
 }

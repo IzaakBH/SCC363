@@ -61,6 +61,9 @@ public class HospitalController {
     @Autowired
     private LogsRepository logsRepository;
 
+    @Autowired
+    private UserManager userManager;
+
     private final SessionManager sessionManager = new SessionManager();
 
     @GetMapping("/login")
@@ -77,7 +80,7 @@ public class HospitalController {
         String userName = (String) dataObj.get("username");
         String password = (String) dataObj.get("password");
         System.out.println(userName + password);
-        if (/*loginService.isAuthenticated(userName, password)*/true)
+        if (loginService.isAuthenticated(userName, password))
         {
             sessionManager.ifUserHasSessionDestroy(userName);
             ArrayList<Cookie> cookies = sessionManager.createSession(userName, request.getRemoteAddr());
@@ -135,6 +138,7 @@ public class HospitalController {
             User registered = regService.registerNewUser(DTOMapper.userDtoToEntity(userDTO));
             registered.sendEmail(userDTO.getEmail());
             System.out.println("===========\n User added");
+            System.out.println("user type " + registered.getUserType());
             logsRepository.save(new Log(LocalDateTime.now(), "info", "user added" + registered.getUsername() , null));
         } catch (UserAlreadyExistsException e) {
             ModelAndView model = new ModelAndView();
@@ -196,7 +200,7 @@ public class HospitalController {
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
-                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
                 if (user != null)
                 {
                     if (user.hasPrivilege(privilegeRepository.findByName("READ_USERS")))
@@ -218,7 +222,7 @@ public class HospitalController {
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
-                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
                 if (user != null)
                 {
                     if (user.hasPrivilege(privilegeRepository.findByName("READ_USERS")))
@@ -255,7 +259,7 @@ public class HospitalController {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
 
-                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
                 if (user != null)
                 {
                     if (user.hasPrivilege(privilegeRepository.findByName("WRITE_PATIENTS")))
@@ -279,7 +283,7 @@ public class HospitalController {
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
-                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
                 if (user != null)
                 {
                     if (user.hasPrivilege(privilegeRepository.findByName("WRITE_PATIENTS")))
@@ -326,7 +330,7 @@ public class HospitalController {
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
-                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
                 if (user != null)
                 {
                     if (user.hasPrivilege(privilegeRepository.findByName("READ_PATIENTS")))
@@ -347,7 +351,7 @@ public class HospitalController {
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
-                User user = userRepository.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
                 if (user != null)
                 {
                     if (user.hasPrivilege(privilegeRepository.findByName("READ_PATIENTS")))

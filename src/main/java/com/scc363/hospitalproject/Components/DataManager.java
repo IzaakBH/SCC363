@@ -68,15 +68,6 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
         createRole("MED_ADMIN", Arrays.asList(readPatients, writePatients, deletePatients));
         createRole("PATIENT", Collections.singletonList(readPatients));
 
-        User testUser = new User();
-        testUser.setUsername("xavier");
-        testUser.setEmail("xavierhickman1234@gmail.com");
-        testUser.setPassword("password");
-        testUser.setRoles(Collections.singletonList(roleRepository.findByName("DOCTOR")));
-        testUser.setUserType("DOCTOR");
-        userRepository.save(testUser);
-
-
         setup = true;
     }
 
