@@ -6,16 +6,14 @@ import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
 
 import com.scc363.hospitalproject.repositories.*;
 import com.scc363.hospitalproject.services.*;
-import com.scc363.hospitalproject.utils.DTOMapper;
-import com.scc363.hospitalproject.utils.JSONManager;
-import com.scc363.hospitalproject.utils.Pair;
+import com.scc363.hospitalproject.utils.*;
 
-import com.scc363.hospitalproject.utils.SessionManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -62,6 +60,9 @@ public class HospitalController {
     @Autowired
     private PermittedUserRepository permittedUserRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private final SessionManager sessionManager = new SessionManager();
 
     @GetMapping("/login")
@@ -99,11 +100,12 @@ public class HospitalController {
     }
 
     @GetMapping("/home")
-    public String isAuthenticated(HttpServletRequest request) {
-        if (request.getCookies().length == 3)
+    public String isAuthenticated(Model model, HttpServletRequest request) {
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
+                model.addAttribute("username", sessionManager.getCookie("username", request.getCookies()));
                 return "home";
             }
         }
@@ -203,7 +205,7 @@ public class HospitalController {
     @GetMapping("/delete-account/{id}")
     public String accountsEdit(@PathVariable Integer id, Model model, HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -230,7 +232,7 @@ public class HospitalController {
     @GetMapping("/accounts")
     public String getUsers(Model model, HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -252,7 +254,7 @@ public class HospitalController {
     @GetMapping("/getuser{id}")
     public String getUserById(@RequestParam int id, HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -288,7 +290,7 @@ public class HospitalController {
     @GetMapping("/addPatient")
     public String getCreatePatient(Model model, HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -313,7 +315,7 @@ public class HospitalController {
     {
         ModelAndView mav = new ModelAndView();
 
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -360,7 +362,7 @@ public class HospitalController {
     @GetMapping("/records")
     public String records(Model model, HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -382,7 +384,7 @@ public class HospitalController {
     @GetMapping("/viewPatient/{id}")
     public String viewPatient(@PathVariable String id, Model model, HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -416,7 +418,7 @@ public class HospitalController {
     @GetMapping("/addPermittedUser")
     public String showAddPermittedUser(HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -436,7 +438,7 @@ public class HospitalController {
     @PostMapping("/preAuthUser")
     public String preAuthUser(@RequestParam String email, @RequestParam String userType, HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -469,7 +471,7 @@ public class HospitalController {
     @GetMapping("/accountsEdit/{username}")
     public String accountsEdit(@PathVariable String username, Model model, HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -496,7 +498,7 @@ public class HospitalController {
     @GetMapping("/logs")
     public String logs(Model model, HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -522,7 +524,7 @@ public class HospitalController {
     @PostMapping("/deleteUser")
     public String deleteUser(@RequestParam String username, HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -532,7 +534,7 @@ public class HospitalController {
                     {
                         if (userRepository.findUserByUsername(username) != null)
                         {
-                            userRepository.deleteUserById(userRepository.findUserByUsername(username).getId());
+                            userRepository.delete(userRepository.findUserByUsername(username));
                             return "success";
                         }
                     }
@@ -547,7 +549,7 @@ public class HospitalController {
     @PostMapping("/deletePatient")
     public String deletePatient(@RequestParam String medicalID, HttpServletRequest request)
     {
-        if (request.getCookies().length == 3)
+        if (request.getCookies().length >= 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
@@ -557,7 +559,7 @@ public class HospitalController {
                     {
                         if (patientDetailsRepository.getPatientDetailsByMedicalID(medicalID) != null)
                         {
-                            patientDetailsRepository.deleteById(patientDetailsRepository.getPatientDetailsByMedicalID(medicalID).getID());
+                            patientDetailsRepository.delete(patientDetailsRepository.getPatientDetailsByMedicalID(medicalID));
                             return "success";
                         }
                     }
@@ -569,5 +571,60 @@ public class HospitalController {
     }
 
 
+    @GetMapping("/updateUser")
+    public String showUpdateUser(Model model, HttpServletRequest request, @RequestParam String username) {
+
+        if (request.getCookies().length >= 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (username.equals(user.getUsername()) || user.hasRole(roleRepository.findRoleByName("SYSTEM_ADMIN")))
+                    {
+                        model.addAttribute("username", username);
+                        return "updateuser";
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
+    }
+
+    @PostMapping("/updateUser")
+    public String processUserUpdate(Model model, @RequestParam String username, @RequestParam String password, HttpServletRequest request)
+    {
+        if (request.getCookies().length >= 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (username.equals(user.getUsername()) || user.hasRole(roleRepository.findRoleByName("SYSTEM_ADMIN")))
+                    {
+                        if (PasswordStrengthEvaluator.evaluatePassword(password) >= 0.5)
+                        {
+                            User updatedUser = userRepository.findUserByUsername(username);
+                            userRepository.delete(updatedUser);
+                            updatedUser.setPassword(passwordEncoder.encode(password));
+                            userRepository.save(updatedUser);
+                            return "success";
+                        }
+                        else
+                        {
+                            model.addAttribute("errorMessage", "Password is too weak");
+                            model.addAttribute("username", username);
+                            return "updateuser";
+                        }
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
+    }
 
 }
