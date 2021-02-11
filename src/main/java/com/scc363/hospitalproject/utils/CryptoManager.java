@@ -63,7 +63,7 @@ public class CryptoManager
     {
         StringBuilder salt = new StringBuilder();
         //loop generates 128 randomly generated characters from ASCII
-        for(int i = 0; i < 16; i++)
+        for(int i = 0; i < 128; i++)
         {
             //Secure random is considered to be 'Crypto graphically secure'.
             SecureRandom secureRandom = new SecureRandom();

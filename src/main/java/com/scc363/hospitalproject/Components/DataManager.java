@@ -11,6 +11,7 @@ import com.scc363.hospitalproject.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -35,6 +36,8 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
     @Autowired
     private PatientDetailsRepository patientDetailsRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -49,7 +52,9 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
 
         Privilege readUsers = createPrivilege("READ_USERS");
         Privilege readPatients = createPrivilege("READ_PATIENTS");
+        Privilege readAllPatients = createPrivilege("READ_ALL_PATIENTS");
 
+        Privilege readLog = createPrivilege("READ_LOGS");
 
         Privilege writeUsers = createPrivilege("WRITE_USERS");
         Privilege writePatients = createPrivilege("WRITE_PATIENTS");
@@ -61,21 +66,23 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
         Privilege deletePatients = createPrivilege("DELETE_PATIENTS");
 
 
-        createRole("REGULATOR", Arrays.asList(readUsers, readPatients, updateUsers, updatePatients));
-        createRole("SYSTEM_ADMIN", Arrays.asList(readUsers, writeUsers, updateUsers, deleteUsers));
+        createRole("REGULATOR", Arrays.asList(readUsers, readPatients, updateUsers, updatePatients, readLog, readAllPatients));
+        createRole("SYSTEM_ADMIN", Arrays.asList(readUsers, writeUsers, updateUsers, deleteUsers, readLog));
         createRole("DOCTOR", Arrays.asList(readPatients, updatePatients));
         createRole("NURSE", Arrays.asList(readPatients, updatePatients));
         createRole("MED_ADMIN", Arrays.asList(readPatients, writePatients, deletePatients));
         createRole("PATIENT", Collections.singletonList(readPatients));
 
-        User testUser = new User();
-        testUser.setUsername("xavier");
-        testUser.setEmail("xavierhickman1234@gmail.com");
-        testUser.setPassword("password");
-        testUser.setRoles(Collections.singletonList(roleRepository.findByName("DOCTOR")));
-        testUser.setUserType("DOCTOR");
-        userRepository.save(testUser);
 
+        User sysAdmin = new User();
+        sysAdmin.setUsername("xavier");
+        sysAdmin.setPassword(passwordEncoder.encode("##PPassword123"));
+        sysAdmin.setUserType("SYSTEM_ADMIN");
+        sysAdmin.setEmail("xavierhickman1234@gmail.com");
+        sysAdmin.setEnabled(true);
+        sysAdmin.setFirst("xavier");
+        sysAdmin.setLast("hickman");
+        userRepository.save(sysAdmin);
 
         setup = true;
     }
@@ -97,7 +104,7 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
     @Transactional
     Role createRole(String name, Collection<Privilege> privileges)
     {
-        Role role = roleRepository.findByName(name);
+        Role role = roleRepository.findRoleByName(name);
         if (role == null)
         {
             role = new Role(name);

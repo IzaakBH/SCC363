@@ -214,23 +214,17 @@ public class User implements UserDetails {
     }
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(
-                    name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"))
-    private Collection<Role> roles;
+    @Transient
+    private ArrayList<Role> roles;
 
-    public void setRoles(Collection<Role> roles)
+    public void setRoles(ArrayList<Role> roles)
     {
         this.roles = roles;
     }
 
     public ArrayList<Role> getRoles()
     {
-        return new ArrayList<Role>(this.roles);
+        return this.roles;
     }
 
     public boolean hasRole(Role role)
@@ -245,13 +239,17 @@ public class User implements UserDetails {
         return false;
     }
 
+    public boolean hasPrivilege(Privilege privilege)
+    {
+        for (Role assignedRole : this.roles)
+        {
+            if (assignedRole.hasPrivileges(privilege))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
-enum UserTypes {
-    REGULATOR,
-    SYSADMIN,
-    DOCTOR,
-    NURSE,
-    MEDADMIN,
-    PATIENT
-}

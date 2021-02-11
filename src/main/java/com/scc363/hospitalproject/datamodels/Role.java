@@ -30,8 +30,6 @@ public class Role {
     {
         return this.name;
     }
-    @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
 
     @ManyToMany
     @JoinTable(
@@ -58,6 +56,11 @@ public class Role {
             }
         }
         return false;
+    }
+
+    public Collection<Privilege> getPrivileges()
+    {
+        return this.privileges;
     }
 
 }

@@ -7,8 +7,11 @@ import com.scc363.hospitalproject.datamodels.Session;
 import org.json.simple.JSONObject;
 
 import javax.crypto.SecretKey;
+import javax.servlet.http.Cookie;
 import java.security.KeyPair;
 import java.security.PrivateKey;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SessionManager
 {
@@ -30,25 +33,34 @@ public class SessionManager
     }
 
 
-    public JSONObject createSession(String username, String clientIP)
+
+    public ArrayList<Cookie> createSession(String username, String clientIP)
     {
         CryptoManager cryptoManager = new CryptoManager();
 
         KeyPair keyPair = cryptoManager.generateKeyPair();
         SecretKey aesKey = cryptoManager.generateAESKey();
-        String sessionID = cryptoManager.hashString((username + System.currentTimeMillis()));
+        String sessionID = cryptoManager.hashString((username + new CryptoManager().generateSalt()));
 
-        Session session = new Session(keyPair.getPublic(), sessionID, aesKey, username, cryptoManager.encrypt(clientIP, keyPair.getPublic()));
+        Session session = new Session(sessionID, aesKey, username, cryptoManager.encrypt(clientIP, keyPair.getPublic()));
 
         if (sessionCache.createSession(session))
         {
             String privKCipher = cryptoManager.encryptAES(cryptoManager.keyToString(keyPair.getPrivate()), aesKey);
-            return new JSONManager(
-                    new Pair[]{
-                            new Pair("sessionID", sessionID),
-                            new Pair("privateKey", privKCipher),
-                            new Pair("username", username)
-                    }).generateJSONObject();
+            Cookie sessionIDCookie = new Cookie("sessionID", sessionID);
+            Cookie privateKeyCookie = new Cookie("key", privKCipher);
+            Cookie usernameCookie = new Cookie("username", username);
+
+            usernameCookie.isHttpOnly();
+            privateKeyCookie.isHttpOnly();
+            usernameCookie.isHttpOnly();
+
+            //max age is 30 minutes
+            usernameCookie.setMaxAge(18000000);
+            privateKeyCookie.setMaxAge(18000000);
+            privateKeyCookie.setMaxAge(18000000);
+            return new ArrayList<>(Arrays.asList(sessionIDCookie, privateKeyCookie, usernameCookie));
+
         }
         else
         {
@@ -57,37 +69,56 @@ public class SessionManager
     }
 
 
-    public boolean isAuthorised(JSONObject dataObj, String clientIP)
+
+
+    public boolean isAuthorised(Cookie[] cookies, String clientIP)
     {
-        String sessionID = (String) dataObj.get("sessionID");
-        String privateKeyString = (String) dataObj.get("privateKey");
-        String username = (String) dataObj.get("username");
+        String sessionID = getCookie("sessionID", cookies);
+        String privateKeyString = getCookie("key", cookies);
+        String username = getCookie("username", cookies);
 
-        privateKeyString = privateKeyString.replaceAll(" ", "+");
-        sessionID = sessionID.replaceAll(" ", "+");
-
-        if (sessionCache.hasSession(sessionID, username))
+        if (sessionID != null && privateKeyString != null && username != null)
         {
-            Session session = sessionCache.getSession(sessionID, username);
-            if (!session.hasExpired())
-            {
-                CryptoManager cryptoManager = new CryptoManager();
+            privateKeyString = privateKeyString.replaceAll(" ", "+");
+            sessionID = sessionID.replaceAll(" ", "+");
 
-                String privKeyPT = cryptoManager.decryptAES(privateKeyString, session.getAesKey());
-                if (privKeyPT != null)
+            if (sessionCache.hasSession(sessionID, username))
+            {
+                Session session = sessionCache.getSession(sessionID, username);
+                if (!session.hasExpired())
                 {
-                    PrivateKey privateKey = cryptoManager.getPrivateKeyFromString(privKeyPT);
-                    if (privateKey != null)
+                    CryptoManager cryptoManager = new CryptoManager();
+
+                    String privKeyPT = cryptoManager.decryptAES(privateKeyString, session.getAesKey());
+                    if (privKeyPT != null)
                     {
-                        return session.isAuthenticated(privateKey, clientIP);
+                        PrivateKey privateKey = cryptoManager.getPrivateKeyFromString(privKeyPT);
+                        if (privateKey != null)
+                        {
+                            return session.isAuthenticated(privateKey, clientIP);
+                        }
                     }
                 }
-            }
-            else
-            {
-                sessionCache.destroySession(sessionID, username);
+                else
+                {
+                    sessionCache.destroySession(sessionID, username);
+                }
             }
         }
+
         return false;
+    }
+
+
+    public String getCookie(String name, Cookie[] cookies)
+    {
+        for (Cookie cookie : cookies)
+        {
+            if (cookie.getName().equals(name))
+            {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 }

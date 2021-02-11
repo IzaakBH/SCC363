@@ -10,7 +10,6 @@ public class Session
 {
 
 
-    private PublicKey publicKey;
     private SecretKey aesKey;
     private String sessionID;
     private long expiry;
@@ -18,11 +17,10 @@ public class Session
     private byte[] challenge;
 
 
-    public Session(PublicKey key, String sessionID, SecretKey aesKey, String user, byte[] challenge)
+    public Session(String sessionID, SecretKey aesKey, String user, byte[] challenge)
     {
-        this.publicKey = key;
         this.sessionID = sessionID;
-        this.expiry = System.currentTimeMillis() + 300000;
+        this.expiry = System.currentTimeMillis() + 18000000;
         this.aesKey = aesKey;
         this.user = user;
         this.challenge = challenge;
@@ -47,14 +45,6 @@ public class Session
     {
         return this.sessionID;
     }
-
-    /*
-    public PublicKey getKey()
-    {
-        return this.publicKey;
-    }
-
-     */
 
 
     public boolean isAuthenticated(PrivateKey privateKey, String data)
