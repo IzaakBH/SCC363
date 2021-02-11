@@ -40,9 +40,9 @@ public class SessionManager
 
         KeyPair keyPair = cryptoManager.generateKeyPair();
         SecretKey aesKey = cryptoManager.generateAESKey();
-        String sessionID = cryptoManager.hashString((username + System.currentTimeMillis()));
+        String sessionID = cryptoManager.hashString((username + new CryptoManager().generateSalt()));
 
-        Session session = new Session(keyPair.getPublic(), sessionID, aesKey, username, cryptoManager.encrypt(clientIP, keyPair.getPublic()));
+        Session session = new Session(sessionID, aesKey, username, cryptoManager.encrypt(clientIP, keyPair.getPublic()));
 
         if (sessionCache.createSession(session))
         {
@@ -59,8 +59,7 @@ public class SessionManager
             usernameCookie.setMaxAge(18000000);
             privateKeyCookie.setMaxAge(18000000);
             privateKeyCookie.setMaxAge(18000000);
-            ArrayList<Cookie> cookies = new ArrayList<>(Arrays.asList(sessionIDCookie, privateKeyCookie, usernameCookie));
-            return cookies;
+            return new ArrayList<>(Arrays.asList(sessionIDCookie, privateKeyCookie, usernameCookie));
 
         }
         else
