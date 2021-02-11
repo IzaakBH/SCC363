@@ -75,6 +75,7 @@ public class HospitalController {
     @GetMapping("/login")
     public String login() {
         logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
+        backupDB();
         return "signin";
     }
 
@@ -747,19 +748,23 @@ public class HospitalController {
                             userRepository.delete(updatedUser);
                             updatedUser.setPassword(passwordEncoder.encode(password));
                             userRepository.save(updatedUser);
+                            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User successfully updated", username));
                             return "success";
                         }
                         else
                         {
                             model.addAttribute("errorMessage", "Password is too weak");
                             model.addAttribute("username", username);
+                            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Error updating user", username));
                             return "updateuser";
                         }
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Error updating user", username));
                     return "error2";
                 }
             }
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
