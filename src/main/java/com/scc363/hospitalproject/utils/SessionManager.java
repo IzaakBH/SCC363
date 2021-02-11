@@ -48,7 +48,7 @@ public class SessionManager
         {
             String privKCipher = cryptoManager.encryptAES(cryptoManager.keyToString(keyPair.getPrivate()), aesKey);
             Cookie sessionIDCookie = new Cookie("sessionID", sessionID);
-            Cookie privateKeyCookie = new Cookie("privateKey", privKCipher);
+            Cookie privateKeyCookie = new Cookie("key", privKCipher);
             Cookie usernameCookie = new Cookie("username", username);
 
             usernameCookie.isHttpOnly();
@@ -74,7 +74,7 @@ public class SessionManager
     public boolean isAuthorised(Cookie[] cookies, String clientIP)
     {
         String sessionID = getCookie("sessionID", cookies);
-        String privateKeyString = getCookie("privateKey", cookies);
+        String privateKeyString = getCookie("key", cookies);
         String username = getCookie("username", cookies);
 
         if (sessionID != null && privateKeyString != null && username != null)
