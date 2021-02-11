@@ -352,7 +352,8 @@ public class HospitalController {
                 {
                     if (user.hasPrivilege(privilegeRepository.findByName("READ_PATIENTS")))
                     {
-                        if (patientDetailsRepository.hasDoctor(user.getUsername(), id))
+                        PatientDetails patientDetails = patientDetailsRepository.getPatientDetailsByMedicalID(id);
+                        if (patientDetails.getDoctor().equals(user.getUsername()))
                         {
                             try {
                                 PatientDetails patient = patientDetailsRepository.getPatientDetailsByMedicalID(id);

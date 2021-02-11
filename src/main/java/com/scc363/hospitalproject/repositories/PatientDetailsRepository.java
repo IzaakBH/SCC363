@@ -12,6 +12,5 @@ public interface PatientDetailsRepository extends CrudRepository<PatientDetails,
     PatientDetails getPatientDetailsByMedicalID(String medicalID);
     List<PatientDetails> getPatientDetailsByFirstNameAndLastName(String firstName, String lastName);
     List<PatientDetails> getPatientDetailsByDoctor(String doctor);
-    boolean hasDoctor(String doctor, String medicalID);
     boolean existsByMedicalID(String medicalID);
 }
