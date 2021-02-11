@@ -39,7 +39,7 @@ function handleResult(response)
 {
         if (response == "success")
         {
-            window.location.assign('http://localhost:8080/controlPanel');
+            window.location.assign('http://localhost:8080/home');
         }
         else
         {

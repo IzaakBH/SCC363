@@ -98,13 +98,13 @@ public class HospitalController {
         return "failure";
     }
 
-    @GetMapping("/controlPanel")
+    @GetMapping("/home")
     public String isAuthenticated(HttpServletRequest request) {
         if (request.getCookies().length == 3)
         {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
-                return "hello";
+                return "home";
             }
         }
         return "signin";
@@ -198,6 +198,32 @@ public class HospitalController {
             return "notverified";
         }
         return "notverified";
+    }
+
+    @GetMapping("/delete-account/{id}")
+    public String accountsEdit(@PathVariable Integer id, Model model, HttpServletRequest request)
+    {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (user.hasPrivilege(privilegeRepository.findByName("DELETE_USERS")))
+                    {
+                        try {
+                            userRepository.deleteUserById(id);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return "delete-account";
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
     }
 
 
@@ -363,7 +389,7 @@ public class HospitalController {
                 User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
                 if (user != null)
                 {
-                    if (user.hasPrivilege(privilegeRepository.findByName("READ_PATIENTS")))
+                    if (user.hasPrivilege(privilegeRepository.findByName("READ_PATIENTS")) || user.hasPrivilege(privilegeRepository.findByName("READ_ALL_PATIENTS")))
                     {
                         PatientDetails patientDetails = patientDetailsRepository.getPatientDetailsByMedicalID(id);
                         if (patientDetails.getDoctor().equals(user.getUsername()))

@@ -7,9 +7,10 @@
     </head>
     <body>
         <div class="btn-group">
-            <button>Records</button>
+            <button onclick="window.location.href='/home'">Home</button>
+            <button onclick="window.location.href='/records'">Records</button>
             <button style = "border-bottom: 5px solid rgb(0, 17, 255);">Accounts</button>
-            <button>Logs</button>
+            <button onclick="window.location.href='/logs'">Logs</button>
         </div>
         <div class="expand view">
             <div th:each="user : ${users}"> <a style="color: white" th:text="${user.username}" th:href="@{'/accountsEdit/'+${user.username}}"></a> </div>
