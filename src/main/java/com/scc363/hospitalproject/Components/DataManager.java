@@ -11,6 +11,7 @@ import com.scc363.hospitalproject.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -35,6 +36,8 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
     @Autowired
     private PatientDetailsRepository patientDetailsRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -67,6 +70,17 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
         createRole("NURSE", Arrays.asList(readPatients, updatePatients));
         createRole("MED_ADMIN", Arrays.asList(readPatients, writePatients, deletePatients));
         createRole("PATIENT", Collections.singletonList(readPatients));
+
+
+        User sysAdmin = new User();
+        sysAdmin.setUsername("xavier");
+        sysAdmin.setPassword(passwordEncoder.encode("##PPassword123"));
+        sysAdmin.setUserType("SYSTEM_ADMIN");
+        sysAdmin.setEmail("xavierhickman1234@gmail.com");
+        sysAdmin.setEnabled(true);
+        sysAdmin.setFirst("xavier");
+        sysAdmin.setLast("hickman");
+        userRepository.save(sysAdmin);
 
         setup = true;
     }

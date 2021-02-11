@@ -4,11 +4,7 @@ import com.scc363.hospitalproject.datamodels.dtos.UserDTO;
 import com.scc363.hospitalproject.exceptions.PatientAlreadyExistsException;
 import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
 
-import com.scc363.hospitalproject.repositories.LogsRepository;
-import com.scc363.hospitalproject.repositories.PatientDetailsRepository;
-import com.scc363.hospitalproject.repositories.PrivilegeRepository;
-import com.scc363.hospitalproject.repositories.RoleRepository;
-import com.scc363.hospitalproject.repositories.UserRepository;
+import com.scc363.hospitalproject.repositories.*;
 import com.scc363.hospitalproject.services.*;
 import com.scc363.hospitalproject.utils.DTOMapper;
 import com.scc363.hospitalproject.utils.JSONManager;
@@ -63,6 +59,9 @@ public class HospitalController {
 
     @Autowired
     private UserManager userManager;
+
+    @Autowired
+    private PermittedUsersRepository permittedUsersRepository;
 
     private final SessionManager sessionManager = new SessionManager();
 
@@ -134,24 +133,30 @@ public class HospitalController {
             return model;
         }
 
-        try {
-            User registered = regService.registerNewUser(DTOMapper.userDtoToEntity(userDTO));
-            registered.sendEmail(userDTO.getEmail());
-            System.out.println("===========\n User added");
-            System.out.println("user type " + registered.getUserType());
-            logsRepository.save(new Log(LocalDateTime.now(), "info", "user added" + registered.getUsername() , null));
-        } catch (UserAlreadyExistsException e) {
-            ModelAndView model = new ModelAndView();
-            System.out.println("===========\n Adding User failed");
-            logsRepository.save(new Log(LocalDateTime.now(), "error", "registration failed", null));
-            model.addObject("userExistsError", "An account for that username/email already exists.");
-            model.addObject("userDTO", userDTO);
-            model.setViewName("register");
-            return model;
-        }
-
         ModelAndView mav = new ModelAndView();
-        mav.setViewName("verifymessage");
+
+        if (permittedUsersRepository.getPermittedUserByEmailAndUserType(userDTO.getEmail(), userDTO.getUserType()) != null)
+        {
+            try {
+                User registered = regService.registerNewUser(DTOMapper.userDtoToEntity(userDTO));
+                registered.sendEmail(userDTO.getEmail());
+                System.out.println("===========\n User added");
+                System.out.println("user type " + registered.getUserType());
+                logsRepository.save(new Log(LocalDateTime.now(), "info", "user added" + registered.getUsername(), null));
+            } catch (UserAlreadyExistsException e) {
+                ModelAndView model = new ModelAndView();
+                System.out.println("===========\n Adding User failed");
+                logsRepository.save(new Log(LocalDateTime.now(), "error", "registration failed", null));
+                model.addObject("userExistsError", "An account for that username/email already exists.");
+                model.addObject("userDTO", userDTO);
+                model.setViewName("register");
+                return model;
+            }
+
+            mav.setViewName("verifymessage");
+            return mav;
+        }
+        mav.setViewName("error2");
         return mav;
     }
 
@@ -377,6 +382,62 @@ public class HospitalController {
 
     }
 
+
+    @GetMapping("/addPermittedUser")
+    public String showAddPermittedUser(HttpServletRequest request)
+    {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null) {
+                    if (user.hasRole(roleRepository.findByName("SYSTEM_ADMIN")))
+                    {
+                        return "addpermitteduser";
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
+    }
+
+    @PostMapping("/preAuthUser")
+    public String preAuthUser(@RequestParam String email, @RequestParam String userType, HttpServletRequest request)
+    {
+        if (request.getCookies().length == 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (user.hasRole(roleRepository.findByName("SYSTEM_ADMIN")))
+                    {
+                        if (userRepository.findUserByEmail(email) == null)
+                        {
+                            System.out.println("email does not exist so validating");
+                            if (email.contains("@") && email.contains("."))
+                            {
+                                if (roleRepository.findByName(userType) != null)
+                                {
+                                    System.out.println("attempting to save permitted user");
+
+                                    PermittedUser permittedUser = new PermittedUser(email, userType);
+                                    permittedUsersRepository.save(permittedUser);
+                                    return "controlpanel";
+                                }
+                            }
+                        }
+                        return "error3";
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
+    }
 
 
 
