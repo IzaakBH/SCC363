@@ -102,7 +102,7 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
     @Transactional
     Role createRole(String name, Collection<Privilege> privileges)
     {
-        Role role = roleRepository.findByName(name);
+        Role role = roleRepository.findRoleByName(name);
         if (role == null)
         {
             role = new Role(name);

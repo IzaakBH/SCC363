@@ -30,8 +30,6 @@ public class Role {
     {
         return this.name;
     }
-    @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
 
     @ManyToMany
     @JoinTable(

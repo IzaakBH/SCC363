@@ -8,7 +8,6 @@ import com.scc363.hospitalproject.repositories.*;
 import com.scc363.hospitalproject.services.*;
 import com.scc363.hospitalproject.utils.DTOMapper;
 import com.scc363.hospitalproject.utils.JSONManager;
-import com.scc363.hospitalproject.utils.Pair;
 
 import com.scc363.hospitalproject.utils.SessionManager;
 import org.json.simple.JSONArray;
@@ -34,7 +33,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collection;
 
 @Controller
 public class HospitalController {
@@ -59,9 +57,8 @@ public class HospitalController {
 
     @Autowired
     private UserManager userManager;
-
     @Autowired
-    private PermittedUsersRepository permittedUsersRepository;
+    private PermittedUserRepository permittedUserRepository;
 
     private final SessionManager sessionManager = new SessionManager();
 
@@ -135,7 +132,7 @@ public class HospitalController {
 
         ModelAndView mav = new ModelAndView();
 
-        if (permittedUsersRepository.getPermittedUserByEmailAndUserType(userDTO.getEmail(), userDTO.getUserType()) != null)
+        if (permittedUserRepository.findPermittedUserByEmailAndUserType(userDTO.getEmail(), userDTO.getUserType()) != null)
         {
             try {
                 User registered = regService.registerNewUser(DTOMapper.userDtoToEntity(userDTO));
@@ -155,6 +152,10 @@ public class HospitalController {
 
             mav.setViewName("verifymessage");
             return mav;
+        }
+        else
+        {
+            System.out.println("could not find " + userDTO.getEmail() + " and " + userDTO.getUserType() + " in permitted users");
         }
         mav.setViewName("error2");
         return mav;
@@ -392,7 +393,7 @@ public class HospitalController {
             {
                 User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
                 if (user != null) {
-                    if (user.hasRole(roleRepository.findByName("SYSTEM_ADMIN")))
+                    if (user.hasRole(roleRepository.findRoleByName("SYSTEM_ADMIN")))
                     {
                         return "addpermitteduser";
                     }
@@ -413,24 +414,21 @@ public class HospitalController {
                 User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
                 if (user != null)
                 {
-                    if (user.hasRole(roleRepository.findByName("SYSTEM_ADMIN")))
+                    if (user.hasRole(roleRepository.findRoleByName("SYSTEM_ADMIN")))
                     {
                         if (userRepository.findUserByEmail(email) == null)
                         {
-                            System.out.println("email does not exist so validating");
                             if (email.contains("@") && email.contains("."))
                             {
-                                if (roleRepository.findByName(userType) != null)
+                                if (roleRepository.findRoleByName(userType) != null)
                                 {
-                                    System.out.println("attempting to save permitted user");
-
                                     PermittedUser permittedUser = new PermittedUser(email, userType);
-                                    permittedUsersRepository.save(permittedUser);
+                                    permittedUserRepository.save(permittedUser);
                                     return "controlpanel";
                                 }
+                                return "error3";
                             }
                         }
-                        return "error3";
                     }
                     return "error2";
                 }
