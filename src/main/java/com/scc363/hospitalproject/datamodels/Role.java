@@ -30,8 +30,6 @@ public class Role {
     {
         return this.name;
     }
-    @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
 
     @ManyToMany
     @JoinTable(
@@ -48,8 +46,7 @@ public class Role {
         this.privileges = privileges;
     }
 
-    public boolean hasPrivileges(Privilege privilege)
-    {
+    public boolean hasPrivileges(Privilege privilege) {
         for (Privilege assignedPrivilege : this.privileges)
         {
             if (assignedPrivilege.getName().equals(privilege.getName()))

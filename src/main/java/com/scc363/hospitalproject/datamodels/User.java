@@ -214,6 +214,7 @@ public class User implements UserDetails {
     }
 
 
+    @Transient
     private ArrayList<Role> roles;
 
     public void setRoles(ArrayList<Role> roles)
