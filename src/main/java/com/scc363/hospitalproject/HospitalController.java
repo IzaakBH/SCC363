@@ -14,6 +14,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -158,7 +159,7 @@ public class HospitalController {
     @PostMapping("/register")
     public ModelAndView processRegistration(@ModelAttribute @Valid UserDTO userDTO, BindingResult result, HttpServletRequest request, Errors errors) {
 
-        logsRepository.save(new Log(LocalDateTime.now(), "info", "registration", null));
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Registration page loaded",null));
         if (result.hasErrors()) {
             System.out.println(result.getAllErrors());
 
