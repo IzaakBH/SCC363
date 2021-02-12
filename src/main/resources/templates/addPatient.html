@@ -1,85 +1,91 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head>
-    <meta charset="UTF-8">
-    <title>363</title>
+  <title>Add Patient</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-
-  <form action="#" th:action="@{/addPatient}" th:object="${patient}" method="POST">
+<div class="expand editPage">
+  <form style="margin-right: 10%" action="#" th:action="@{/addPatient}" th:object="${patient}" method="POST">
     <p>Add customer</p>
 
     <div th:if="${patientExistsError}">
       <p th:text="${patientExistsError}"></p>
     </div>
-
+    <br>
     <div>
       <label for="firstName">First Name</label>
       <input name="firstName" th:field="*{firstName}" id="firstName" placeholder="John">
       <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
     </div>
+    <br>
     <div>
       <label for="lastName">Last Name</label>
       <input name="lastName" th:field="*{lastName}" id="lastName" placeholder="Appleseed">
       <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
     </div>
+    <br>
     <div>
       <label for="medicalID">Medical ID</label>
       <input name="medicalID" th:field="*{medicalID}" id="medicalID" placeholder="D12345">
       <span th:if="${#fields.hasErrors('medicalID')}" th:errors="*{medicalID}"></span>
     </div>
-
+    <br>
     <div>
       <label for="address">Address</label>
       <input name="address" th:field="*{address}" id="address" placeholder="1 Balmoral Road, Lancaster, Lancashire, LA1 3BT">
       <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
     </div>
-
+    <br>
     <div>
       <label for="phone">phone Number</label>
       <input type="number" name="phone" th:field="*{phoneNumber}" id="phone" placeholder="07834556885">
       <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
     </div>
-
+    <br>
     <div>
       <label for="dateOfBirth">Date of Birth</label>
       <input type="date" name="dateOfBirth" th:field="*{dateOfBirth}" id="dateOfBirth">
       <span th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></span>
     </div>
-
+    <br>
     <div>
       <label for="weight">Weight (KG)</label>
       <input name="weight" th:field="*{weight}" id="weight" placeholder="100">
       <span th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}"></span>
     </div>
-
+    <br>
     <div>
       <label for="height">Height (cm)</label>
       <input name="height" th:field="*{height}" id="height" placeholder="100">
       <span th:if="${#fields.hasErrors('height')}" th:errors="*{height}"></span>
     </div>
-
+    <br>
     <input type="hidden" id="doctors" th:value="${doctors}"/>
-
+    <br>
     <div>
       <label for="doctor">Patient's Doctor</label>
       <select id="doctor" th:field="*{doctor}" name="doctor">
       </select>
       <script>
-      let doctors = document.getElementById("doctors").value.split(",");
-      for (var i = 0; i < doctors.length; i++)
-      {
-          let doctor = doctors[i];
-          let option = document.createElement("option");
-          option.value = doctor.split("(")[1].replace(")", "");
-          option.innerHTML = doctor;
-          document.getElementById("doctor").appendChild(option);
-      }
-      </script>
+                  let doctors = document.getElementById("doctors").value.split(",");
+                  for (var i = 0; i < doctors.length; i++)
+                  {
+                      let doctor = doctors[i];
+                      let option = document.createElement("option");
+                      option.value = doctor.split("(")[1].replace(")", "");
+                      option.innerHTML = doctor;
+                      document.getElementById("doctor").appendChild(option);
+                  }
+                  </script>
     </div>
+    <br>
     <div>
-      <button>Add Patient</button>
+      <button style="color:white">Add Patient</button>
     </div>
   </form>
+  <button id="cancel" style="color:white" onclick="window.location.href='/records'">Cancel/Back</button>
+</div>
 </body>
 </html>

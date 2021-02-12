@@ -374,6 +374,7 @@ public class HospitalController implements ErrorController {
         return "signin";
     }
 
+
     @PostMapping("/addPatient")
     public ModelAndView addPatient(@ModelAttribute @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @Valid PatientDetails patientDetails, BindingResult result, HttpServletRequest request, Errors errors)
     {
@@ -414,7 +415,7 @@ public class HospitalController implements ErrorController {
                             return model;
                         }
 
-                        mav.setViewName("listPatients");
+                        mav.setViewName("home");
                         return mav;
                     }
                     mav.setViewName("error2");

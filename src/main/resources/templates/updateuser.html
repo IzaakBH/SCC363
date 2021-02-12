@@ -4,7 +4,7 @@
     <title>Update User</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script type="text/javascript" th:src="@{/js/PasswordValidator.js}"></script>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
 </head>
 <body>
 
@@ -23,10 +23,11 @@
 
     <div>
         <label for="password">New Password</label>
-        <input name="password" id="password" placeholder="New Password" type = "text">
+        <input name="password" id="password" placeholder="New Password" type = "text" onkeyup="evaluatePassword(this)" onpaste="evaluatePassword(this)">
+        <div id="rating"/>
     </div>
     <div>
-        <input type="submit">Save Details</input>
+        <button style="color:white" id="submit" disabled type="submit">Save Details</button>
     </div>
 </form>
 

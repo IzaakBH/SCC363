@@ -14,9 +14,9 @@
         </div>
         <div class="expand view">
             <div th:each="patient : ${patients}"> <a style="color: white" th:text="${patient.medicalID}" th:href="@{'/recordsEdit/' + ${patient.medicalID}}"></a>
-                <a style="color: red" th:href="@{'/deletePatient/?medicalID=' + ${patient.medicalID}}">Delete User</a>
+                <a style="color: red" th:href="@{'/deletePatient/?medicalID=' + ${patient.medicalID}}">Delete Record</a>
             </div>
         </div>
-        <button id = "new" onclick="window.location.href='/addPatient'">+ New Record</button><button id = "ac" style="color: yellow;">Access Control</button>
+        <button id = "new" onclick="window.location.href='/addPatient'">+ New Record</button>
     </body>
 </html>
