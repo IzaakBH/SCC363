@@ -8,3 +8,9 @@ If an issue is too complex to complete in a short time frame, create new issues 
 sprint. These can then be implemented on their own branches.
 
 To start the spring localhost on your machine, run (Linux/OSX) -> './mvnw spring-boot:run' (Windows) -> 'mvnw spring-boot:run'
+
+Steps to run the spring server on your local machine for testing and marking purposes - 
+1. extract the folder from the zip file.
+2. open the project folder in Intellij
+3. in the top right hand corner click on 'Add Configuration...'
+4. 
