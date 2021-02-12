@@ -7,27 +7,25 @@
     </head>
     <body>
         <div class="expand editPage">
-            <div style = "margin-left: 1%; margin-top: 1%;">
+            <div style = "margin-left: 30%; margin-top: 1%;">
                 <p id= "text"> Medical ID:</p>
-                <input type="text" id="medid" th:placeholder="${patient.medicalID}"/>
+                <p id="text" th:text="${patient.medicalID}"></p>
                 <p id= "text"> First Name:</p>
-                <input type="text" id="firstname" th:placeholder="${patient.firstName}"/>
+                <p id="text" th:text="${patient.firstName}"></p>
                 <p id= "text"> Last Name:</p>
-                <input type="text" id="lastname" th:placeholder="${patient.lastName}"/>
-                <p id= "text"> Last Name:</p>
-                <input type="text" id="dateOfBirth" th:placeholder="${patient.dateOfBirth}"/>
-                <p id= "text"> Last Name:</p>
-                <input type="text" id="phoneNumber" th:placeholder="${patient.phoneNumber}"/>
-                <p id= "text"> Last Name:</p>
-                <input type="text" id="address" th:placeholder="${patient.address}"/>
-                <p id= "text"> Last Name:</p>
-                <input type="text" id="height" th:placeholder="${patient.height}"/>
-                <p id= "text"> Last Name:</p>
-                <input type="text" id="weight" th:placeholder="${patient.weight}"/>
-                <p id= "text"> Last Name:</p>
-                <input type="text" id="doctor" th:placeholder="${patient.doctor}"/>
-                <button id = "save">Save</button>
-                <button id = "delete">Delete</button>
+                <p id="text" th:text="${patient.lastName}"></p>
+                <p id= "text"> Date of Birth:</p>
+                <p id="text" th:text="${patient.dateOfBirth}"></p>
+                <p id= "text"> Phone Number:</p>
+                <p id="text" th:text="${patient.phoneNumber}"></p>
+                <p id= "text"> Address:</p>
+                <p id="text" th:text="${patient.address}"></p>
+                <p id= "text"> Height:</p>
+                <p id="text" th:text="${patient.height}"></p>
+                <p id= "text"> Weight:</p>
+                <p id="text" th:text="${patient.weight}"></p>
+                <p id= "text"> Doctor:</p>
+                <p id="text" th:text="${patient.doctor}"></p>
                 <button id = "cancel">Cancel/Back</button><br>
             </div>
         </div>

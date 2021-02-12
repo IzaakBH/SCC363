@@ -59,18 +59,23 @@
       <span th:if="${#fields.hasErrors('height')}" th:errors="*{height}"></span>
     </div>
 
-    //Session key
+    <input type="hidden" id="doctors" th:value="${doctors}"/>
 
     <div>
       <label for="doctor">Patient's Doctor</label>
       <select id="doctor" th:field="*{doctor}" name="doctor">
-        <option value="SYSADMIN">Doc1</option>
-        <option value="DOCTOR">doc2</option>
-        <option value="NURSE">doc3</option>
-        <option value="PATIENT">doc4</option>
-        <option value="REGULATOR">doc5</option>
-        <option value="MEDADMIN">doc6</option>
       </select>
+      <script>
+      let doctors = document.getElementById("doctors").value.split(",");
+      for (var i = 0; i < doctors.length; i++)
+      {
+          let doctor = doctors[i];
+          let option = document.createElement("option");
+          option.value = doctor.split("(")[1].replace(")", "");
+          option.innerHTML = doctor;
+          document.getElementById("doctor").appendChild(option);
+      }
+      </script>
     </div>
     <div>
       <button>Add Patient</button>

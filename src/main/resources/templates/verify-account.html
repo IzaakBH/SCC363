@@ -9,10 +9,12 @@
 
     <div th:if="*{success}">
         <p>Your account was successfully validated</p>
+        <p>Back to <a href="/home">home</a></p>
     </div>
 
     <div th:if="*{failure}">
         <p>Verification failed. Incorrect link.</p>
+        <p>Back to <a href="/home">home</a></p>
     </div>
 
 </body>

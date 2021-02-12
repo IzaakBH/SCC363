@@ -7,6 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface UserRepository extends CrudRepository<User, Integer> {
     User findUserById(Integer id);
@@ -21,6 +23,8 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     boolean existsByEmail(String email);
     boolean existsByEmailOrUsername(String email, String username);
     boolean existsByEmailAndCode(String email, int code);
+
+    List<User> findUsersByUserType(String userType);
 
 
 }

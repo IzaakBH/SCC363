@@ -1,9 +1,12 @@
 package com.scc363.hospitalproject.utils;
 
+import com.scc363.hospitalproject.datamodels.User;
 import com.scc363.hospitalproject.utils.Pair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+
+import java.awt.*;
 
 
 public class JSONManager
@@ -39,4 +42,6 @@ public class JSONManager
         this.keyValues = new Pair[]{new Pair("result", String.valueOf(value))};
         return generateJSONObject().toString();
     }
+
+
 }
