@@ -121,23 +121,8 @@ public class HospitalController implements ErrorController {
             }
         }
 
-        //code block is crashing
-        /*
+
         logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "warn", "Error logging in", userName));
-        int users = logsRepository.countByLevelAndUserNameAndDate("warn", userName, LocalDate.now());
-        System.out.println(users);
-        if(users>=5){
-            Email warnEmail = new Email();
-            warnEmail.sendEmail(userRepository.findUserByUsername(userName).getEmail(), "Someone tried to login to your account for 3 times with the wrong credentials");
-        }
-
-        int warns = logsRepository.countByLevel("warn");
-        if(warns>=500){
-            Email warnEmail = new Email();
-            warnEmail.sendEmail("scc363gr@gmail.com", "Many warns available");
-        }
-
-         */
         return "failure";
     }
 
@@ -148,10 +133,12 @@ public class HospitalController implements ErrorController {
             if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
             {
                 model.addAttribute("username", sessionManager.getCookie("username", request.getCookies()));
+                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Home page loaded", null));
                 return "home";
             }
 
         }
+        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
 
@@ -395,6 +382,7 @@ public class HospitalController implements ErrorController {
                         try {
                             PatientDetails registered = patientService.registerPatient(patientDetails);
                             System.out.println("===========\n Patient added");
+                            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Patient added", registered.getLastName()+registered.getFirstName()));
                         } catch (PatientAlreadyExistsException e) {
                             ModelAndView model = new ModelAndView();
                             System.out.println("===========\n Adding Patient failed");
@@ -408,6 +396,7 @@ public class HospitalController implements ErrorController {
                         mav.setViewName("listPatients");
                         return mav;
                     }
+                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Error while ading patient", null));
                     mav.setViewName("error2");
                 }
             }
@@ -694,7 +683,7 @@ public class HospitalController implements ErrorController {
         if (day == 1 && checkDB == false) {
             try {
                 Class.forName("org.h2.Driver");
-                Connection con = DriverManager.getConnection("jdbc:h2:" + "./data/userdata", "sa", "password");
+                Connection con = DriverManager.getConnection("jdbc:h2:" + "./data/userdata;CIPHER=AES", "sa", "filepwd password");
                 Statement stmt = con.createStatement();
                 con.prepareStatement("BACKUP TO 'backup.zip'").executeUpdate();
                 checkDB = true;
@@ -722,7 +711,7 @@ public class HospitalController implements ErrorController {
         if (checkDB == false) {
             try {
                 Class.forName("org.h2.Driver");
-                Connection con = DriverManager.getConnection("jdbc:h2:" + "./data/userdata", "sa", "password");
+                Connection con = DriverManager.getConnection("jdbc:h2:" + "./data/userdata;CIPHER=AES", "sa", "filepwd password");
                 Statement stmt = con.createStatement();
                 con.prepareStatement("BACKUP TO 'backup.zip'").executeUpdate();
                 checkDB = true;
