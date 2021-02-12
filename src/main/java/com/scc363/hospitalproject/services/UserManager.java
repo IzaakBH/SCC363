@@ -31,4 +31,13 @@ public class UserManager implements UserManagerInterface
         }
         return user;
     }
+
+    public void updateUser(User user)
+    {
+        if (userRepository.findUserByUsername(user.getUsername()) != null)
+        {
+            userRepository.delete(user);
+            userRepository.save(user);
+        }
+    }
 }

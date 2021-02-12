@@ -219,67 +219,55 @@ public class HospitalController implements ErrorController {
         System.out.println(token);
         System.out.println(email);
 
-        try {
-            if (userRepository.existsByEmail(email)) {
-                System.out.println("==========\nVerified user");
-                // User authenticated
-                User u = userRepository.findUserByEmail(email);
-
-                if (u.isEnabled()) {
+        User u = userRepository.findUserByEmail(email);
+        if (u != null)
+        {
+            if (!u.isLocked())
+            {
+                if (u.isEnabled())
+                {
                     model.addAttribute("failure", false);
+                    model.addAttribute("failMessage", "account is already verified");
                     logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User not verified", u.getUsername()));
                     return "notverified";
-                } else if (u.getCode().equals(token)) {
+                }
+                else if (u.getCode().equals(token))
+                {
                     u.setEnabled(true);
                     userRepository.save(u);
                     model.addAttribute("success", true);
                     logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "debug", "User verified", u.getUsername()));
                     return "verified";
                 }
-            } else {
-                model.addAttribute("failure", false);
-                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User not verified", null));
+                else
+                {
+                    if (u.getActivationAttempts() >= 3)
+                    {
+                        u.lockAccount();
+                        userManager.updateUser(u);
+                        System.out.println("account is now locked");
+                    }
+                    else
+                    {
+                        System.out.println("Account has " + String.valueOf(3-u.getActivationAttempts()) + " attempts left");
+                        u.addActivationAttempt();
+                        userManager.updateUser(u);
+                    }
+                    return "notverified";
+                }
+            }
+            else
+            {
+                model.addAttribute("failMessage", "Your account has been locked it must now be unlocked by a system admin");
                 return "notverified";
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+        else
+            {
             model.addAttribute("failure", false);
             logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User not verified", null));
             return "notverified";
         }
-        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User not verified", null));
-        return "notverified";
-    }
-
-
-    @GetMapping("/delete-account/{id}")
-    public String accountsEdit(@PathVariable Integer id, Model model, HttpServletRequest request)
-    {
-        if (request.getCookies().length >= 3)
-        {
-            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
-            {
-                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
-                if (user != null)
-                {
-                    if (user.hasPrivilege(privilegeRepository.findByName("DELETE_USERS")))
-                    {
-                        try {
-                            userRepository.deleteUserById(id);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Account could not be deleted", userRepository.findUserById(id).getUsername()));
-                        }
-                        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Account deleted", userRepository.findUserById(id).getUsername()));
-                        return "delete-account";
-                    }
-                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Account could not be deleted", userRepository.findUserById(id).getUsername()));
-                    return "error2";
-                }
-            }
-        }
-        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
-        return "signin";
     }
 
 
@@ -847,4 +835,63 @@ public class HospitalController implements ErrorController {
     public String getErrorPath() {
         return null;
     }
+
+
+    @GetMapping("/lockUser")
+    public String lockUser(@RequestParam Integer id, HttpServletRequest request)
+    {
+        if (request.getCookies().length >= 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (user.hasRole(roleRepository.findRoleByName("SYSTEM_ADMIN")))
+                    {
+                        User userToLock = userRepository.findUserById(id);
+                        if (userToLock != null)
+                        {
+                            user.lockAccount();
+                            userManager.updateUser(user);
+                            return "success";
+                        }
+                        return "error3";
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
+    }
+
+    @GetMapping("/unlockUser")
+    public String unlockUser(@RequestParam Integer id, HttpServletRequest request)
+    {
+        if (request.getCookies().length >= 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    if (user.hasRole(roleRepository.findRoleByName("SYSTEM_ADMIN")))
+                    {
+                        User userToUnlock = userRepository.findUserById(id);
+                        if (userToUnlock != null)
+                        {
+                            userToUnlock.unlockAccount();
+                            userManager.updateUser(user);
+                            return "success";
+                        }
+                        return "error3";
+                    }
+                    return "error2";
+                }
+            }
+        }
+        return "signin";
+    }
+
+
 }

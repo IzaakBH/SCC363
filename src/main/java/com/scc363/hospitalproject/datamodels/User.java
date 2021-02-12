@@ -8,6 +8,7 @@ import javax.mail.Session;
 
 import com.scc363.hospitalproject.constraints.UniqueUsername;
 import com.scc363.hospitalproject.constraints.ValidPassword;
+import net.bytebuddy.implementation.bind.annotation.Default;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -68,6 +69,39 @@ public class User implements UserDetails {
     // Account is enabled if it has been verified with the email 2fa code.
     private boolean enabled;
 
+
+    @Column
+    private Integer activationAttempts = 0;
+
+    public Integer getActivationAttempts()
+    {
+        return this.activationAttempts;
+    }
+
+    public void addActivationAttempt()
+    {
+        if (this.activationAttempts < 3) this.activationAttempts++;
+    }
+
+    public boolean isLocked()
+    {
+        return this.locked;
+    }
+
+
+
+
+
+    public void lockAccount()
+    {
+        this.locked = true;
+    }
+
+    public void unlockAccount()
+    {
+        this.locked = false;
+        this.activationAttempts = 0;
+    }
 
     public User() {
         this.enabled = false;
