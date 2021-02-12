@@ -12,6 +12,7 @@ import com.scc363.hospitalproject.utils.SessionManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,7 +41,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 @Controller
-public class HospitalController {
+public class HospitalController implements ErrorController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -805,4 +806,45 @@ public class HospitalController {
         return "signin";
     }
 
+
+
+    @GetMapping("/exit")
+    public String logout(HttpServletRequest request)
+    {
+        if (request.getCookies().length >= 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    sessionManager.ifUserHasSessionDestroy(user.getUsername());
+                }
+            }
+        }
+        return "signin";
+    }
+
+    @RequestMapping("/error")
+    public String redirect(Model model, HttpServletRequest request)
+    {
+        if (request.getCookies().length >= 3)
+        {
+            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+            {
+                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+                if (user != null)
+                {
+                    model.addAttribute("username", sessionManager.getCookie("username", request.getCookies()));
+                    return "home";
+                }
+            }
+        }
+        return "signin";
+    }
+
+    @Override
+    public String getErrorPath() {
+        return null;
+    }
 }

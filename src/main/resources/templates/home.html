@@ -16,10 +16,7 @@
             <p id="text">Hello!</p>
 
             <button id="save" th:value="${username}" onclick="window.location.assign(`http://localhost:8080/updateUser/?username=` + this.value);">Update my details</button>
-            <form th:action="@{/logout}" method="post">
-                <input type="submit" value="Sign Out"/>
-            </form>
-<!--            <button onclick="window.location.assign(`/logout`);">Logout</button>-->
+            <button id="logout" onclick="window.location.assign('http://localhost:8080/exit');">Logout</button>
       </div>
     </body>
 </html>
