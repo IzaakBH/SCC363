@@ -77,7 +77,7 @@ public class DataManager implements ApplicationListener<ContextRefreshedEvent>
         User sysAdmin = new User();
         sysAdmin.setUsername("xavier");
         sysAdmin.setPassword(passwordEncoder.encode("##PPassword123"));
-        sysAdmin.setUserType("MED_ADMIN");
+        sysAdmin.setUserType("SYSTEM_ADMIN");
         sysAdmin.setEmail("xavierhickman1234@gmail.com");
         sysAdmin.setEnabled(true);
         sysAdmin.setFirst("xavier");
