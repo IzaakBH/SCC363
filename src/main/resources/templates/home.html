@@ -12,11 +12,12 @@
             <button onclick="window.location.href='/accounts'">Accounts</button>
             <button onclick="window.location.href='/logslist'">Logs/Admin</button>
         </div>
-        <div class="expand view">
-            <p id="text">Hello!</p>
-
-            <button id="save" th:value="${username}" onclick="window.location.assign(`http://localhost:8080/updateUser/?username=` + this.value);">Update my details</button>
-            <button id="logout" onclick="window.location.assign('http://localhost:8080/exit');">Logout</button>
+        <div class="expand editPage">
+            <div style="margin-left: 40%; margin-top:10%">
+                <p style="font-size: 200%" id="text">Hello!</p><br>
+                <button id="save" th:value="${username}" onclick="window.location.assign(`http://localhost:8080/updateUser/?username=` + this.value);">Update my details</button>
+                <button id="logout" onclick="window.location.assign('http://localhost:8080/exit');">Logout</button>
+            </div>
       </div>
     </body>
 </html>
