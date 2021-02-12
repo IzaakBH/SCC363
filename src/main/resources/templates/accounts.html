@@ -15,6 +15,5 @@
         <div class="expand view">
             <div th:each="user : ${users}"> <a style="color: white" th:text="${user.username}" th:href="@{'/accountsEdit/'+${user.username}}"></a> </div>
       </div>
-      <button id = "new" >+ New Account</button>
     </body>
 </html>

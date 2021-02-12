@@ -38,7 +38,7 @@
             </div>
             <div>
                 <label for="password">Password</label>
-                <input name="password" th:field="*{password}" id="password" placeholder="Password" type = "text" onkeyup="evaluatePassword(this)" onpaste="evaluatePassword(this)">
+                <input name="password" th:field="*{password}" id="password" placeholder="Password" type = "password" onkeyup="evaluatePassword(this)" onpaste="evaluatePassword(this)">
                 <div id="rating"/>
                 <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"/>
             </div>
