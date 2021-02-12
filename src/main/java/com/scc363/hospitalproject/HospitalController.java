@@ -252,36 +252,6 @@ public class HospitalController implements ErrorController {
     }
 
 
-    @GetMapping("/delete-account/{id}")
-    public String accountsEdit(@PathVariable Integer id, Model model, HttpServletRequest request)
-    {
-        if (request.getCookies().length >= 3)
-        {
-            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
-            {
-                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
-                if (user != null)
-                {
-                    if (user.hasPrivilege(privilegeRepository.findByName("DELETE_USERS")))
-                    {
-                        try {
-                            userRepository.deleteUserById(id);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Account could not be deleted", userRepository.findUserById(id).getUsername()));
-                        }
-                        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Account deleted", userRepository.findUserById(id).getUsername()));
-                        return "delete-account";
-                    }
-                    logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Account could not be deleted", userRepository.findUserById(id).getUsername()));
-                    return "error2";
-                }
-            }
-        }
-        logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
-        return "signin";
-    }
-
 
     @GetMapping("/accounts")
     public String getUsers(Model model, HttpServletRequest request)
