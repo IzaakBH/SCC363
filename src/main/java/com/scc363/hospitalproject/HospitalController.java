@@ -607,8 +607,8 @@ public class HospitalController implements ErrorController {
                     {
                         if (userRepository.findUserById(id) != null)
                         {
+                            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", user.getUsername() + " deleted "+ userRepository.findUserById(id).getUsername(), userRepository.findUserById(id).getUsername()));
                             userRepository.delete(userRepository.findUserById(id));
-                            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User deleted"+ userRepository.findUserById(id).getUsername(), userRepository.findUserById(id).getUsername()));
                             return "success";
                         }
                     }
@@ -635,6 +635,7 @@ public class HospitalController implements ErrorController {
                     {
                         if (patientDetailsRepository.getPatientDetailsByMedicalID(medicalID) != null)
                         {
+                            logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", user.getUsername() + " deleted "+ patientDetailsRepository.getPatientDetailsByMedicalID(medicalID).getMedicalID(), patientDetailsRepository.getPatientDetailsByMedicalID(medicalID).getMedicalID()));
                             patientDetailsRepository.delete(patientDetailsRepository.getPatientDetailsByMedicalID(medicalID));
                             return "success";
                         }
