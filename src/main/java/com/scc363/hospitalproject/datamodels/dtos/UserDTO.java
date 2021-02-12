@@ -38,10 +38,10 @@ public class UserDTO {
     @NotBlank(message = "Choose a user type")
     private String userType;
 
-    @NotBlank(message = "Choose a user first name")
+    @NotBlank(message = "Please enter first name")
     private String first;
 
-    @NotBlank(message = "Choose a user last name")
+    @NotBlank(message = "Please enter last name")
     private String last;
 
     public UserDTO() {
@@ -53,6 +53,8 @@ public class UserDTO {
         this.password = password;
         this.email = email;
         this.userType = userType;
+        this.first = first;
+        this.last = last;
     }
 
     public String getUsername() {

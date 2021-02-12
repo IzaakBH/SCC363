@@ -1,0 +1,1 @@
+Rename this file to .sql if you want to run any custom SQL. If this is called .sql it causes a crash at load.

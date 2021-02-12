@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <title>Add Permitted User</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="expand editPage">
+        <form style="margin-right: 10%; margin-top: 10%" action="/preAuthUser" method="POST">
+            <input type="text" name="email" required placeholder="Email"><br>
+
+            <select id="userType" name="userType">
+                <option value="SYSTEM_ADMIN">Sysadmin</option>
+                <option value="DOCTOR">Doctor</option>
+                <option value="NURSE">Nurse</option>
+                <option value="PATIENT">Patient</option>
+                <option value="REGULATOR">Regulator</option>
+                <option value="MED_ADMIN">Medical Admin</option>
+            </select><br>
+
+            <button id="save" type="submit">Add User</button><br>
+            <button id = "cancel" onclick="window.location.href='/logslist'">Cancel/Back</button>
+        </form>
+
+
+</div>
+</body>
+</html>

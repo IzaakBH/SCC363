@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+    <title>SCC363 - Verify your account</title>
+</head>
+<body>
+    <h1>Account Verification</h1>
+
+    <div th:if="*{success}">
+        <p>Your account was successfully validated</p>
+        <p>Back to <a href="/home">home</a></p>
+    </div>
+
+    <div th:if="*{failure}">
+        <p>Verification failed. Incorrect link.</p>
+        <p>Back to <a href="/home">home</a></p>
+    </div>
+
+</body>
+</html>

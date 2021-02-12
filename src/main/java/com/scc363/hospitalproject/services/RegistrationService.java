@@ -3,8 +3,11 @@ package com.scc363.hospitalproject.services;
 import com.scc363.hospitalproject.datamodels.User;
 import com.scc363.hospitalproject.exceptions.UserAlreadyExistsException;
 import com.scc363.hospitalproject.repositories.UserRepository;
+import com.scc363.hospitalproject.utils.CodeGen;
+//import com.scc363.hospitalproject.security.LoginSecurity;
 import com.scc363.hospitalproject.utils.DTOMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -13,6 +16,11 @@ import javax.transaction.Transactional;
 public class RegistrationService implements RegistrationInterface {
     @Autowired
     private UserRepository repo;
+
+    private CodeGen c = new CodeGen();
+
+    @Autowired
+    private PasswordEncoder pEncoder;
 
     /**
      * Checks that a new user does not share a username or email with an existing user before creating the use object
@@ -28,6 +36,9 @@ public class RegistrationService implements RegistrationInterface {
         } else {
             // Convert DTO to User entity and save it.
             //return repo.save(DTOMapper.userDtoToEntity(u));
+
+            u.setCode(c.generateCode());
+            u.setPassword(pEncoder.encode(u.getPassword()));
             return repo.save(u);
         }
     }

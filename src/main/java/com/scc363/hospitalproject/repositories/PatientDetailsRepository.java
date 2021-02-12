@@ -6,8 +6,12 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
-@RepositoryRestResource(collectionResourceRel = "patients", path = "patients")
+//@RepositoryRestResource(collectionResourceRel = "patients", path = "patients")
 public interface PatientDetailsRepository extends CrudRepository<PatientDetails, Integer> {
     PatientDetails getPatientDetailsById(int id);
+    PatientDetails getPatientDetailsByMedicalID(String medicalID);
     List<PatientDetails> getPatientDetailsByFirstNameAndLastName(String firstName, String lastName);
+    List<PatientDetails> getPatientDetailsByDoctor(String doctor);
+    boolean existsByMedicalID(String medicalID);
+    String getLastNameById(int id);
 }

@@ -14,7 +14,10 @@
       <configuration>
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
-        <datasource-mapping />
+        <datasource-mapping>
+          <factory-entry name="entityManagerFactory" />
+          <factory-entry name="hospitalproject" />
+        </datasource-mapping>
         <naming-strategy-map />
       </configuration>
     </facet>
@@ -29,19 +32,26 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/.mvn" />
+      <excludeFolder url="file://$MODULE_DIR$/data" />
+      <excludeFolder url="file://$MODULE_DIR$/logs" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: javax.mail:mail:1.4.1" level="project" />
-    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
+    <orderEntry type="library" name="json-simple-1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-jdbc:2.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-core:2.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-jdbc:2.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-core:2.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-jdbc:2.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-core:2.4.2" level="project" />
     <orderEntry type="library" name="Maven: com.h2database:h2:1.4.200" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-data-jpa:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-aop:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.9.6" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-jdbc:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:3.4.5" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:5.3.2" level="project" />
     <orderEntry type="library" name="Maven: jakarta.transaction:jakarta.transaction-api:1.3.3" level="project" />
     <orderEntry type="library" name="Maven: jakarta.persistence:jakarta.persistence-api:2.2.3" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-core:5.4.25.Final" level="project" />
@@ -60,7 +70,6 @@
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-jpa:2.4.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:2.4.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-orm:5.3.2" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-context:5.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:5.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
@@ -136,7 +145,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.skyscreamer:jsonassert:1.5.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.vaadin.external.google:android-json:0.0.20131108.vaadin1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-core:5.3.2" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-test:5.3.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.xmlunit:xmlunit-core:2.7.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: io.projectreactor:reactor-test:3.4.1" level="project" />
@@ -176,5 +184,10 @@
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-config:5.4.2" level="project" />
     <orderEntry type="library" name="Maven: org.mindrot:jbcrypt:0.4" level="project" />
     <orderEntry type="library" name="Maven: jakarta.validation:jakarta.validation-api:2.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-jdbc:2.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-context:5.3.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:5.3.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-core:2.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.3.2" level="project" />
   </component>
 </module>

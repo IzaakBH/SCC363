@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+    <head>
+        <title>Records</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body>
+        <div class="expand editPage">
+            <div style = "margin-left: 40%; margin-top: 1%;">
+                <p id= "text"> Medical ID:</p>
+                <p id="text" th:text="${patient.medicalID}"></p>
+                <p id= "text"> First Name:</p>
+                <p id="text" th:text="${patient.firstName}"></p>
+                <p id= "text"> Last Name:</p>
+                <p id="text" th:text="${patient.lastName}"></p>
+                <p id= "text"> Date of Birth:</p>
+                <p id="text" th:text="${patient.dateOfBirth}"></p>
+                <p id= "text"> Phone Number:</p>
+                <p id="text" th:text="${patient.phoneNumber}"></p>
+                <p id= "text"> Address:</p>
+                <p id="text" th:text="${patient.address}"></p>
+                <p id= "text"> Height:</p>
+                <p id="text" th:text="${patient.height}"></p>
+                <p id= "text"> Weight:</p>
+                <p id="text" th:text="${patient.weight}"></p>
+                <p id= "text"> Doctor:</p>
+                <p id="text" th:text="${patient.doctor}"></p>
+                <button id = "cancel" onclick="window.location.href='/records'">Cancel/Back</button><br>
+            </div>
+        </div>
+    </body>
+</html>

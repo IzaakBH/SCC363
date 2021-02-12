@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+    <head>
+        <title>Records</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body>
+        <div class="btn-group">
+            <button onclick="window.location.href='/home'">Home</button>
+            <button onclick="window.location.href='/records'">Records</button>
+            <button style = "border-bottom: 5px solid rgb(0, 17, 255);">Accounts</button>
+            <button onclick="window.location.href='/logslist'">Logs/Admin</button>
+        </div>
+        <div class="expand view">
+            <div th:each="user : ${users}"> <a style="color: white" th:text="${user.username}" th:href="@{'/accountsEdit/'+${user.username}}"></a> </div>
+      </div>
+    </body>
+</html>

@@ -8,19 +8,30 @@ import javax.mail.Session;
 
 import com.scc363.hospitalproject.constraints.UniqueUsername;
 import com.scc363.hospitalproject.constraints.ValidPassword;
+import net.bytebuddy.implementation.bind.annotation.Default;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.scc363.hospitalproject.utils.CodeGen;
+import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 @Entity
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -51,12 +62,50 @@ public class User implements UserDetails {
     @NotBlank(message = "Choose a user last name")
     private String last;
 
-    String code;
+    private String code;
+
     private boolean locked;
 
+    // Account is enabled if it has been verified with the email 2fa code.
+    private boolean enabled;
+
+
+    @Column
+    private Integer activationAttempts = 0;
+
+    public Integer getActivationAttempts()
+    {
+        return this.activationAttempts;
+    }
+
+    public void addActivationAttempt()
+    {
+        if (this.activationAttempts < 3) this.activationAttempts++;
+    }
+
+    public boolean isLocked()
+    {
+        return this.locked;
+    }
+
+
+
+
+
+    public void lockAccount()
+    {
+        this.locked = true;
+    }
+
+    public void unlockAccount()
+    {
+        this.locked = false;
+        this.activationAttempts = 0;
+    }
 
     public User() {
-
+        this.enabled = false;
+        this.locked = false;
     }
 
     public User(String username, String password, String email, String userType, String first, String last) {
@@ -66,6 +115,8 @@ public class User implements UserDetails {
         this.userType = userType;
         this.first = first;
         this.last = last;
+        this.enabled = false;
+        this.locked = false;
     }
 
     // Getters and setters
@@ -79,6 +130,10 @@ public class User implements UserDetails {
     }
 
     public String getCode() { return code; }
+
+    public void setCode(int code) {
+        this.code = String.valueOf(code);
+    }
 
     public String getUsername() {
         return username;
@@ -101,7 +156,11 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void setUsername(String username) {
@@ -115,6 +174,12 @@ public class User implements UserDetails {
     public void setUserType(String type) {
         userType = type;
     }
+
+    public Integer getId()
+    {
+        return this.id;
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -154,9 +219,6 @@ public class User implements UserDetails {
         String from = "scc363gr@gmail.com";
         String password = "SCC363group";
         String sub = "Code";
-        CodeGen c = new CodeGen();
-        String msg = String.valueOf(c.generateCode());
-        code = msg;
 
 
         Properties props = new Properties();
@@ -167,7 +229,7 @@ public class User implements UserDetails {
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.port", "465");
         //get Session
-        Session session = Session.getDefaultInstance(props,
+        Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(from,password);
@@ -175,11 +237,10 @@ public class User implements UserDetails {
                 });
         //compose message
         try {
-
             MimeMessage message = new MimeMessage(session);
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
             message.setSubject(sub);
-            message.setText(msg);
+            message.setText("http://localhost:8080/verify-account?email=" + getEmail() + "&token=" + getCode());
             //send message
             Transport.send(message);
             System.out.println("message sent successfully");
@@ -187,13 +248,42 @@ public class User implements UserDetails {
     }
 
 
+    @Transient
+    private ArrayList<Role> roles;
+
+    public void setRoles(ArrayList<Role> roles)
+    {
+        this.roles = roles;
+    }
+
+    public ArrayList<Role> getRoles()
+    {
+        return this.roles;
+    }
+
+    public boolean hasRole(Role role)
+    {
+        for (Role assignedRole : this.roles)
+        {
+            if (assignedRole.getName().equals(role.getName()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasPrivilege(Privilege privilege)
+    {
+        for (Role assignedRole : this.roles)
+        {
+            if (assignedRole.hasPrivileges(privilege))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
-enum UserTypes {
-    REGULATOR,
-    SYSADMIN,
-    DOCTOR,
-    NURSE,
-    MEDADMIN,
-    PATIENT
-}

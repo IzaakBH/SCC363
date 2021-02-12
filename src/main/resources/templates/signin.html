@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html>
     <head>
         <title>Register_Login</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script src="js/Services.js"></script>
     </head>
     <body>
 
-        <form th:action="@{/signin}" method="POST">
-            <form action="code" method="GET">
 
-            <div class="container">
+            <div style="opacity: 0.8" class="container">
+
                 <br>
                 <br>
                 <br>
@@ -20,72 +19,22 @@
                 <br>
                 <br>
                 <label >Username : </label>
-                <input type="text" placeholder="Enter Username" name="userName" required>
+                <input type="text" id="username" placeholder="Enter Username" name="username" required>
                 <br>
                 <br>
                 <label >Password : </label>
-                <input type="password" placeholder="Enter Password" name="password" required>
+                <input type="password" id="password" placeholder="Enter Password" name="password" required>
                 <br>
                 <br>
-
-                <button id="myBtn" >Sign in</button>
+                <button style="color:white; padding: 10px;" onclick="login(document.getElementById('username').value, document.getElementById('password').value)">Sign in</button>
                 <br>
                 <br>
-                <a href="#">Forgot password? </a>
+                <a style="color: #00FFFF" href="#">Forgot password? </a>
                 <br>
                 <br>
-                <a href="/register"> New client </a>
+                <a style="color: #FF00FF" href="/register"> New client </a>
                 <br>
                 <br>
             </div>
-        </form>
-            <div id="myModal" class="modal">
-
-                <!-- Modal content -->
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <br>
-                    <p >Enter the code you received on email</p>
-                    <input for = "code" type="code" placeholder="Code" name="code" required>
-                    <button onclick = "/login';">Submit</button>
-                </div>
-
-            </div>
-
-            <script>
-                // Get the modal
-                var modal = document.getElementById("myModal");
-
-                // Get the button that opens the modal
-                var btn = document.getElementById("myBtn");
-
-                // Get the <span> element that closes the modal
-                var span = document.getElementsByClassName("close")[0];
-
-                // When the user clicks the button, open the modal
-                btn.onclick = function() {
-                  modal.style.display = "block";
-                }
-
-                // When the user clicks on <span> (x), close the modal
-                span.onclick = function() {
-                  modal.style.display = "none";
-                }
-
-                // When the user clicks anywhere outside of the modal, close it
-                window.onclick = function(event) {
-                  if (event.target == modal) {
-                    modal.style.display = "none";
-                  }
-                }
-                </script>
-        </form>
-
-
-
-
-    <!--<form action="/list" method="GET">-->
-    <!--    <button>List customers</button>-->
-    <!--</form>  -->
     </body>
 </html>

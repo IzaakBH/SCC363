@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <title>Update User</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" th:src="@{/js/PasswordValidator.js}"></script>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+</head>
+<body>
+
+<form class="container register" action="/updateUser" method="POST">
+
+    <div>
+        <p th:text="${errorMessage}"></p>
+    </div>
+
+
+    <div>
+        <label for="userName">Username</label>
+        <input name="username" th:value="*{username}" id="userName" placeholder="Username" type = "text" >
+    </div>
+
+
+    <div>
+        <label for="password">New Password</label>
+        <input name="password" id="password" placeholder="New Password" type = "text" onkeyup="evaluatePassword(this)" onpaste="evaluatePassword(this)">
+        <div id="rating"/>
+    </div>
+    <div>
+        <button style="color:white" id="submit" disabled type="submit">Save Details</button>
+    </div>
+</form>
+
+
+
+</body>
+</html>

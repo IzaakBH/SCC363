@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+    <head>
+        <title>Accounts</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body>
+        <div class="expand editPage">
+            <div style = "margin-left: 40%; margin-top: 10%;">
+                <p id="text">First Name:</p>
+                <p id="text" th:text="${user.first}"></p>
+                <p id="text">Last Name:</p>
+                <p id="text" th:text="${user.last}"></p>
+                <p id="text">Email address:</p>
+                <p id="text" th:text="${user.email}"></p>
+                <p id="text">Account type:</p>
+                <p id="text" th:text="${user.userType}"></p>
+                <p id="text">Account activation status</p>
+                <p id="text" th:text="${user.enabled}"></p>
+                <p id="text">Account locked status</p>
+                <p id="text" th:text="${user.locked}"></p>
+                <br><br><br>
+                <button id = "unlock" th:onclick="|window.location.assign(`http://localhost:8080/unlockUser/?id=${user.id}`);|">Unlock this account</button>
+                <button id = "lock" th:onclick="|window.location.assign(`http://localhost:8080/lockUser/?id=${user.id}`);|" >Locked this account</button><br>
+                <button id = "delete" th:onclick="|window.location.assign(`http://localhost:8080/deleteUser/?id=${user.id}`);|">Delete</button>
+                <button id = "cancel" onclick="window.location.href='/accounts'">Cancel/Back</button>
+            </div>
+            
+
+        </div>
+    </body>
+</html>
