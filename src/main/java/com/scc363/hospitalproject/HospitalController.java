@@ -459,7 +459,7 @@ public class HospitalController {
         return "signin";
     }
 
-    @GetMapping("/viewPatient/{id}")
+    @GetMapping("/recordsEdit/{id}")
     public String viewPatient(@PathVariable String id, Model model, HttpServletRequest request)
     {
         if (request.getCookies().length >= 3)
@@ -482,7 +482,7 @@ public class HospitalController {
                                 PatientDetails patient = new PatientDetails();
                             }
                             logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "Patients data viewed", patientDetails.getFirstName()+ patientDetails.getLastName()));
-                            return "viewPatient";
+                            return "recordsEdit";
                         }
                     }
                     logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "Patients data loading error", null));
@@ -540,7 +540,7 @@ public class HospitalController {
                                     PermittedUser permittedUser = new PermittedUser(email, userType);
                                     permittedUserRepository.save(permittedUser);
                                     logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "User is preauthenticated", user.getUsername()));
-                                    return "controlpanel";
+                                    return "success";
                                 }
                                 logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "error", "User could not be preauthenticated", null));
                                 return "error3";
@@ -571,7 +571,7 @@ public class HospitalController {
                             try {
                                 User targetuser = userRepository.findUserByUsername(username);
                                 model.addAttribute("user", targetuser);
-                                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Account is edited", username));
+                                logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", targetuser.getId() + "'s account is viewed", username));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -585,6 +585,34 @@ public class HospitalController {
         logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "trace", "Sign in page loaded", null));
         return "signin";
     }
+
+//    @GetMapping("/recordsEdit/{medId}")
+//    public String recordsEdit(@PathVariable String medId, Model model, HttpServletRequest request)
+//    {
+//        if (request.getCookies().length == 3)
+//        {
+//            if (sessionManager.isAuthorised(request.getCookies(), request.getRemoteAddr()))
+//            {
+//                User user = userManager.findUserByUsername(sessionManager.getCookie("username", request.getCookies()));
+//                if (user != null)
+//                {
+//                    if (user.hasPrivilege(privilegeRepository.findByName("READ_PATIENTS")) || user.hasPrivilege(privilegeRepository.findByName("READ_ALL_PATIENTS")))
+//                    {
+//                        try {
+//                            PatientDetails patient = patientDetailsRepository.getPatientDetailsByMedicalID(medId);
+//                            model.addAttribute("patient", patient);
+//                            System.out.println("Got the patient");
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                        return "accountsEdit";
+//                    }
+//                    return "error2";
+//                }
+//            }
+//        }
+//        return "signin";
+//    }
 
     @GetMapping("/logs")
     public String logs(Model model, HttpServletRequest request)
