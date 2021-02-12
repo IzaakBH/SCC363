@@ -119,8 +119,11 @@ public class HospitalController {
                 return "failure";
             }
         }
+
+        //code block is crashing
+        /*
         logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "warn", "Error logging in", userName));
-        int users= logsRepository.countByLevelAndUserNameAndDate("warn", userName, LocalDate.now());
+        int users = logsRepository.countByLevelAndUserNameAndDate("warn", userName, LocalDate.now());
         System.out.println(users);
         if(users>=5){
             Email warnEmail = new Email();
@@ -132,6 +135,8 @@ public class HospitalController {
             Email warnEmail = new Email();
             warnEmail.sendEmail("scc363gr@gmail.com", "Many warns available");
         }
+
+         */
         return "failure";
     }
 
@@ -355,6 +360,7 @@ public class HospitalController {
                     if (user.hasPrivilege(privilegeRepository.findByName("WRITE_PATIENTS")))
                     {
                         model.addAttribute("patient", new PatientDetails());
+                        model.addAttribute("doctors", splitDoctorsList());
                         logsRepository.save( new Log(LocalDate.now(), LocalTime.now(), "info", "New patient added", null));
                         return "addPatient";
                     }
@@ -387,6 +393,7 @@ public class HospitalController {
                             ModelAndView model = new ModelAndView();
                             System.out.println("===========\n Adding Patient failed");
                             model.addObject("patient", patientDetails);
+                            model.addObject("doctors", splitDoctorsList());
                             model.setViewName("addPatient");
                             return model;
                         }
@@ -401,6 +408,7 @@ public class HospitalController {
                             System.out.println("===========\n Adding Patient failed");
                             model.addObject("patientExistsError", "An patient already exists with this medial ID.");
                             model.addObject("patient", patientDetails);
+                            model.addObject("doctors", splitDoctorsList());
                             model.setViewName("addPatient");
                             return model;
                         }
@@ -414,6 +422,16 @@ public class HospitalController {
         }
         mav.setViewName("sigin");
         return mav;
+    }
+
+    private String splitDoctorsList()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (User userObj : userRepository.findUsersByUserType("DOCTOR"))
+        {
+            stringBuilder.append("Dr. ").append(userObj.getFirst()).append(" ").append(userObj.getLast()).append(" (").append(userObj.getUsername()).append("),");
+        }
+        return stringBuilder.toString().length() > 0 ? stringBuilder.toString().substring(0, stringBuilder.toString().length()-1) : "";
     }
 
     @GetMapping("/records")
