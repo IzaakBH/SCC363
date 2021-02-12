@@ -13,4 +13,8 @@ Steps to run the spring server on your local machine for testing and marking pur
 1. extract the folder from the zip file.
 2. open the project folder in Intellij
 3. in the top right hand corner click on 'Add Configuration...'
-4. 
+4. There is a + sign that you should click and Application should appear in the list 
+5. Add the Application 
+6. Add the main file (Controller)
+7. Click apply
+8. Click ok
